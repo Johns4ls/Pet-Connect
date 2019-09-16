@@ -5,7 +5,13 @@
       <title> Dashboard</title>
   {% endblock %}      
   {% block body %}
-   <h1>Under Construction </h1>
+  <div class="jumbotron text-center">
+      <h1>Hello, {{user.username}}!</h1>
+      <p>Under Construction</p>
+    </div>
+    {% for post in posts %}
+    <div class="well well-lg"><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+    {% endfor %}
 
 
 {% endblock %}
