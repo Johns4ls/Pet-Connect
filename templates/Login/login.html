@@ -3,6 +3,15 @@
 {% endblock %}
 {% block body %}
 <body class ="background">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <div class="alert alert-danger"><li><strong>{{ message }}</strong></li></div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
 <div class="login-reg-panel">
 		<div class="login-info-box">
 			<h2>Have an account?</h2>
@@ -21,20 +30,38 @@
 		<div class="white-panel">
 			<div class="login-show">
                 <h2>LOGIN</h2>
-                <form action="/Login" method="post" novalidate>
-				<input type="text" placeholder="Email">
-				<input type="password" placeholder="Password">
-                <input type="button" value="Login">
+                <form action="/login" method="post" novalidate>
+                    {{ Loginform.hidden_tag() }}
+                    {{ Loginform.email(placeholder="Email") }}
+                    {% for error in Loginform.email.errors %}
+                    <div class="alert alert-danger" role="alert">
+                      [{{ error }}]</div>
+                    {% endfor %}
+                    {{ Loginform.password(placeholder="Password") }}
+                    {% for error in Loginform.password.errors %}
+                    <div class="alert alert-danger" role="alert">
+                      [{{ error }}]</div>
+                    {% endfor %}
+                    {{ Loginform.submit() }}
             </form>
-				<a href="/ForgotPass">Forgot password?</a>
+				<a href="/forgotPass">Forgot password?</a>
 			</div>
 			<div class="register-show">
                 <h2>REGISTER</h2>
-                <form action="/Register" method="post" novalidate>
-				<input type="text" placeholder="Email">
-				<input type="password" placeholder="Password">
-				<input type="password" placeholder="Confirm Password">
-                <input type="button" value="Register">
+                <form action="/register" method="post" novalidate>
+                    {{ Registerform.hidden_tag() }}
+                    {{ Registerform.email(placeholder="Email") }}
+                    {% for error in Registerform.email.errors %}
+                    <div class="alert alert-danger" role="alert">
+                      [{{ error }}]</div>
+                      {% endfor %}
+                    {{ Registerform.password(placeholder="Password") }}
+                    {{ Registerform.passwordConfirm(placeholder="Repeat Password") }}
+                    {% for error in Registerform.password.errors %}
+                    <div class="alert alert-danger" role="alert">
+                      [{{ error }}]</div>
+                      {% endfor %}
+                    {{ Registerform.submit() }}
             </form>
 			</div>
 		</div>

@@ -1,10 +1,17 @@
 #Various imports
-from flask import Flask, flash, render_template
+from flask import Flask, flash, render_template, redirect
+from Modules.forms import LoginForm, RegisterForm
+from Modules import Tlbx
 app = Flask(__name__)
+
+#Secret to prevent Cross-Site Request Forgery(CSRF) atacks
 app.secret_key = 'some_secret'
+
 #Initial screen upon entering website.
 @app.route("/")
 def index():
+
+    #Temporary filler data
     user = {'username': 'Larry'}
     posts = [
     {
@@ -18,9 +25,35 @@ def index():
 ]
     return render_template('HomePage/index.html', user = user, posts = posts)
 
-@app.route('/login')
+#Renders the login page
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('Login/login.html')
+
+    #instantiates the forms to login and register your account
+    Loginform = LoginForm()
+    Registerform = RegisterForm()
+
+    #Checks to ensure fields are not null
+    if Loginform.validate_on_submit():
+        #Checks to ensure username and password are correct.
+        if(Tlbx.check_password(Loginform.email.data, Loginform.password.data) is not False):
+            return redirect('/')
+    flash("Email or Password is incorrect.")
+    return render_template('Login/login.html', Registerform=Registerform, Loginform=Loginform)
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    Registerform = RegisterForm()
+    if Registerform.validate_on_submit():
+        valid = Tlbx.validate_email(Registerform.email.data)
+        print(valid)
+        if(Tlbx.validate_email(Registerform.email.data) is not False):
+            password =  Tlbx.hash_password(Registerform.password.data)
+            Tlbx.new_Account(Registerform.email.data, password)
+            return redirect('/')
+        flash('Email address already exists')
+        return redirect('/login')
+        
+    return render_template('Login/login.html', Registerform=Registerform, Loginform=Loginform)
 #Run
 if __name__ == "__main__":
 
