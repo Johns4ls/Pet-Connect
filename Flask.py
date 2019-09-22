@@ -4,7 +4,8 @@ from Modules.forms import LoginForm, RegisterForm
 from Modules import Tlbx
 app = Flask(__name__)
 
-#Secret to prevent Cross-Site Request Forgery(CSRF) atacks
+'''Secret to prevent Cross-Site Request Forgery(CSRF) attacks.
+   This will need to be updated before the site goes live.'''
 app.secret_key = 'some_secret'
 
 #Initial screen upon entering website.
