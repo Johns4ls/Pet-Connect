@@ -1,10 +1,11 @@
 CREATE TABLE `tUser` (
   `userID` int PRIMARY KEY AUTO_INCREMENT,
-  `firstName` varchar(255) NOT NULL DEFAULT '',
-  `lastName` varchar(255) NOT NULL DEFAULT '',
+  `firstName` varchar(255) NOT NULL,
+  `lastName` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `addressID` int DEFAULT 1
+  `image` varchar(255),
+  `addressID` int
 );
 
 CREATE TABLE `tAddress` (
@@ -26,7 +27,8 @@ CREATE TABLE `tDog` (
   `favToyID` int,
   `Size` varchar(255) NOT NULL,
   `weight` int,
-  `bio` varchar(255)
+  `bio` varchar(255),
+  `image` varchar(255)
 );
 
 CREATE TABLE `tBreed` (
@@ -42,13 +44,15 @@ CREATE TABLE `tOwnership` (
 
 CREATE TABLE `tFavoriteToy` (
   `favToyID` int PRIMARY KEY AUTO_INCREMENT,
-  `ToyName` varchar(255) NOT NULL
+  `ToyName` varchar(255) NOT NULL,
+  `image` varchar(255)
 );
 
 CREATE TABLE `tFavoritePark` (
   `favParkID` int PRIMARY KEY AUTO_INCREMENT,
   `parkName` varchar(255) NOT NULL,
-  `AddressID` int
+  `AddressID` int,
+  `image` varchar(255)
 );
 
 CREATE TABLE `tAdmin` (
@@ -67,8 +71,16 @@ CREATE TABLE `tPosts` (
   `postID` int PRIMARY KEY AUTO_INCREMENT,
   `dogID` int,
   `userID` int,
+  `groupID` int,
   `Post` varchar(255) NOT NULL,
-  `ts` timestamp
+  `ts` timestamp NOT NULL DEFAULT NOW(),
+  `image` varchar(255)
+);
+
+CREATE TABLE `tPostPicures` (
+  `PostPicturesD` int,
+  `image` varchar(255),
+  `postID` int
 );
 
 CREATE TABLE `tComments` (
@@ -77,7 +89,8 @@ CREATE TABLE `tComments` (
   `dogID` int,
   `userID` int,
   `Post` varchar(255) NOT NULL,
-  `ts` timestamp
+  `ts` timestamp NOT NULL DEFAULT NOW(),
+  `image` varchar(255)
 );
 
 CREATE TABLE `tReacts` (
@@ -116,7 +129,14 @@ CREATE TABLE `tPlayDate` (
 CREATE TABLE `tMessage` (
   `messageID` int PRIMARY KEY AUTO_INCREMENT,
   `userTo_ID` int,
-  `userFrom_ID` int
+  `userFrom_ID` int,
+  `ts` timestamp NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE `tPictureMessage` (
+  `pictureMessageID` int,
+  `image` varchar(255),
+  `messageID` int
 );
 
 CREATE TABLE `tInterests` (
@@ -129,6 +149,18 @@ CREATE TABLE `tDogInterests` (
   `DogInterestsID` int PRIMARY KEY AUTO_INCREMENT,
   `interestsID` int,
   `dogID` int
+);
+
+CREATE TABLE `tGroupParticipants` (
+  `GroupParticipantsID` int PRIMARY KEY AUTO_INCREMENT,
+  `userID` int,
+  `groupID` int
+);
+
+CREATE TABLE `tGroup` (
+  `groupID` int PRIMARY KEY AUTO_INCREMENT,
+  `Name` varchar(255),
+  `image` varchar(255)
 );
 
 ALTER TABLE `tUser` ADD FOREIGN KEY (`addressID`) REFERENCES `tAddress` (`addressID`);
@@ -157,6 +189,10 @@ ALTER TABLE `tPosts` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
 
 ALTER TABLE `tPosts` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
+ALTER TABLE `tPosts` ADD FOREIGN KEY (`groupID`) REFERENCES `tGroup` (`groupID`);
+
+ALTER TABLE `tPostPicures` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
+
 ALTER TABLE `tComments` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
 
 ALTER TABLE `tComments` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
@@ -183,6 +219,12 @@ ALTER TABLE `tMessage` ADD FOREIGN KEY (`userTo_ID`) REFERENCES `tUser` (`userID
 
 ALTER TABLE `tMessage` ADD FOREIGN KEY (`userFrom_ID`) REFERENCES `tUser` (`userID`);
 
+ALTER TABLE `tPictureMessage` ADD FOREIGN KEY (`messageID`) REFERENCES `tMessage` (`messageID`);
+
 ALTER TABLE `tDogInterests` ADD FOREIGN KEY (`interestsID`) REFERENCES `tInterests` (`interestsID`);
 
 ALTER TABLE `tDogInterests` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
+
+ALTER TABLE `tGroupParticipants` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
+
+ALTER TABLE `tGroupParticipants` ADD FOREIGN KEY (`groupID`) REFERENCES `tGroup` (`groupID`);
