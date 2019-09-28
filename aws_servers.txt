@@ -1,0 +1,7 @@
+To connect to either of the AWS servers, you need to download the sendesignpem.pem ssh key located at the root level of this repository. Then use the following commands.
+
+To connect to the flask/nginx server:
+ssh -i location_of_sendesignpem.pem ec2-user@ec2-3-16-11-72.us-east-2.compute.amazonaws.com
+
+To connect to the database server:
+ssh -i location_of_sendesignpem.pem ubuntu@ec2-18-224-2-233.us-east-2.compute.amazonaws.com
