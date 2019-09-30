@@ -10,3 +10,12 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     passwordConfirm = PasswordField('passwordConfirm', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
+class UserInfoForm(FlaskForm):
+    firstName = StringField('firstName', validators=[DataRequired()])
+    lastName = StringField('lastName', validators=[DataRequired()])
+    addressNumber = StringField('addressNumber', validators=[DataRequired()])
+    stName = StringField('stName', validators=[DataRequired()])
+    city = StringField('city', validators=[DataRequired()])
+    state = StringField('state', validators=[DataRequired()])
+    zipCode = StringField('zipCode', validators=[DataRequired()])
+    submit = SubmitField('Register')
