@@ -2,14 +2,24 @@
 from flask import Flask, flash, render_template, redirect, session
 from Modules.forms import LoginForm, RegisterForm, UserInfoForm
 from Modules import Tlbx
+from flask_login import LoginManager, login_required
 app = Flask(__name__)
 
 '''Secret to prevent Cross-Site Request Forgery(CSRF) attacks.
    This will need to be updated before the site goes live.'''
 app.secret_key = 'some_secret'
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(userid):
+    return Tlbx.userRefresh(userid)
+
 #Initial screen upon entering website.
 @app.route("/")
+@login_required
 def index():
 
     #Temporary filler data
@@ -62,12 +72,14 @@ def userInfo():
     lastName = UserInfoform.lastName.data
     email = session.get('email')
     password =  Tlbx.hash_password(session.get('password', None))
-    addressNumber = UserInfoform.addressNumber.data
-    stName = UserInfoform.stName.data
+    address = UserInfoform.address.data
     city = UserInfoform.city.data
     state = UserInfoform.state.data
     zipCode = UserInfoform.zipCode.data
-    Tlbx.new_Account(firstName, lastName, email, password, addressNumber, stName, city, state, zipCode)
+    Tlbx.new_Account(firstName, lastName, email, password, address, city, state, zipCode)
+    Tlbx.loginUser(email)
+    return redirect('/')
+
 #Run
 if __name__ == "__main__":
 

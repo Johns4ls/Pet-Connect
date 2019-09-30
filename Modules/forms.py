@@ -13,8 +13,7 @@ class RegisterForm(FlaskForm):
 class UserInfoForm(FlaskForm):
     firstName = StringField('firstName', validators=[DataRequired()])
     lastName = StringField('lastName', validators=[DataRequired()])
-    addressNumber = StringField('addressNumber', validators=[DataRequired()])
-    stName = StringField('stName', validators=[DataRequired()])
+    address = StringField('address', validators=[DataRequired()])
     city = StringField('city', validators=[DataRequired()])
     state = StringField('state', validators=[DataRequired()])
     zipCode = StringField('zipCode', validators=[DataRequired()])
