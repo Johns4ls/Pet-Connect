@@ -10,8 +10,7 @@ CREATE TABLE `tUser` (
 
 CREATE TABLE `tAddress` (
   `addressID` int PRIMARY KEY AUTO_INCREMENT,
-  `addressNumber` int,
-  `stName` varchar(255),
+  `address` varchar(255),
   `city` varchar(255),
   `state` varchar(255),
   `zip` int
@@ -77,7 +76,7 @@ CREATE TABLE `tPosts` (
   `image` varchar(255)
 );
 
-CREATE TABLE `tPostPicures` (
+CREATE TABLE `tPostPictures` (
   `PostPicturesD` int,
   `image` varchar(255),
   `postID` int
@@ -191,7 +190,7 @@ ALTER TABLE `tPosts` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
 ALTER TABLE `tPosts` ADD FOREIGN KEY (`groupID`) REFERENCES `tGroup` (`groupID`);
 
-ALTER TABLE `tPostPicures` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
+ALTER TABLE `tPostPictures` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
 
 ALTER TABLE `tComments` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
 
