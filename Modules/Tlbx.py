@@ -28,13 +28,29 @@ def validate_email(email):
         return False
 
 #Insert the new account information into the database
+def new_Account(firstName, lastName, email, password, addressNumber, stName, city, state, zipCode):
     cur = dbConnectDict()
+    #query = ("INSERT INTO tUser (email, password) VALUES ( %s, %s)")
+    #data = (email, Password)
+    print(firstName)
+    print(lastName)
+    print(email)
+    print(password)
+    print(addressNumber)
+    print(stName)
+    print(city)
+    print(state)
+    print(zipCode)
+
+    #cur.execute(query, data)
 
 #Get the password from the database
 def getPass(email):
     cur = dbConnectDict()
     cur.execute("SELECT password from tUser where email ='" + email +"';")
     password = cur.fetchone()
+    
+    #Causes crash if account does not exist
     password = password.get("password")
     return password
 
