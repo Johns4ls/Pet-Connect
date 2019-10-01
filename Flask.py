@@ -79,7 +79,12 @@ def userInfo():
     Tlbx.new_Account(firstName, lastName, email, password, address, city, state, zipCode)
     Tlbx.loginUser(email)
     return redirect('/dashboard')
-
+@app.route('/forgotPass', methods=['GET', 'POST'])
+def forgotPass():
+    return render_template('PasswordReset/PasswordReset.html')
+@app.route('/PasswordReset', methods=['GET','POST'])
+def passwordReset():
+    print("WIP")
 #Run
 if __name__ == "__main__":
 

@@ -1,3 +1,7 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
 <form action="/userInfo" method="post" novalidate>
     {{ UserInfoform.hidden_tag() }}
     {{ UserInfoform.firstName(placeholder="First Name") }}<br>
@@ -8,3 +12,4 @@
     {{ UserInfoform.zipCode(placeholder="zipCode") }}<br>
     {{ UserInfoform.submit() }}
 </form>
+{% endblock %}
