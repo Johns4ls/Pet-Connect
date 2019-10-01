@@ -2,7 +2,7 @@
 from flask import Flask, flash, render_template, redirect, session
 from Modules.forms import LoginForm, RegisterForm, UserInfoForm
 from Modules import Tlbx
-from flask_login import LoginManager, login_required
+from flask_login import LoginManager, login_required, logout_user
 app = Flask(__name__)
 
 '''Secret to prevent Cross-Site Request Forgery(CSRF) attacks.
@@ -34,7 +34,7 @@ def index():
         'body': 'The Avengers movie was so cool!'
     }
 ]
-    return render_template('HomePage/index.html', user = user, posts = posts)
+    return render_template('HomePage/Dashboard.html', user = user, posts = posts)
 
 #Renders the login page
 @app.route('/', methods=['GET', 'POST'])
@@ -48,6 +48,7 @@ def login():
     if Loginform.validate_on_submit():
         #Checks to ensure username and password are correct.
         if(Tlbx.check_password(Loginform.email.data, Loginform.password.data) is not False):
+            Tlbx.loginUser(Loginform.email.data)
             return redirect('/dashboard')
         flash("Email or Password is incorrect.")
     return render_template('Login/login.html', Registerform=Registerform, Loginform=Loginform)
@@ -85,6 +86,12 @@ def forgotPass():
 @app.route('/PasswordReset', methods=['GET','POST'])
 def passwordReset():
     print("WIP")
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("You have been logged out.")
+    return redirect('/')
 #Run
 if __name__ == "__main__":
 
