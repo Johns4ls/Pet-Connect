@@ -30,7 +30,7 @@
 		<div class="white-panel">
 			<div class="login-show">
                 <h2>LOGIN</h2>
-                <form action="/login" method="post" novalidate>
+                <form action="/" method="post" novalidate>
                     {{ Loginform.hidden_tag() }}
                     {{ Loginform.email(placeholder="Email") }}
                     {% for error in Loginform.email.errors %}

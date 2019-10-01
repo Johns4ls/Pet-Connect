@@ -11,14 +11,14 @@ app.secret_key = 'some_secret'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"
+login_manager.login_view = "/"
 
 @login_manager.user_loader
 def load_user(userid):
     return Tlbx.userRefresh(userid)
 
 #Initial screen upon entering website.
-@app.route("/")
+@app.route("/dashboard")
 @login_required
 def index():
 
@@ -37,7 +37,7 @@ def index():
     return render_template('HomePage/index.html', user = user, posts = posts)
 
 #Renders the login page
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
 
     #instantiates the forms to login and register your account
@@ -48,7 +48,7 @@ def login():
     if Loginform.validate_on_submit():
         #Checks to ensure username and password are correct.
         if(Tlbx.check_password(Loginform.email.data, Loginform.password.data) is not False):
-            return redirect('/')
+            return redirect('/dashboard')
         flash("Email or Password is incorrect.")
     return render_template('Login/login.html', Registerform=Registerform, Loginform=Loginform)
 @app.route('/register', methods=['GET', 'POST'])
@@ -62,7 +62,7 @@ def register():
             UserInfoform = UserInfoForm()
             return render_template('Register/userInfo.html', UserInfoform = UserInfoform )
         flash('Email address already exists')
-        return redirect('/login')
+        return redirect('/')
         
     return render_template('Login/login.html', Registerform=Registerform, Loginform=Loginform)
 @app.route('/userInfo', methods=['GET', 'POST'])
@@ -78,7 +78,7 @@ def userInfo():
     zipCode = UserInfoform.zipCode.data
     Tlbx.new_Account(firstName, lastName, email, password, address, city, state, zipCode)
     Tlbx.loginUser(email)
-    return redirect('/')
+    return redirect('/dashboard')
 
 #Run
 if __name__ == "__main__":
