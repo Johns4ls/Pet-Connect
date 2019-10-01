@@ -5,13 +5,13 @@ from flask_login import login_user, logout_user, UserMixin
 
 #Connectors to database
 def dbConnect():
-  #db = pymysql.connect(host='ec2-3-16-158-152.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-  db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+  db = pymysql.connect(host='ec2-3-16-158-152.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+  #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
   cur = db.cursor()
   return cur
 def dbConnectDict():
-  #db = pymysql.connect(host='ec2-3-16-158-152.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-  db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+  db = pymysql.connect(host='ec2-3-16-158-152.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+  #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
   cur = db.cursor(pymysql.cursors.DictCursor)
   return cur, db
 
