@@ -1,0 +1,29 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block nav %}
+{% endblock %}
+{% block body %}
+<form action="/Create/Start/Park" method="post" novalidate>
+    {{ CreateDogform.hidden_tag() }}
+    <h2>Dog Name</h2>
+    {{ CreateDogform.dogName(placeholder="Thor") }}<br>
+    <h2>gender</h2>
+    {{ CreateDogform.gender(placeholder="Male/Female") }}<br>
+    <h2>Breed</h2>
+    {{ CreateDogform.breed(placeholder="Rottweiler") }}<br>
+    <h2>Are they fixed?</h2>
+    {{ CreateDogform.fixed() }}<br>
+    <h2>How old are they?</h2>
+    {{ CreateDogform.age(placeholder="6") }}<p>Years</p><br>
+    <h2>What's their favorite toy?</h2>
+    {{ CreateDogform.favToy(placeholder="Ball") }}<br>
+    <h2>How large are they?</h2>
+    {{ CreateDogform.size() }}<br>
+    <h2>How much do they weigh?</h2>
+    {{ CreateDogform.weight(placeholder="100") }}<p>lbs</p><br>
+    <h2>Tell us a little about them!</h2>
+    {{ CreateDogform.bio(placeholder="Tell us about them!") }}<br>
+    {{ CreateDogform.submit() }}
+</form>
+{% endblock %}

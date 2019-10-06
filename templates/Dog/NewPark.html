@@ -1,0 +1,17 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block nav %}
+{% endblock %}
+{% block body %}
+<form action="/Create/Finish/Dog" method="post" novalidate>
+    {{ FavoriteParkform.hidden_tag() }}
+    <h1>Favorite Park</h1>
+    {{ FavoriteParkform.parkName(placeholder="Miami Meadows") }}<br>
+    {{ FavoriteParkform.address(placeholder="1234 Miami Ave.") }}<br>
+    {{ FavoriteParkform.city(placeholder="Cincinnati") }}<br>
+    {{ FavoriteParkform.state(placeholder="Ohio") }}<br>
+    {{ FavoriteParkform.zipCode(placeholder="45244") }}<br>
+    {{ FavoriteParkform.submit() }}
+</form>
+{% endblock %}

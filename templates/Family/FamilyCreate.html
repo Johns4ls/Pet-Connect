@@ -1,0 +1,13 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block nav %}
+{% endblock %}
+{% block body %}
+<form action="/Create/Finish/Family" method="post" novalidate>
+    {{ CreateFamilyform.hidden_tag() }}
+    <h1>Family Last Name</h1>
+    {{ CreateFamilyform.surName(placeholder="Last Name") }}<br>
+    {{ CreateFamilyform.submit() }}
+</form>
+{% endblock %}

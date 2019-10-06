@@ -3,6 +3,7 @@ CREATE TABLE `tUser` (
   `firstName` varchar(255) NOT NULL,
   `lastName` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `familyID` int, 
   `password` varchar(255) NOT NULL,
   `image` varchar(255),
   `addressID` int
@@ -18,16 +19,18 @@ CREATE TABLE `tAddress` (
 
 CREATE TABLE `tDog` (
   `dogID` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255),
+  `gender` varchar(255),  
   `breedID` int,
-  `gender` varchar(255),
-  `fixed` boolean,
+  `fixed` varchar(255),
   `age` int NOT NULL,
-  `favParkID` int,
-  `favToyID` int,
   `Size` varchar(255) NOT NULL,
   `weight` int,
   `bio` varchar(255),
-  `image` varchar(255)
+  `image` varchar(255),
+  `favToyID` int,
+  `favParkID` int,
+  `familyID` int
 );
 
 CREATE TABLE `tBreed` (
@@ -35,8 +38,14 @@ CREATE TABLE `tBreed` (
   `breed` varchar(255) NOT NULL
 );
 
-CREATE TABLE `tOwnership` (
-  `ownerID` int PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE `tFamily` (
+  `familyID` int PRIMARY KEY AUTO_INCREMENT,
+  `familyName` varchar(255),
+  `headofHouseID` int
+);
+
+CREATE TABLE `tAdmin` (
+  `adminID` int PRIMARY KEY AUTO_INCREMENT,
   `dogID` int,
   `userID` int
 );
@@ -52,12 +61,6 @@ CREATE TABLE `tFavoritePark` (
   `parkName` varchar(255) NOT NULL,
   `AddressID` int,
   `image` varchar(255)
-);
-
-CREATE TABLE `tAdmin` (
-  `adminID` int PRIMARY KEY AUTO_INCREMENT,
-  `dogID` int,
-  `userID` int
 );
 
 CREATE TABLE `tFollowers` (
@@ -162,7 +165,13 @@ CREATE TABLE `tGroup` (
   `image` varchar(255)
 );
 
+CREATE TABLE `tHeadofHouse` (
+  `headofHouseID` int PRIMARY KEY AUTO_INCREMENT,
+  `userID` int
+);
 ALTER TABLE `tUser` ADD FOREIGN KEY (`addressID`) REFERENCES `tAddress` (`addressID`);
+
+ALTER TABLE `tUser` ADD FOREIGN KEY (`FamilyID`) REFERENCES `tFamily` (`familyID`);
 
 ALTER TABLE `tDog` ADD FOREIGN KEY (`breedID`) REFERENCES `tBreed` (`breedID`);
 
@@ -170,9 +179,9 @@ ALTER TABLE `tDog` ADD FOREIGN KEY (`favParkID`) REFERENCES `tFavoritePark` (`fa
 
 ALTER TABLE `tDog` ADD FOREIGN KEY (`favToyID`) REFERENCES `tFavoriteToy` (`favToyID`);
 
-ALTER TABLE `tOwnership` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
+ALTER TABLE `tDog` ADD FOREIGN KEY (`FamilyID`) REFERENCES `tFamily` (`familyID`);
 
-ALTER TABLE `tOwnership` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
+ALTER TABLE `tFamily` ADD FOREIGN KEY (`headofHouseID`) REFERENCES `tUser` (`userID`);
 
 ALTER TABLE `tFavoritePark` ADD FOREIGN KEY (`AddressID`) REFERENCES `tAddress` (`addressID`);
 
@@ -227,3 +236,5 @@ ALTER TABLE `tDogInterests` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`
 ALTER TABLE `tGroupParticipants` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
 ALTER TABLE `tGroupParticipants` ADD FOREIGN KEY (`groupID`) REFERENCES `tGroup` (`groupID`);
+
+ALTER TABLE `tHeadofHouse` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);

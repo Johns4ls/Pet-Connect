@@ -29,7 +29,7 @@ def new_Account(firstName, lastName, email, password, address, city, state, zipC
     addressQuery = ("INSERT INTO tAddress (address, city, state, zip) VALUES(%s, %s, %s, %s);")
     data = (address, city, state, zipCode)
     cur.execute(addressQuery, data)
-    userQuery = ("INSERT INTO tUser (firstName, lastName, email, password, image, addressID) VALUES(%s, %s, %s, %s, %s, LAST_INSERT_ID());")
+    userQuery = ("INSERT INTO tUser (firstName, lastName, email, familyID, password, image, addressID) VALUES(%s, %s, %s, NULL, %s, %s, LAST_INSERT_ID());")
     image = None
     data = (firstName, lastName, email, password, image)
     cur.execute(userQuery, data)
@@ -76,6 +76,7 @@ class userRefresh(UserMixin):
     
 def __repr__(self):
     return "%d/%s/%s" % (self.id, self.name, self.password)
+    
 class User(UserMixin):
     def __init__(self, email):
         cur, db = dbConnectDict()
@@ -88,5 +89,3 @@ class User(UserMixin):
         self.name = email
         self.password = password
     
-def __repr__(self):
-    return "%d/%s/%s" % (self.id, self.name, self.password)

@@ -1,8 +1,8 @@
 #Various imports
 from flask import Flask, flash, render_template, redirect, session
-from Modules.forms import LoginForm, RegisterForm, UserInfoForm
+from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm
 from Modules import Tlbx
-from flask_login import LoginManager, login_required, logout_user
+from flask_login import LoginManager, login_required, logout_user, current_user
 app = Flask(__name__)
 
 '''Secret to prevent Cross-Site Request Forgery(CSRF) attacks.
@@ -45,7 +45,8 @@ def index():
 #Renders the login page
 @app.route('/', methods=['GET', 'POST'])
 def login():
-
+    if current_user.is_authenticated:
+        return redirect('/dashboard')
     #instantiates the forms to login and register your account
     Loginform = LoginForm()
     Registerform = RegisterForm()
@@ -76,7 +77,7 @@ def register():
     return render_template('Login/login.html', Registerform=Registerform, Loginform=Loginform)
 
 #Create a new User
-@app.route('/userInfo', methods=['GET', 'POST'])
+@app.route('/Create/User', methods=['GET', 'POST'])
 def userInfo():
     UserInfoform = UserInfoForm()
     firstName = UserInfoform.firstName.data
@@ -89,7 +90,7 @@ def userInfo():
     zipCode = UserInfoform.zipCode.data
     Tlbx.new_Account(firstName, lastName, email, password, address, city, state, zipCode)
     Tlbx.loginUser(email)
-    return redirect('/dashboard')
+    return render_template('/Family/FamilySplash.html')
 
 @app.route('/forgotPass', methods=['GET', 'POST'])
 def forgotPass():
@@ -99,55 +100,86 @@ def forgotPass():
 def passwordReset():
     print("WIP")
 
-@app.route('/FamilyCreation', methods=['GET','POST'])
+@app.route('/Create/Start/Family', methods=['GET','POST'])
+@login_required
+def CreateNewFamily():
+    CreateFamilyform = CreateFamilyForm()
+    return render_template('/Family/FamilyCreate.html', CreateFamilyform = CreateFamilyform )
+
+@app.route('/Create/Finish/Family', methods=['GET','POST'])
 @login_required
 def familyCreation():
-    print("Create a new Family.")
+    CreateFamilyform = CreateFamilyForm()
+    CreateDogform = CreateDogForm()
+    familyName = CreateFamilyform.surName.data
+    cur, db = Tlbx.dbConnectDict()
+    query = ("INSERT INTO tFamily (familyName, headofHouseID) VALUES(%s, %s);")
+    data = (familyName, current_user.id)
+    cur.execute(query, data)
+    session['familyID'] = db.insert_id()
+    return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
 
-@app.route('/JoinFamily', methods=['GET','POST'])
+
+@app.route('/Join/Family', methods=['GET','POST'])
 @login_required
 def JoinFamily():
-    print("Join an Existing family.")
+    return render_template('/Family/JoinFamily.html')
 
-@app.route('/DogCreation', methods=['GET','POST'])
+@app.route('/Create/Start/Park', methods=['GET','POST'])
+@login_required
+def StartPark():
+    CreateDogform = CreateDogForm()
+    session['dogName'] = CreateDogform.dogName.data
+    session['gender'] = CreateDogform.gender.data
+    session['breed'] = CreateDogform.breed.data
+    session['fixed'] = CreateDogform.fixed.data
+    session['age'] = CreateDogform.age.data
+    session['favToy'] = CreateDogform.favToy.data
+    session['size'] = CreateDogform.size.data
+    session['weight'] = CreateDogform.weight.data
+    session['bio'] = CreateDogform.bio.data  
+    FavoriteParkform = FavoriteParkForm()
+    return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
+@app.route('/Create/Finish/Dog', methods=['GET','POST'])
 @login_required
 def DogCreation():
     '''We may want to split these into functions...
     If we let users have the ability to update these items
     it may be easier to just call a function from tlbx.'''
-    #Query for breed existence in DB here
-    if (breedID is None)
-        cur, db = dbConnectDict()
-        breedQuery = "INSERT INTO tbreed (breed) VALUES (%s);"
-        data = (breed)
-        cur.execute(breedQuery, data)
-        db.commit()
-        breedID = cur.insert_id()
-    #Query for favorite park existence in DB here
-    if (favParkID is None)
-        image = None
-        addressQuery = "INSERT INTO tAddress (address, city, state, zip) VALUES (%s, %s, %s, %s);"
-        data = (address, city, state zipCode)
-        cur.execute(addressQuery, data)
-        favParkQuery = "INSERT INTO tFavoritePark (parkName, AddressID, image) VALUES (%s, LAST_INSERT_ID(), %s);"
-        data = (parkName, image)
-        cur.execute(favParkQuery, data)
-        db.commit()
-        favParkID = cur.insert_id()
-    #Wuery for favorite toy here... Combo box?
-    if (favToyID is None)
-        image = None
-        favToyQuery = "INSERT INTO tFavoriteToy (ToyName, image) VALUES (%s, %s);"
-        data = (ToyName, image)
-        cur.execute(favToyQuery, data)
-        db.commit()
-        favToyID = cur.insert_id()
+    #insert Breed
+    cur, db = Tlbx.dbConnectDict()
+    breedQuery = "INSERT INTO tBreed (breed) VALUES (%s);"
+    data = (session.get('breed'))
+    cur.execute(breedQuery, data)
+    db.commit()
+    breedID = cur.lastrowid
 
-#finally commit all the dog data into the database.
-dogQuery = "Insert into tDog (breedID, gender, fixed, age, favParkID, favToyID, Size, Weight, bio, image"
-data = (breedID, gender, fixed, age, favParkID, favToyID, Size, weight, bio, image)
-cur.execute(dogQuery, data)
-db.commit()
+    #Insert Address then insert Favorite Park
+    FavoriteParkform = FavoriteParkForm()
+    image = None
+    addressQuery = "INSERT INTO tAddress (address, city, state, zip) VALUES (%s, %s, %s, %s);"
+    data = (FavoriteParkform.address.data, FavoriteParkform.city.data, FavoriteParkform.state.data, FavoriteParkform.zipCode.data)
+    cur.execute(addressQuery, data)
+    favParkQuery = "INSERT INTO tFavoritePark (parkName, AddressID, image) VALUES (%s, LAST_INSERT_ID(), %s);"
+    data = (FavoriteParkform.parkName.data, image)
+    cur.execute(favParkQuery, data)
+    db.commit()
+    favParkID = cur.lastrowid
+
+    #Insert favorite toy.
+    image = None
+    favToyQuery = "INSERT INTO tFavoriteToy (ToyName, image) VALUES (%s, %s);"
+    data = (session['favToy'], image)
+    cur.execute(favToyQuery, data)
+    db.commit()
+    favToyID = cur.lastrowid
+
+    #finally commit all the dog data into the database.
+    dogQuery = "Insert into tDog (name, gender, breedID, fixed, age, Size, Weight, bio, image, favToyID, favParkID, familyID) VALUES (%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s)"
+    data = (session.get('dogName'), session.get('gender'), breedID, session.get('fixed'), session.get('age'), session.get('size'), session.get('weight'), session.get('bio'), image, favToyID, favParkID, session.get('familyID') )
+    cur.execute(dogQuery, data)
+    db.commit()
+    return redirect('/dashboard')
 
 @app.route("/logout")
 @login_required
