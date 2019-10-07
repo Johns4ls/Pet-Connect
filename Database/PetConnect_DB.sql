@@ -6,7 +6,8 @@ CREATE TABLE `tUser` (
   `familyID` int, 
   `password` varchar(255) NOT NULL,
   `image` varchar(255),
-  `addressID` int
+  `addressID` int,
+  FULLTEXT KEY (firstName, lastName, email)
 );
 
 CREATE TABLE `tAddress` (
@@ -30,7 +31,8 @@ CREATE TABLE `tDog` (
   `image` varchar(255),
   `favToyID` int,
   `favParkID` int,
-  `familyID` int
+  `familyID` int,
+  FULLTEXT KEY (name)
 );
 
 CREATE TABLE `tBreed` (
@@ -41,7 +43,8 @@ CREATE TABLE `tBreed` (
 CREATE TABLE `tFamily` (
   `familyID` int PRIMARY KEY AUTO_INCREMENT,
   `familyName` varchar(255),
-  `headofHouseID` int
+  `headofHouseID` int,
+  FULLTEXT KEY (familyName)
 );
 
 CREATE TABLE `tAdmin` (

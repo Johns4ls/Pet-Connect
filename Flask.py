@@ -1,5 +1,5 @@
 #Various imports
-from flask import Flask, flash, render_template, redirect, session
+from flask import Flask, flash, render_template, redirect, session, request
 from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm
 from Modules import Tlbx
 from flask_login import LoginManager, login_required, logout_user, current_user
@@ -125,6 +125,27 @@ def familyCreation():
 def JoinFamily():
     return render_template('/Family/JoinFamily.html')
 
+@app.route('/Search', methods=['GET','POST'])
+@login_required
+def Search():
+    Search = request.form['Search']
+    cur, db = Tlbx.dbConnectDict()
+    query = '''
+    SELECT *
+    FROM tUser
+    LEFT JOIN tFamily ON tUser.familyID = tFamily.familyID
+    Left JOIN tDog ON tFamily.familyID = tDog.familyID
+    WHERE
+    MATCH(tUser.email, tUser.firstName, tUser.lastName) AGAINST(%s IN NATURAL LANGUAGE MODE)
+    OR MATCH(tDog.name) AGAINST(%s IN NATURAL LANGUAGE MODE)
+    OR MATCH(tFamily.familyName) AGAINST(%s IN NATURAL LANGUAGE MODE);'''
+    data = (Search, Search, Search)
+    cur.execute(query, data)
+    result = cur.fetchall()
+    print(result)
+
+    return render_template('/Search/Search.html', result = result)
+
 @app.route('/Create/Start/Park', methods=['GET','POST'])
 @login_required
 def StartPark():
@@ -140,6 +161,7 @@ def StartPark():
     session['bio'] = CreateDogform.bio.data  
     FavoriteParkform = FavoriteParkForm()
     return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
+
 @app.route('/Create/Finish/Dog', methods=['GET','POST'])
 @login_required
 def DogCreation():
