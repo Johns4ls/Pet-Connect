@@ -117,6 +117,9 @@ def familyCreation():
     data = (familyName, current_user.id)
     cur.execute(query, data)
     session['familyID'] = db.insert_id()
+    query = ('UPDATE tUser SET (familyID = %s) WHERE userID = %S;')
+    data = (db.insert_id, current_user.id)
+    cur.execute(query, data)
     return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
 
 
@@ -130,11 +133,18 @@ def JoinFamily():
 def Search():
     Search = request.form['Search']
     cur, db = Tlbx.dbConnectDict()
+    query = '''SELECT id, body, MATCH (title,body) AGAINST
+    ('Security implications of running MySQL as root'
+    IN NATURAL LANGUAGE MODE) AS score
+    FROM articles WHERE MATCH (title,body) AGAINST
+    ('Security implications of running MySQL as root'
+    IN NATURAL LANGUAGE MODE);'''
+
     query = '''
-    SELECT *
+    SELECT tUser.email, tUser.firstName, tUser.lastName, tDog.name, tFamily.familyName
     FROM tUser
-    LEFT JOIN tFamily ON tUser.familyID = tFamily.familyID
-    Left JOIN tDog ON tFamily.familyID = tDog.familyID
+    JOIN tFamily ON tUser.familyID = tFamily.familyID
+    JOIN tDog ON tFamily.familyID = tDog.familyID
     WHERE
     MATCH(tUser.email, tUser.firstName, tUser.lastName) AGAINST(%s IN NATURAL LANGUAGE MODE)
     OR MATCH(tDog.name) AGAINST(%s IN NATURAL LANGUAGE MODE)
