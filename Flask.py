@@ -1,5 +1,5 @@
 #Various imports
-from flask import Flask, flash, render_template, redirect, session
+from flask import Flask, flash, render_template, redirect, session, request
 from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm
 from Modules import Tlbx
 from flask_login import LoginManager, login_required, logout_user, current_user
@@ -117,6 +117,9 @@ def familyCreation():
     data = (familyName, current_user.id)
     cur.execute(query, data)
     session['familyID'] = db.insert_id()
+    query = ('UPDATE tUser SET (familyID = %s) WHERE userID = %S;')
+    data = (db.insert_id, current_user.id)
+    cur.execute(query, data)
     return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
 
 
@@ -124,6 +127,34 @@ def familyCreation():
 @login_required
 def JoinFamily():
     return render_template('/Family/JoinFamily.html')
+
+@app.route('/Search', methods=['GET','POST'])
+@login_required
+def Search():
+    Search = request.form['Search']
+    cur, db = Tlbx.dbConnectDict()
+    query = '''SELECT id, body, MATCH (title,body) AGAINST
+    ('Security implications of running MySQL as root'
+    IN NATURAL LANGUAGE MODE) AS score
+    FROM articles WHERE MATCH (title,body) AGAINST
+    ('Security implications of running MySQL as root'
+    IN NATURAL LANGUAGE MODE);'''
+
+    query = '''
+    SELECT tUser.email, tUser.firstName, tUser.lastName, tDog.name, tFamily.familyName
+    FROM tUser
+    JOIN tFamily ON tUser.familyID = tFamily.familyID
+    JOIN tDog ON tFamily.familyID = tDog.familyID
+    WHERE
+    MATCH(tUser.email, tUser.firstName, tUser.lastName) AGAINST(%s IN NATURAL LANGUAGE MODE)
+    OR MATCH(tDog.name) AGAINST(%s IN NATURAL LANGUAGE MODE)
+    OR MATCH(tFamily.familyName) AGAINST(%s IN NATURAL LANGUAGE MODE);'''
+    data = (Search, Search, Search)
+    cur.execute(query, data)
+    result = cur.fetchall()
+    print(result)
+
+    return render_template('/Search/Search.html', result = result)
 
 @app.route('/Create/Start/Park', methods=['GET','POST'])
 @login_required
@@ -140,6 +171,7 @@ def StartPark():
     session['bio'] = CreateDogform.bio.data  
     FavoriteParkform = FavoriteParkForm()
     return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
+
 @app.route('/Create/Finish/Dog', methods=['GET','POST'])
 @login_required
 def DogCreation():
