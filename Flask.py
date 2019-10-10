@@ -22,7 +22,7 @@ def load_user(userid):
 @login_required
 def index():
 
-    '''Will be here soon! Need to add the 
+    '''Will be here soon! Need to add the
     ability to create new posts on the Dashboard
     once dogs are made, since Users are now
     able to hit the Dashboard. This will require
@@ -67,13 +67,13 @@ def register():
     Loginform = LoginForm()
     if Registerform.validate_on_submit():
         session['email'] = Registerform.email.data
-        session['password'] = Registerform.password.data 
+        session['password'] = Registerform.password.data
         if(Tlbx.validate_email(Registerform.email.data) is not False):
             UserInfoform = UserInfoForm()
             return render_template('Register/userInfo.html', UserInfoform = UserInfoform )
         flash('Email address already exists')
         return redirect('/')
-        
+
     return render_template('Login/login.html', Registerform=Registerform, Loginform=Loginform)
 
 #Create a new User
@@ -94,11 +94,8 @@ def userInfo():
 
 @app.route('/forgotPass', methods=['GET', 'POST'])
 def forgotPass():
+    CreateFamilyform = CreateFamilyForm()
     return render_template('PasswordReset/PasswordReset.html')
-
-@app.route('/PasswordReset', methods=['GET','POST'])
-def passwordReset():
-    print("WIP")
 
 @app.route('/Create/Start/Family', methods=['GET','POST'])
 @login_required
@@ -119,7 +116,6 @@ def familyCreation():
     session['familyID'] = db.insert_id()
     return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
 
-
 @app.route('/Join/Family', methods=['GET','POST'])
 @login_required
 def JoinFamily():
@@ -137,7 +133,7 @@ def StartPark():
     session['favToy'] = CreateDogform.favToy.data
     session['size'] = CreateDogform.size.data
     session['weight'] = CreateDogform.weight.data
-    session['bio'] = CreateDogform.bio.data  
+    session['bio'] = CreateDogform.bio.data
     FavoriteParkform = FavoriteParkForm()
     return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
 @app.route('/Create/Finish/Dog', methods=['GET','POST'])
