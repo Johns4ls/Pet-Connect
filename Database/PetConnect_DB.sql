@@ -83,7 +83,7 @@ CREATE TABLE `tPosts` (
 );
 
 CREATE TABLE `tPostPictures` (
-  `PostPicturesD` int,
+  `postPicturesID` int,
   `image` varchar(255),
   `postID` int
 );
