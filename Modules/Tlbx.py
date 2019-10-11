@@ -6,12 +6,12 @@ from flask_login import login_user, logout_user, UserMixin
 #Connectors to database
 def dbConnect():
   #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-  db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+  db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
   cur = db.cursor()
   return cur
 def dbConnectDict():
   #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-  db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+  db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
   cur = db.cursor(pymysql.cursors.DictCursor)
   return cur, db
 
@@ -20,7 +20,7 @@ def validate_email(email):
     cur= dbConnect()
     cur.execute("SELECT email from tUser WHERE email = '" + email+"';")
     Result = cur.fetchall()
-    if Result is not ():   
+    if Result is not ():
         return False
 
 #Insert the new account information into the database
@@ -34,14 +34,14 @@ def new_Account(firstName, lastName, email, password, address, city, state, zipC
     data = (firstName, lastName, email, password, image)
     cur.execute(userQuery, data)
     db.commit()
-    
+
 
 #Get the password from the database
 def getPass(email):
     cur, db = dbConnectDict()
     cur.execute("SELECT password from tUser where email ='" + email +"';")
     password = cur.fetchone()
-    
+
     #Causes crash if account does not exist
     password = password.get("password")
     return password
@@ -55,7 +55,7 @@ def hash_password(password):
 def check_password(email, password):
     try:
         return check_password_hash(getPass(email), password)
-    except: 
+    except:
         return False
 
 def loginUser(email):
@@ -73,10 +73,10 @@ class userRefresh(UserMixin):
         self.id = id
         self.name = email
         self.password = password
-    
+
 def __repr__(self):
     return "%d/%s/%s" % (self.id, self.name, self.password)
-    
+
 class User(UserMixin):
     def __init__(self, email):
         cur, db = dbConnectDict()
@@ -88,4 +88,3 @@ class User(UserMixin):
         self.id = userID
         self.name = email
         self.password = password
-    
