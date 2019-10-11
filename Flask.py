@@ -131,28 +131,7 @@ def JoinFamily():
 @app.route('/Search', methods=['GET','POST'])
 @login_required
 def Search():
-    Search = request.form['Search']
-    cur, db = Tlbx.dbConnectDict()
-    query = '''SELECT id, body, MATCH (title,body) AGAINST
-    ('Security implications of running MySQL as root'
-    IN NATURAL LANGUAGE MODE) AS score
-    FROM articles WHERE MATCH (title,body) AGAINST
-    ('Security implications of running MySQL as root'
-    IN NATURAL LANGUAGE MODE);'''
-
-    query = '''
-    SELECT tUser.email, tUser.firstName, tUser.lastName, tDog.name, tFamily.familyName
-    FROM tUser
-    JOIN tFamily ON tUser.familyID = tFamily.familyID
-    JOIN tDog ON tFamily.familyID = tDog.familyID
-    WHERE
-    MATCH(tUser.email, tUser.firstName, tUser.lastName) AGAINST(%s IN NATURAL LANGUAGE MODE)
-    OR MATCH(tDog.name) AGAINST(%s IN NATURAL LANGUAGE MODE)
-    OR MATCH(tFamily.familyName) AGAINST(%s IN NATURAL LANGUAGE MODE);'''
-    data = (Search, Search, Search)
-    cur.execute(query, data)
-    result = cur.fetchall()
-    print(result)
+    '''I'll hopefully be here this weekend. Got SQLAlchemy working!'''
 
     return render_template('/Search/Search.html', result = result)
 
