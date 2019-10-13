@@ -1,0 +1,8 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+{% for result in results %}
+ <h1>{{ result.name }}</h1>
+{% endfor %}
+{% endblock %}
