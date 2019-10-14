@@ -43,6 +43,11 @@ def index():
 ]
     return render_template('HomePage/Dashboard.html', user = user, posts = posts)
 
+@app.route('/Create/Post', methods=['GET','POST'])
+@login_required
+def CreateNewPost():
+    CreateFamilyform = CreateFamilyForm()
+
 #Renders the login page
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -133,7 +138,7 @@ def JoinFamily():
 @login_required
 def FollowDogs(dogID):
    session = Database.Session()
-   addFollower = Database.tFollowers(dogID = dogID, userID= current_user.id)
+   addFollower = Database.tfollowers(dogID = dogID, userID= current_user.id)
    session.add(addFollower)
    session.commit()
 
@@ -146,6 +151,12 @@ def Search():
     dogs = session.query(Database.tDog).order_by(Database.tDog.name.match(Name).desc()).all()
 
     return render_template('/Search/Search.html', results = dogs)
+
+@app.route('/Create/New/Dog', methods=['GET','POST'])
+@login_required
+def CreateNewDog():
+    CreateDogform = CreateDogForm()
+    return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
 
 @app.route('/Create/Start/Park', methods=['GET','POST'])
 @login_required
@@ -166,9 +177,6 @@ def StartPark():
 @app.route('/Create/Finish/Dog', methods=['GET','POST'])
 @login_required
 def DogCreation():
-    '''We may want to split these into functions...
-    If we let users have the ability to update these items
-    it may be easier to just call a function from tlbx.'''
     #insert Breed
     cur, db = Tlbx.dbConnectDict()
     breedQuery = "INSERT INTO tBreed (breed) VALUES (%s);"
