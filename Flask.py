@@ -2,7 +2,7 @@
 from flask import Flask, flash, render_template, redirect, session, request
 from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm
 from Modules import Tlbx, Database
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, functools
 from flask_login import LoginManager, login_required, logout_user, current_user
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -148,7 +148,7 @@ def Search():
     #Do we want to do a like to prevent ALL dogs from being searched and sorted by relevance?
     session = Database.Session()
     Name = request.form['Search']
-    dogs = session.query(Database.tDog).order_by(Database.tDog.name.match(Name).desc()).all()
+    dogs = session.query(Database.tDog).filter(Database.tDog.name.contains(Name) | (Database.tDog.name.op('SOUNDS LIKE')(Name))).order_by(Database.tDog.name.match(Name).desc()).all()
 
     return render_template('/Search/Search.html', results = dogs)
 
