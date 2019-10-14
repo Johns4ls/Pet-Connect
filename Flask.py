@@ -128,6 +128,14 @@ def familyCreation():
 @login_required
 def JoinFamily():
     return render_template('/Family/JoinFamily.html')
+   
+@app.route('/follow/<int:dogID>', methods=['GET','POST'])
+@login_required
+def FollowDogs(dogID):
+   session = Database.Session()
+   addFollower = Database.tFollowers(dogID = dogID, userID= current_user.id)
+   session.add(addFollower)
+   session.commit()
 
 @app.route('/Search', methods=['GET','POST'])
 @login_required
