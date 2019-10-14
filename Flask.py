@@ -119,13 +119,14 @@ def familyCreation():
     CreateDogform = CreateDogForm()
     familyName = CreateFamilyform.surName.data
     cur, db = Tlbx.dbConnectDict()
+    cursor= Database.Session()
     query = ("INSERT INTO tFamily (familyName, headofHouseID) VALUES(%s, %s);")
     data = (familyName, current_user.id)
     cur.execute(query, data)
     session['familyID'] = db.insert_id()
-    query = ('UPDATE tUser SET (familyID = %s) WHERE userID = %S;')
-    data = (db.insert_id, current_user.id)
-    cur.execute(query, data)
+    x = cursor.query(Database.tUser).get(current_user.id)
+    x.familyID = db.insert_id()
+    cursor.commit()
     return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
 
 
@@ -205,6 +206,9 @@ def DogCreation():
     cur.execute(favToyQuery, data)
     db.commit()
     favToyID = cur.lastrowid
+
+    if session.get('familyID') is None:
+        session.query(Database.tDog.familyID).filter_by(current_user.id)
 
     #finally commit all the dog data into the database.
     dogQuery = "Insert into tDog (name, gender, breedID, fixed, age, Size, Weight, bio, image, favToyID, favParkID, familyID) VALUES (%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s)"
