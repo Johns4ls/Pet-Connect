@@ -141,6 +141,7 @@ def FollowDogs(dogID):
    addFollower = Database.tfollowers(dogID = dogID, userID= current_user.id)
    session.add(addFollower)
    session.commit()
+   return '', 204
 
 @app.route('/Search', methods=['GET','POST'])
 @login_required
