@@ -1,0 +1,20 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+ <table style="width:100%">
+   <h1>
+   <tr>
+     <td><b>Name</b></td>
+     <td><b>Follow</b></td>
+  </tr>
+  </h1>
+{% for result in results %}
+   <tr>
+     <td><h3><b>{{result.name}}</b></h3> </td>
+     <td><input type="button" value="Follow" onclick="window.location='/follow/{{result.dogID}}';"></td>
+   </tr>
+{% endfor %}
+</table>
+
+{% endblock %}
