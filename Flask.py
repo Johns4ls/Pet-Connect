@@ -1,6 +1,6 @@
 #Various imports
 from flask import Flask, flash, render_template, redirect, session, request
-from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm
+from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm, PasswordResetForm
 from Modules import Tlbx
 from flask_login import LoginManager, login_required, logout_user, current_user
 app = Flask(__name__)
@@ -22,7 +22,7 @@ def load_user(userid):
 @login_required
 def index():
 
-    '''Will be here soon! Need to add the 
+    '''Will be here soon! Need to add the
     ability to create new posts on the Dashboard
     once dogs are made, since Users are now
     able to hit the Dashboard. This will require
@@ -67,13 +67,13 @@ def register():
     Loginform = LoginForm()
     if Registerform.validate_on_submit():
         session['email'] = Registerform.email.data
-        session['password'] = Registerform.password.data 
+        session['password'] = Registerform.password.data
         if(Tlbx.validate_email(Registerform.email.data) is not False):
             UserInfoform = UserInfoForm()
             return render_template('Register/userInfo.html', UserInfoform = UserInfoform )
         flash('Email address already exists')
         return redirect('/')
-        
+
     return render_template('Login/login.html', Registerform=Registerform, Loginform=Loginform)
 
 #Create a new User
@@ -92,9 +92,25 @@ def userInfo():
     Tlbx.loginUser(email)
     return render_template('/Family/FamilySplash.html')
 
+def functionToDealWithThis():
+    # grab data from form
+    email = PasswordResetform.email.data
+    password = PasswordResetform.password.data
+    confirmpassword = PasswordResetform.passwordConfirm.data
+    return render_template('PasswordReset/PasswordReset.html', PasswordResetform = PasswordResetform)
 @app.route('/forgotPass', methods=['GET', 'POST'])
 def forgotPass():
-    return render_template('PasswordReset/PasswordReset.html')
+    PasswordResetform = PasswordResetForm()
+    # grab data from form
+    email = PasswordResetform.email.data
+    password = PasswordResetform.password.data
+    confirmpassword = PasswordResetform.passwordConfirm.data
+    # ensure password and confirmed password field are the same value
+    if str(password) == str(confirmpassword):
+        print('password good')
+    else:
+        print('alert the user')
+    return render_template('PasswordReset/PasswordReset.html', PasswordResetform = PasswordResetform)
 
 @app.route('/PasswordReset', methods=['GET','POST'])
 def passwordReset():
@@ -168,7 +184,7 @@ def StartPark():
     session['favToy'] = CreateDogform.favToy.data
     session['size'] = CreateDogform.size.data
     session['weight'] = CreateDogform.weight.data
-    session['bio'] = CreateDogform.bio.data  
+    session['bio'] = CreateDogform.bio.data
     FavoriteParkform = FavoriteParkForm()
     return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
 
