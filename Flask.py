@@ -22,20 +22,11 @@ def load_user(userid):
 @app.route("/dashboard")
 @login_required
 def index():
+   #dogResults and postResults still need implemented in jinja
     session = Database.Session()
-    results = session.query(Database.tDog.name).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
-    user = {'username': 'Larry'}
-    posts = [
-    {
-        'author': {'username': 'John'},
-        'body': 'Beautiful day in Portland!'
-    },
-    {
-        'author': {'username': 'Susan'},
-        'body': 'The Avengers movie was so cool!'
-    }
-]
-    return render_template('HomePage/Dashboard.html', user = user, posts = posts, results = results)
+    dogResults = session.query(Database.tDog.name).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
+    postResults = session.query(Database.tPosts).join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID).filter(Database.tFollowers.userID == current_user.id)
+    return render_template('HomePage/Dashboard.html', user = user, posts = posts, dogResults = dogResults, postResults = postResults)
 
 @app.route('/Create/Post', methods=['GET','POST'])
 @login_required
