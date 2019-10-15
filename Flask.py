@@ -22,14 +22,8 @@ def load_user(userid):
 @app.route("/dashboard")
 @login_required
 def index():
-
-    '''Will be here soon! Need to add the 
-    ability to create new posts on the Dashboard
-    once dogs are made, since Users are now
-    able to hit the Dashboard. This will require
-    JavaScript to submit the request without redirecting.
-    The posts submits will be there own separate route.
-    Much like likes will.'''
+    session = Database.Session()
+    results = session.query(Database.tDog.name).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
     user = {'username': 'Larry'}
     posts = [
     {
@@ -41,7 +35,7 @@ def index():
         'body': 'The Avengers movie was so cool!'
     }
 ]
-    return render_template('HomePage/Dashboard.html', user = user, posts = posts)
+    return render_template('HomePage/Dashboard.html', user = user, posts = posts, results = results)
 
 @app.route('/Create/Post', methods=['GET','POST'])
 @login_required
@@ -206,9 +200,10 @@ def DogCreation():
     cur.execute(favToyQuery, data)
     db.commit()
     favToyID = cur.lastrowid
-
-    if session.get('familyID') is None:
-        session.query(Database.tDog.familyID).filter_by(current_user.id)
+    cursor = Database.Session()
+    familyID = session.get('familyID')
+    if familyID is None:
+        familyID = cursor.query(Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
 
     #finally commit all the dog data into the database.
     dogQuery = "Insert into tDog (name, gender, breedID, fixed, age, Size, Weight, bio, image, favToyID, favParkID, familyID) VALUES (%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s)"

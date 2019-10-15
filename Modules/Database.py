@@ -42,7 +42,7 @@ class tDog(Base):
     image = Column('image', String(255))
     favToyID = Column(Integer, ForeignKey('tFavoriteToy.favToyID'))
     favParkID = Column(Integer, ForeignKey('tFavoritePark.favParkID'))
-    FamilyID = Column(Integer, ForeignKey('tFamily.familyID'))
+    familyID = Column(Integer, ForeignKey('tFamily.familyID'))
 
 class tBreed(Base):
     __tablename__ = 'tBreed'
