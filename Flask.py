@@ -95,10 +95,18 @@ def userInfo():
 @app.route('/forgotPass', methods=['GET', 'POST'])
 def forgotPass():
     PasswordResetform = PasswordResetForm()
-    # grab data from form
-    email = PasswordResetform.email.data
-    password = PasswordResetform.password.data
-    confirmpassword = PasswordResetform.passwordConfirm.data
+    if PasswordResetform.validate():
+        # grab data from form
+        email = PasswordResetform.email.data
+        password = PasswordResetform.password.data
+        confirmPassword = PasswordResetform.passwordConfirm.data
+        newPassword = PasswordResetform.newPassword.data
+        # confirm that password in database doesn't equal requested new passwordReset
+        dbPassword = Tlbx.getPass(email)
+        if dbPassword == Tlbx.hash_password(newPassword):
+            flash('Cant use the same password as before')
+        else:
+            Tlbx.resetPass(email, password)
     return render_template('PasswordReset/PasswordReset.html', PasswordResetform = PasswordResetform)
 
 @app.route('/PasswordReset', methods=['GET','POST'])

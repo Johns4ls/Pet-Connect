@@ -35,6 +35,13 @@ def new_Account(firstName, lastName, email, password, address, city, state, zipC
     cur.execute(userQuery, data)
     db.commit()
 
+# updates password for a given email address
+def resetPass(email, newPassword):
+    cur, db = dbConnectDict()
+    pwQuery = ("UPDATE tUser set password = '%s' WHERE email = '%s'")
+    data = (newPassword, email)
+    cur.execute(pwQuery, data)
+    db.commit()
 
 #Get the password from the database
 def getPass(email):
