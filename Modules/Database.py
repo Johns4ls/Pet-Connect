@@ -29,7 +29,7 @@ class tAddress(Base):
     zip = Column('zip', Integer)
 
 class tDog(Base):
-    __tablename__ = 'tD'
+    __tablename__ = 'tDog'
     dogID = Column(Integer, primary_key=True)
     name = Column('name', String(255))
     gender = Column('gender', Integer)
