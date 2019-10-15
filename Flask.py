@@ -1,6 +1,6 @@
 #Various imports
 from flask import Flask, flash, render_template, redirect, session, request
-from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm
+from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm, PasswordResetForm
 from Modules import Tlbx, Database
 from flask_sqlalchemy import SQLAlchemy, functools
 from flask_login import LoginManager, login_required, logout_user, current_user
@@ -67,13 +67,13 @@ def register():
     Loginform = LoginForm()
     if Registerform.validate_on_submit():
         session['email'] = Registerform.email.data
-        session['password'] = Registerform.password.data 
+        session['password'] = Registerform.password.data
         if(Tlbx.validate_email(Registerform.email.data) is not False):
             UserInfoform = UserInfoForm()
             return render_template('Register/userInfo.html', UserInfoform = UserInfoform )
         flash('Email address already exists')
         return redirect('/')
-        
+
     return render_template('Login/login.html', Registerform=Registerform, Loginform=Loginform)
 
 #Create a new User
@@ -94,7 +94,12 @@ def userInfo():
 
 @app.route('/forgotPass', methods=['GET', 'POST'])
 def forgotPass():
-    return render_template('PasswordReset/PasswordReset.html')
+    PasswordResetform = PasswordResetForm()
+    # grab data from form
+    email = PasswordResetform.email.data
+    password = PasswordResetform.password.data
+    confirmpassword = PasswordResetform.passwordConfirm.data
+    return render_template('PasswordReset/PasswordReset.html', PasswordResetform = PasswordResetform)
 
 @app.route('/PasswordReset', methods=['GET','POST'])
 def passwordReset():
@@ -128,7 +133,7 @@ def familyCreation():
 @login_required
 def JoinFamily():
     return render_template('/Family/JoinFamily.html')
-   
+
 @app.route('/follow/<int:dogID>', methods=['GET','POST'])
 @login_required
 def FollowDogs(dogID):
@@ -166,7 +171,7 @@ def StartPark():
     session['favToy'] = CreateDogform.favToy.data
     session['size'] = CreateDogform.size.data
     session['weight'] = CreateDogform.weight.data
-    session['bio'] = CreateDogform.bio.data  
+    session['bio'] = CreateDogform.bio.data
     FavoriteParkform = FavoriteParkForm()
     return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
 
