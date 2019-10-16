@@ -74,7 +74,7 @@ class tFavoritePark(Base):
     addressID = Column(Integer, ForeignKey('tAddress.addressID'))
     image = Column('image', String(255))
 
-class tfollowers(Base):
+class tFollowers(Base):
     __tablename__ = 'tFollowers'
     followID = Column(Integer, primary_key=True)
     dogID = Column(Integer, ForeignKey('tDog.dogID'))
