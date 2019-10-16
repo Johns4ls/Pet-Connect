@@ -5,15 +5,23 @@
       <title> Dashboard</title>
   {% endblock %}      
   {% block body %}
-
+  <div class="container">
   <div class="jumbotron text-center">
       <h1>Hello, {{user.username}}!</h1>
-      <p>Under Construction</p>
-      <input type="submit" value="Log Out" onclick="window.location='/logout'">
+      <form action="/Create/Post" method="post" novalidate>
+      <select> 
+          {% for dog in dogResults %}
+        <option name="DogValue" value="{{dog.dogID}}">{{dog.name}}</option>
+        {% endfor %}
+      </select>
+      <textarea name="Post" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+      <button>Create Post</button>
     </div>
-    {% for post in posts %}
-    <div class="well well-lg"><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+  </form>
+    {% for post in postResults %}
+    <div class="well well-lg"><p> None of your Business says: <b>{{ post.Post }}</b></p></div>
     {% endfor %}
+  </div>
 
 
 {% endblock %}

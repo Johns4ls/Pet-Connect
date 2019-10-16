@@ -4,6 +4,7 @@ from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyFor
 from Modules import Tlbx, Database
 from flask_sqlalchemy import SQLAlchemy, functools
 from flask_login import LoginManager, login_required, logout_user, current_user
+import datetime
 app = Flask(__name__)
 db = SQLAlchemy(app)
 '''Secret to prevent Cross-Site Request Forgery(CSRF) attacks.
@@ -165,6 +166,16 @@ def StartPark():
     session['bio'] = CreateDogform.bio.data
     FavoriteParkform = FavoriteParkForm()
     return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
+
+@app.route('/Create/Post', methods=['GET','POST'])
+@login_required
+def CreatePost():
+    session = Database.Session()
+    dogID = request.form['DogValue']
+    Post = request.form['Post']
+    Query = Database.tPost(dogID=dogID, userID=current_user.id, groupID=None, Post=Post, ts=datetime.datetime.now(), image=None)
+    session.add(Query)
+    session.commit()
 
 @app.route('/Create/Finish/Dog', methods=['GET','POST'])
 @login_required
