@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy, functools
 from flask_login import LoginManager, login_required, logout_user, current_user
 import datetime
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 '''Secret to prevent Cross-Site Request Forgery(CSRF) attacks.
    This will need to be updated before the site goes live.'''
@@ -25,14 +26,12 @@ def load_user(userid):
 def index():
    #dogResults and postResults still need implemented in jinja
     session = Database.Session()
-    dogResults = session.query(Database.tDog.name).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
+    user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
+    for user in user:
+        user = user
+    dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
     postResults = session.query(Database.tPosts).join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID).filter(Database.tFollowers.userID == current_user.id)
-    return render_template('HomePage/Dashboard.html', user = user, posts = posts, dogResults = dogResults, postResults = postResults)
-
-@app.route('/Create/Post', methods=['GET','POST'])
-@login_required
-def CreateNewPost():
-    CreateFamilyform = CreateFamilyForm()
+    return render_template('HomePage/Dashboard.html', user = user, posts = postResults, dogResults = dogResults, postResults = postResults)
 
 #Renders the login page
 @app.route('/', methods=['GET', 'POST'])
@@ -130,7 +129,7 @@ def JoinFamily():
 @login_required
 def FollowDogs(dogID):
    session = Database.Session()
-   addFollower = Database.tfollowers(dogID = dogID, userID= current_user.id)
+   addFollower = Database.tFollowers(dogID = dogID, userID= current_user.id)
    session.add(addFollower)
    session.commit()
    return '', 204
@@ -173,9 +172,10 @@ def CreatePost():
     session = Database.Session()
     dogID = request.form['DogValue']
     Post = request.form['Post']
-    Query = Database.tPost(dogID=dogID, userID=current_user.id, groupID=None, Post=Post, ts=datetime.datetime.now(), image=None)
+    Query = Database.tPosts(dogID=dogID, userID=current_user.id, groupID=None, Post=Post, ts=datetime.datetime.now(), image=None)
     session.add(Query)
     session.commit()
+    return '', 204
 
 @app.route('/Create/Finish/Dog', methods=['GET','POST'])
 @login_required
