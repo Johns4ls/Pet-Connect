@@ -35,6 +35,7 @@
   background-color:#eaeaea;
   box-shadow: 0 0 10px #000000;
   padding: 10px;
+  overflow: auto !important;
 }
 .mainContainer h2{
   width: 70%;
@@ -236,7 +237,6 @@ body {
   font-weight: 400;
   font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #222; 
-  overflow: auto;}
 
 
 /* Typography
