@@ -9,44 +9,23 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" media="all" type="text/css" href="/static/style.css">
+    <link rel="stylesheet" media="all" type="text/css" href="/static/skeleton.css">
     <script type="text/javascript" src="/static/script.js"></script>
     {% block head %}
     {% endblock %}
 </head>
 {%block nav%}
  <!--navbar styled with bootstrap classes-->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <!--site label (clickable)-->
-    <a class="navbar-brand" href="/">Pet-Connect</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <!--main button list-->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/dashboard">Dashboard <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/Create/New/Dog">Create a new dog</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/placeholder">Placeholder</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/placeholder">Placeholder</a>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0" action="/Search" method="post" novalidate>
-            <input class="form-control mr-sm-2" type="search" name='Search' placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" >Search</button>
-        </form>
-        <button type="button" class="btn btn-default" onclick="window.location='/logout'">
-          <span class="glyphicon glyphicon-log-out"></span> Log out
-        </button>
-    </div>
-</nav>
-{% endblock %}
+ <div class="navBar" id="mainNavBar">
+   <a href="/dashboard">Home</a>
+   <a href="#service">Services</a>
+   <a href="#about">About Us</a>
+   <a href="#contact">Contact</a>
+   <a href="javascript:void(0);" class="icon" onClick="openDrawerMenu()">&#9776;</a>
+   <!--&#9776; is the code for the 3 line menu button-->
+ </div>
+
+ </nav>{% endblock %}
 {% block body %}
 {% endblock %}
 </html>

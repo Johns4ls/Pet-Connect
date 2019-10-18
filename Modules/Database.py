@@ -5,7 +5,7 @@ import sqlalchemy
 import pymysql
 engine = sqlalchemy.create_engine(
     'mysql+pymysql://Website:W3bsite!@ec2-13-59-203-226.us-east-2.compute.amazonaws.com:3306/PetConnect',
-    echo=True)
+    echo=True, pool_size=30)
 
 # Define and create all tables in the DB
 Base = declarative_base()
