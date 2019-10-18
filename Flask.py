@@ -30,7 +30,11 @@ def index():
     for user in user:
         user = user
     dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
-    postResults = session.query(Database.tPosts).join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID).filter(Database.tFollowers.userID == current_user.id)
+    postResults = session.query(Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName)\
+    .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
+    .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
+    .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
+    .filter(Database.tFollowers.userID == current_user.id)
     return render_template('HomePage/Dashboard.html', user = user, posts = postResults, dogResults = dogResults, postResults = postResults)
 
 #Renders the login page
