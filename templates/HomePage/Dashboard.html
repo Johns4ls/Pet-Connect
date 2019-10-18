@@ -3,26 +3,30 @@
 <html>
   {% block head %}
       <title> Dashboard</title>
-  {% endblock %}      
+  {% endblock %}
   {% block body %}
-  <div class="container">
-  <div class="jumbotron text-center">
-      <h1>Hello, {{user.firstName}}!</h1>
-      <form action="/Create/Post" method="post" novalidate>
-      <select name="DogValue"> 
-          {% for dog in dogResults %}
-        <option  value="{{dog.dogID}}">{{dog.name}}</option>
+  <div class="backgroundContainer">
+    <div class="mainContainer">
+      <h2>Hello, {{user.firstName}}!</h2>
+      <div class="subContainer">
+        <form action="/Create/Post" method="post" novalidate>
+          <select name="DogValue">
+            {% for dog in dogResults %}
+            <option  value="{{dog.dogID}}">{{dog.name}}</option>
+            {% endfor %}
+          </select>
+          <textarea name="Post" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="What's on your mind?"></textarea>
+          <button>Create Post</button>
+        </form>
+      </div>
+      <br>
+      <h2>Your Feed</h2>
+      <div class="feed">
+        {% for post in postResults %}
+        <div class="well well-lg"><p><br> {{post.firstName}} {{post.lastName}} wrote this about {{post.name}}: <b>{{ post.Post }}</b></p></div>
         {% endfor %}
-      </select>
-      <textarea name="Post" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-      <button>Create Post</button>
+      </div>
     </div>
-  </form>
-    {% for post in postResults %}
-    <div class="well well-lg"><p> {{post.firstName}} {{post.lastName}} wrote this about {{post.name}}: <b>{{ post.Post }}</b></p></div>
-    {% endfor %}
   </div>
-
-
 {% endblock %}
 </html>
