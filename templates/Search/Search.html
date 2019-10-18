@@ -1,7 +1,22 @@
 {% extends "Layout/Layout.html" %}
 {% block head %}
+
+<script>
+  function changeFollow(id) {
+	value = document.getElementById(id).value;
+        window.location = '/' + value + '/' + id;
+	if (value == 'Unfollow'){
+	document.getElementById(id).value = 'Follow';
+	}
+	else {
+	document.getElementById(id).value = 'Unfollow'
+    }
+  }
+</script>
+
 {% endblock %}
 {% block body %}
+
  <table style="width:100%">
    <h1>
    <tr>
@@ -9,10 +24,10 @@
      <td><b>Follow</b></td>
   </tr>
   </h1>
-{% for result in results %}
+{% for dogs, text in results %}
    <tr>
-     <td><h3><b>{{result.name}}</b></h3> </td>
-     <td><input type="button" value="Follow" onclick="window.location='/follow/{{result.dogID}}';"></td>
+     <td><h3><b>{{dogs.name}}</b></h3> </td>
+     <td><input type="button" id="{{dogs.dogID}}" value="{{text}}" onclick="changeFollow({{dogs.dogID}})"></td>
    </tr>
 {% endfor %}
 </table>

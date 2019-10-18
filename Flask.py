@@ -3,6 +3,7 @@ from flask import Flask, flash, render_template, redirect, session, request
 from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm, PasswordResetForm
 from Modules import Tlbx, Database
 from flask_sqlalchemy import SQLAlchemy, functools
+from sqlalchemy import and_
 from flask_login import LoginManager, login_required, logout_user, current_user
 import datetime
 app = Flask(__name__)
@@ -129,7 +130,7 @@ def familyCreation():
 def JoinFamily():
     return render_template('/Family/JoinFamily.html')
 
-@app.route('/follow/<int:dogID>', methods=['GET','POST'])
+@app.route('/Follow/<int:dogID>', methods=['GET','POST'])
 @login_required
 def FollowDogs(dogID):
    session = Database.Session()
@@ -138,6 +139,15 @@ def FollowDogs(dogID):
    session.commit()
    return '', 204
 
+@app.route('/Unfollow/<int:dogID>', methods=['GET','POST'])
+@login_required
+def UnfollowDogs(dogID):
+    session = Database.Session()
+    session.query(Database.tFollowers).filter(Database.tFollowers.dogID==dogID) \
+    .filter(Database.tFollowers.userID==current_user.id).delete()
+    session.commit()
+    return '', 204
+
 @app.route('/Search', methods=['GET','POST'])
 @login_required
 def Search():
@@ -145,8 +155,17 @@ def Search():
     session = Database.Session()
     Name = request.form['Search']
     dogs = session.query(Database.tDog).filter(Database.tDog.name.contains(Name) | (Database.tDog.name.op('SOUNDS LIKE')(Name))).order_by(Database.tDog.name.match(Name).desc()).all()
-
-    return render_template('/Search/Search.html', results = dogs)
+    followed = session.query(Database.tFollowers).filter(Database.tFollowers.userID == current_user.id)
+    texts={}
+    text =[]
+    for dog in dogs:
+        texts[dog.dogID] = 'Follow'
+    for follower in followed:
+        if follower.dogID in texts.keys():
+            texts[dog.dogID] = 'Unfollow'
+    for dog in dogs:
+        text.append(texts[dog.dogID])
+    return render_template('/Search/Search.html', results = zip(dogs, text))
 
 @app.route('/Create/New/Dog', methods=['GET','POST'])
 @login_required
