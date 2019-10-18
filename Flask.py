@@ -162,7 +162,7 @@ def Search():
         texts[dog.dogID] = 'Follow'
     for follower in followed:
         if follower.dogID in texts.keys():
-            texts[dog.dogID] = 'Unfollow'
+            texts[follower.dogID] = 'Unfollow'         
     for dog in dogs:
         text.append(texts[dog.dogID])
     return render_template('/Search/Search.html', results = zip(dogs, text))
