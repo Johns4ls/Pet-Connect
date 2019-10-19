@@ -9,7 +9,10 @@
     {% if messages %}
     <ul>
         {% for message in messages %}
-        <div class="alert alert-danger"><li><strong>{{ message }}</strong></li></div>
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            You have been signed out
+          </div>
         {% endfor %}
     </ul>
     {% endif %}
@@ -74,8 +77,11 @@
         $('.login-info-box').fadeOut();
         $('.login-show').addClass('show-log-panel');
     });
-    
-    
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
     $('.login-reg-panel input[type="radio"]').on('change', function() {
         if($('#log-login-show').is(':checked')) {
             $('.register-info-box').fadeOut(); 
