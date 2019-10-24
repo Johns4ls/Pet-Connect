@@ -100,23 +100,16 @@ class tComments(Base):
     __tablename__ = 'tComments'
     commentID = Column(Integer, primary_key=True)
     postID = Column(Integer, ForeignKey('tPosts.postID'))
-    dogID = Column(Integer, ForeignKey('tDog.dogID'))
     userID = Column(Integer, ForeignKey('tUser.userID'))
-    Post = Column('Post', String(255))
+    Comment = Column('Comment', String(255))
     ts = Column('ts', DateTime)
     image = Column('image', String(255))
-
 
 class tReacts(Base):
     __tablename__ = 'tReacts'
     reactID = Column(Integer, primary_key=True)
-    reactTypeID = Column(Integer, ForeignKey('tReactType.reactTypeID'))
+    userID = Column(Integer, ForeignKey('tUser.userID'))
     postID = Column(Integer, ForeignKey('tPosts.postID'))
-
-class tReactTypes(Base):
-    __tablename__ = 'tReactTypes'
-    reactTypeID = Column(Integer, primary_key=True)
-    reactType = Column('reactType', String(255))
 
 class tAvailability(Base):
     __tablename__ = 'tAvailability'

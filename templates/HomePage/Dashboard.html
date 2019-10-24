@@ -34,12 +34,22 @@
       <br>
       <h2>Your Feed</h2>
       <div class="feed">
+      <div class="container">
         {% for post in postResults %}
-        <div class="well well-lg"><p><br> {{post.firstName}} {{post.lastName}} wrote this about {{post.name}}: <b>{{ post.Post }}</b></p></div>
+        <div class="well well-lg"><p><br>{{post.firstName}} {{post.lastName}} wrote this about {{post.name}}: <b>{{ post.Post }}</b></p></div>
+        <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
+        <textarea name="Comment"></textarea>
+        <button onclick="window.location='/Create/Comment/{{post.postID}}';">Comment</button>
+      </form>
+      <button onclick="window.location='/Create/Like/{{post.postID}}';">like</button>
+        <br>
+        
+        
         {% endfor %}
       </div>
     </div>
   </div>
+</div>
   <script>
   window.setTimeout(function() {
     $(".alert").fadeTo(500, 0).slideUp(500, function(){

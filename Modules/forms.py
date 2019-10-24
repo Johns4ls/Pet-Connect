@@ -23,7 +23,7 @@ class CreateFamilyForm(FlaskForm):
     submit = SubmitField('Create Family')
 class CreateDogForm(FlaskForm):
     Genders=[('Male', 'Male'), ('Female', 'Female')]
-    Fixed = [('Yes','Yes,'), ('No', 'No')]
+    Fixed = [('Yes','Yes'), ('No', 'No')]
     Sizes = [('Extra Small','Extra Small'), ('Small','Small'), ('Medium','Medium'), ('Large', 'Large'), ('Very large', 'Very large')]
     dogName = StringField('name', validators=[DataRequired()])
     gender = SelectField('gender', choices = Genders, validators = [DataRequired()])

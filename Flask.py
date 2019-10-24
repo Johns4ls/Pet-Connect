@@ -31,7 +31,7 @@ def index():
     for user in user:
         user = user
     dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
-    postResults = session.query(Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName)\
+    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName)\
     .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
@@ -87,6 +87,27 @@ def userInfo():
     Tlbx.new_Account(firstName, lastName, email, password, address, city, state, zipCode)
     Tlbx.loginUser(email)
     return render_template('/Family/FamilySplash.html')
+
+#Create a new User
+@app.route('/Create/Like/<int:postID>', methods=['GET', 'POST'])
+def Like(postID):
+    postID=str(postID)
+    session = Database.Session()
+    Like = Database.tReacts(userID=current_user.id, postID=postID)
+    session.add(Like)
+    session.commit()
+    return '', 204
+
+#Create a new User
+@app.route('/Create/Comment/<int:postID>', methods=['GET', 'POST'])
+def Comment(postID):
+    postID = str(postID)
+    Comment = request.form['Comment']
+    session = Database.Session()
+    Comment = Database.tComments(postID=postID, userID = current_user.id, Comment = Comment, ts=datetime.datetime.now(), image=None)
+    session.add(Comment)
+    session.commit()
+    return '', 204
 
 @app.route('/forgotPass', methods=['GET', 'POST'])
 def forgotPass():
