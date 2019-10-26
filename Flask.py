@@ -1,5 +1,6 @@
 #Various imports
 from flask import Flask, flash, render_template, redirect, session, request
+from werkzeug.utils import secure_filename
 from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm, PasswordResetForm
 from Modules import Tlbx, Database
 from flask_sqlalchemy import SQLAlchemy, functools
@@ -84,7 +85,8 @@ def userInfo():
     city = UserInfoform.city.data
     state = UserInfoform.state.data
     zipCode = UserInfoform.zipCode.data
-    Tlbx.new_Account(firstName, lastName, email, password, address, city, state, zipCode)
+    image = secure_filename(UserInfoForm.profileImage.data)
+    Tlbx.new_Account(firstName, lastName, email, password, address, city, state, zipCode, image)
     Tlbx.loginUser(email)
     return render_template('/Family/FamilySplash.html')
 

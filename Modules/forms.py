@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
-from wtforms.validators import DataRequired, ValidationError, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, FileField
+from wtforms.validators import DataRequired, ValidationError, EqualTo, FileAllowed
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -17,6 +17,7 @@ class UserInfoForm(FlaskForm):
     city = StringField('city', validators=[DataRequired()])
     state = StringField('state', validators=[DataRequired()])
     zipCode = StringField('zipCode', validators=[DataRequired()])
+    profileImage = FileField('profileImage', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Register')
 class CreateFamilyForm(FlaskForm):
     surName = StringField('surName', validators=[DataRequired()])
