@@ -4,7 +4,7 @@
 {% block nav %}
 {% endblock %}
 {% block body %}
-<form action="/Create/User" method="post" novalidate>
+<form action="/Create/User" method="post" enctype="multipart/form-data">
     {{ UserInfoform.hidden_tag() }}
     {{ UserInfoform.firstName(placeholder="First Name") }}<br>
     {{ UserInfoform.lastName(placeholder="Last Name") }}<br>

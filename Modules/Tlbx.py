@@ -26,14 +26,14 @@ def validate_email(email):
         return False
 
 
-def imgToPNG(location, image):
+def imgToJPG(location, image):
     dirpath = os.getcwd()
-    path = dirpath + '/static/pictures/' + location + '/'
+    path =  'pictures/' + location + '/'
     imageName = image.filename.split('.')
     imageName = imageName[0]
-    png = dirpath + imageName + ".png"
-    if imageName != '' and not os.path.exists(png):
-        imageName = path + image
+    fullPath =  path + imageName
+    savePath = dirpath + '/static/pictures/' + location + '/' + imageName
+    if imageName != '' and not os.path.exists(fullPath):
         image = Image.open(image.stream)
         if hasattr(image, '_getexif'):
             orientation = 0x0112
@@ -47,8 +47,20 @@ def imgToPNG(location, image):
                 }
                 if orientation in rotations:
                     image = image.transpose(rotations[orientation])
+        if location == "Profile":
+            thumbnailGen(image, savePath)
+        savePath = savePath +  ".jpg"
+        image.save(savePath,optimize=True,quality=90)
+    else: 
+        fullPath = None
+    return fullPath
 
-        image.save(png,optimize=True,quality=85)
+def thumbnailGen(image, path):
+    size = 128, 128
+    thumbnail = image
+    thumbnail.thumbnail(size)
+    thumbnail.save(path + ".thumbnail", "JPEG" )
+    
 
 #Insert the new account information into the database
 def new_Account(firstName, lastName, email, password, address, city, state, zipCode, image):
@@ -57,7 +69,6 @@ def new_Account(firstName, lastName, email, password, address, city, state, zipC
     data = (address, city, state, zipCode)
     cur.execute(addressQuery, data)
     userQuery = ("INSERT INTO tUser (firstName, lastName, email, familyID, password, image, addressID) VALUES(%s, %s, %s, NULL, %s, %s, LAST_INSERT_ID());")
-    image = None
     data = (firstName, lastName, email, password, image)
     cur.execute(userQuery, data)
     db.commit()

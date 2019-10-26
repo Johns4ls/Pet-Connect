@@ -4,7 +4,7 @@ from sqlalchemy.engine import create_engine
 import sqlalchemy
 import pymysql
 engine = sqlalchemy.create_engine(
-    'mysql+pymysql://Website:W3bsite!@ec2-13-59-203-226.us-east-2.compute.amazonaws.com:3306/PetConnect',
+    'mysql+pymysql://Website:W3bsite!@127.0.0.1:3306/PetConnect',
     echo=True, pool_size=30)
 
 # Define and create all tables in the DB

@@ -20,6 +20,8 @@
     {% endif %}
     {% endwith %}
       <h2>Hello, {{user.firstName}}!</h2>
+      <a href="{{ url_for('static', filename = user.image + '.jpg') }}">
+        <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="img-thumbnail"></a>
       <div class="subContainer">
         <form action="/Create/Post" method="post" novalidate>
           <select name="DogValue">
