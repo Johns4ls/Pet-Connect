@@ -76,11 +76,15 @@
   width: 75%;
   float: right;
 }
+.searchnavbar {
+  float: right;
+}
 /* navbar
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .navBar{
   background-color: #33363b;
   overflow: hidden;
+
 }
 
 /*Floats each item to the left with padding of 14 & 16 px.
@@ -92,6 +96,14 @@ Removes the underline with text decoration = none.*/
   text-decoration: none;
   font-size: 17px;
 }
+.navBar p{
+  float: right;
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
 
 /*Background color change during hover state*/
 .navBar a:hover{
