@@ -218,6 +218,8 @@ def StartPark():
         session['size'] = CreateDogform.size.data
         session['weight'] = CreateDogform.weight.data
         session['bio'] = CreateDogform.bio.data
+        image = request.files[CreateDogform.profileImage.name]
+        session['image'] = Tlbx.imgToJPG("Profile", image)
         FavoriteParkform = FavoriteParkForm()
         return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
     flash("Please fill out all fields")
@@ -283,7 +285,7 @@ def DogCreation():
 
         #finally commit all the dog data into the database.
         dogQuery = "Insert into tDog (name, gender, breedID, fixed, age, Size, Weight, bio, image, favToyID, favParkID, familyID) VALUES (%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s)"
-        data = (session.get('dogName'), session.get('gender'), breedID, session.get('fixed'), session.get('age'), session.get('size'), session.get('weight'), session.get('bio'), image, favToyID, favParkID, session.get('familyID') )
+        data = (session.get('dogName'), session.get('gender'), breedID, session.get('fixed'), session.get('age'), session.get('size'), session.get('weight'), session.get('bio'), session.get('image'), favToyID, favParkID, session.get('familyID') )
         cur.execute(dogQuery, data)
         db.commit()
         return redirect('/dashboard')

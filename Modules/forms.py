@@ -36,6 +36,7 @@ class CreateDogForm(FlaskForm):
     size = SelectField('fixed', choices = Sizes, validators = [DataRequired()])
     weight = StringField('weight', validators=[DataRequired()])
     bio = StringField('bio')
+    profileImage = FileField('profileImage', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Next')
 class FavoriteParkForm(FlaskForm):
     parkName = StringField('surName', validators=[DataRequired()])

@@ -4,7 +4,7 @@
 {% block nav %}
 {% endblock %}
 {% block body %}
-<form action="/Create/Start/Park" method="post" novalidate>
+<form action="/Create/Start/Park" method="post" enctype="multipart/form-data">
     {{ CreateDogform.hidden_tag() }}
     <h2>Dog Name</h2>
     {{ CreateDogform.dogName(placeholder="Thor") }}<br>
@@ -24,6 +24,7 @@
     {{ CreateDogform.weight(placeholder="100") }}<p>lbs</p><br>
     <h2>Tell us a little about them!</h2>
     {{ CreateDogform.bio(placeholder="Tell us about them!") }}<br>
+    {{CreateDogform.profileImage()}}<br>
     {{ CreateDogform.submit() }}
 </form>
 {% endblock %}

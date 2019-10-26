@@ -50,7 +50,7 @@ def imgToJPG(location, image):
         if location == "Profile":
             thumbnailGen(image, savePath)
         savePath = savePath +  ".jpg"
-        image.save(savePath,optimize=True,quality=90)
+        image.save(savePath,optimize=True,quality=100)
     else: 
         fullPath = None
     return fullPath
