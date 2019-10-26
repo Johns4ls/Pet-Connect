@@ -4,14 +4,28 @@
 {% block nav %}
 {% endblock %}
 {% block body %}
-<form action="/Create/User" method="post" novalidate>
-    {{ UserInfoform.hidden_tag() }}
-    {{ UserInfoform.firstName(placeholder="First Name") }}<br>
-    {{ UserInfoform.lastName(placeholder="Last Name") }}<br>
-    {{ UserInfoform.address(placeholder="Address") }}<br>
-    {{ UserInfoform.city(placeholder="City") }}<br>
-    {{ UserInfoform.state(placeholder="State") }}<br>
-    {{ UserInfoform.zipCode(placeholder="zipCode") }}<br>
-    {{ UserInfoform.submit() }}
-</form>
+<div class="backgroundContainer">
+  <div class="mainContainer">
+    <h2>Tell Us About You</h2>
+    <form action="/Create/User" method="post" novalidate>
+      <ul class="formRegistration">
+        <p><strong>Full Name</strong></p>
+        {{ UserInfoform.hidden_tag() }}
+        <li>
+          {{ UserInfoform.firstName(placeholder="First Name", class_="field-half") }}
+          {{ UserInfoform.lastName(placeholder="Last Name", class_="field-half") }}
+        </li>
+        <br>
+        <p><strong>Address</strong></p>
+        <li>{{ UserInfoform.address(placeholder="Street Address", class_="field-full") }}</li>
+        <li>
+          {{ UserInfoform.city(placeholder="City", class_="field-half") }}
+          {{ UserInfoform.state(placeholder="State", class_="field-half") }}
+        </li>
+        <li>{{ UserInfoform.zipCode(placeholder="Zip Code", class_="field-half") }}</li>
+        <li>{{ UserInfoform.submit() }}</li>
+      </ul>
+    </form>
+</div>
 {% endblock %}
+</div>

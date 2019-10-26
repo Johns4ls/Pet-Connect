@@ -4,26 +4,27 @@
 {% block nav %}
 {% endblock %}
 {% block body %}
-<form action="/Create/Start/Park" method="post" novalidate>
-    {{ CreateDogform.hidden_tag() }}
-    <h2>Dog Name</h2>
-    {{ CreateDogform.dogName(placeholder="Thor") }}<br>
-    <h2>gender</h2>
-    {{ CreateDogform.gender(placeholder="Male/Female") }}<br>
-    <h2>Breed</h2>
-    {{ CreateDogform.breed(placeholder="Rottweiler") }}<br>
-    <h2>Are they fixed?</h2>
-    {{ CreateDogform.fixed() }}<br>
-    <h2>How old are they?</h2>
-    {{ CreateDogform.age(placeholder="6") }}<p>Years</p><br>
-    <h2>What's their favorite toy?</h2>
-    {{ CreateDogform.favToy(placeholder="Ball") }}<br>
-    <h2>How large are they?</h2>
-    {{ CreateDogform.size() }}<br>
-    <h2>How much do they weigh?</h2>
-    {{ CreateDogform.weight(placeholder="100") }}<p>lbs</p><br>
-    <h2>Tell us a little about them!</h2>
-    {{ CreateDogform.bio(placeholder="Tell us about them!") }}<br>
-    {{ CreateDogform.submit() }}
-</form>
+<div class="backgroundContainer">
+  <div class="mainContainer">
+    <h2>Tell Us About Your Dog</h2>
+    <form action="/Create/Start/Park" method="post" novalidate>
+      <ul class="formRegistration">
+        {{ CreateDogform.hidden_tag() }}
+        <p><strong>Basic Information</strong></p>
+        <li><p>Name: </p>{{ CreateDogform.dogName(placeholder="Thor", class_="field-80") }}</li>
+        <li><p>Gender: </p>{{ CreateDogform.gender(placeholder="Male/Female", class_="field-80") }}</li>
+        <li><p>Breed: </p>{{ CreateDogform.breed(placeholder="Rottweiler", class_="field-80") }}</li>
+        <li><p>Fixed? </p>{{ CreateDogform.fixed(class_="field-80") }}</li>
+        <li><p>Age: </p>{{ CreateDogform.age(placeholder="Age (Years)", class_="field-80") }}</li>
+        <br><p><strong>Size</strong></p>
+        <li><p>Size: </p>{{ CreateDogform.size(class_="field-80") }}</li>
+        <li><p>Weight: </p>{{ CreateDogform.weight(placeholder="Weight (lbs)", class_="field-80") }}</li>
+        <br><p><strong>Personality</strong></p>
+        <li><p>Fav' Toy: </p>{{ CreateDogform.favToy(placeholder="Ball", class_="field-80") }}</li>
+        <li><p>Fun Fact: </p>{{ CreateDogform.bio(placeholder="Tell us about them!", class_="field-80") }}</li>
+        <br><li>{{ CreateDogform.submit() }}</li>
+      </ul>
+    </form>
+  </div>
 {% endblock %}
+</div>

@@ -51,6 +51,31 @@
   width: 70%;
   margin: 0 auto;
 }
+
+.formRegistration li {
+  padding: 0;
+	display: block;
+	list-style: none;
+	margin: 10px 0 0 0;
+  width: 30%;
+}
+.formRegistration p {
+  display: inline;
+}
+.formRegistration .field-half {
+  width: 49.5%;
+}
+.formRegistration .field-full {
+  width: 100%;
+}
+.formRegistration .field-80 {
+  width: 80%;
+  float: right;
+}
+.formRegistration .field-75 {
+  width: 75%;
+  float: right;
+}
 /* navbar
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .navBar{
@@ -236,7 +261,7 @@ body {
   line-height: 1.6;
   font-weight: 400;
   font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #222; 
+  color: #222;
 
 
 /* Typography
