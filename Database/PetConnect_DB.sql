@@ -91,22 +91,16 @@ CREATE TABLE `tPostPictures` (
 CREATE TABLE `tComments` (
   `commentID` int PRIMARY KEY AUTO_INCREMENT,
   `postID` int,
-  `dogID` int,
   `userID` int,
-  `Post` varchar(255) NOT NULL,
+  `Comment` varchar(255) NOT NULL,
   `ts` timestamp NOT NULL DEFAULT NOW(),
   `image` varchar(255)
 );
 
 CREATE TABLE `tReacts` (
   `reactID` int PRIMARY KEY AUTO_INCREMENT,
-  `reactTypeID` int,
+  `userID` int,
   `postID` int
-);
-
-CREATE TABLE `tReactTypes` (
-  `reactTypeID` int PRIMARY KEY AUTO_INCREMENT,
-  `ReactType` varchar(255) NOT NULL
 );
 
 CREATE TABLE `tAvailability` (
@@ -206,11 +200,9 @@ ALTER TABLE `tPostPictures` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`pos
 
 ALTER TABLE `tComments` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
 
-ALTER TABLE `tComments` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
-
 ALTER TABLE `tComments` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
-ALTER TABLE `tReacts` ADD FOREIGN KEY (`reactTypeID`) REFERENCES `tReactTypes` (`reactTypeID`);
+ALTER TABLE `tReacts` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
 ALTER TABLE `tReacts` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
 

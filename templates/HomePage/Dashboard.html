@@ -34,12 +34,40 @@
       <br>
       <h2>Your Feed</h2>
       <div class="feed">
+      <div class="container">
         {% for post in postResults %}
-        <div class="well well-lg"><p><br> {{post.firstName}} {{post.lastName}} wrote this about {{post.name}}: <b>{{ post.Post }}</b></p></div>
+        <div class="well well-lg"><p><br>{{post.firstName}} {{post.lastName}} wrote this about {{post.name}}: <b>{{ post.Post }}</b></p></div>
+        <button onclick="window.location='/Create/Like/{{post.postID}}';">like</button>
+        <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
+        <textarea name="Comment"></textarea>
+        <button onclick="window.location='/Create/Comment/{{post.postID}}';">Comment</button>
+      </form>
+      <br>
+      {% set count = namespace(a=0) %}
+      {% for react in reactResults %}
+        {% if post.postID == react.postID %}
+        {% if count.a == 0 %}
+        <p>{{react.firstName}} {{react.lastName}}
+        {% endif %}
+        {% set count.a = count.a + 1 %}
+        {% endif %}
+      {% endfor %}  
+      {% if count.a > 1 %}
+      and {{count.a - 1}} others liked this</p>
+      {% else %}
+      liked this</p>
+      {% endif %}
+        <br>
+          {% for comment in commentResults %}
+            {% if post.postID == comment.postID %}
+            <p>{{comment.firstName}} {{comment.lastName}} said {{comment.Comment}}</p>
+            {% endif %}
+          {% endfor %}
         {% endfor %}
       </div>
     </div>
   </div>
+</div>
   <script>
   window.setTimeout(function() {
     $(".alert").fadeTo(500, 0).slideUp(500, function(){
