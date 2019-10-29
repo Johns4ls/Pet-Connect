@@ -178,7 +178,7 @@ ALTER TABLE `tDog` ADD FOREIGN KEY (`favToyID`) REFERENCES `tFavoriteToy` (`favT
 
 ALTER TABLE `tDog` ADD FOREIGN KEY (`FamilyID`) REFERENCES `tFamily` (`familyID`);
 
-ALTER TABLE `tFamily` ADD FOREIGN KEY (`headofHouseID`) REFERENCES `tUser` (`userID`);
+ALTER TABLE `tFamily` ADD FOREIGN KEY (`headofHouseID`) REFERENCES `tHeadofHouse` (`headofHouseID`);
 
 ALTER TABLE `tFavoritePark` ADD FOREIGN KEY (`AddressID`) REFERENCES `tAddress` (`addressID`);
 

@@ -145,13 +145,17 @@ def CreateNewFamily():
 @app.route('/Create/Finish/Family', methods=['GET','POST'])
 @login_required
 def familyCreation():
+    sqlalch = Database.Session()
+    HeadOfHouse = Database.tHeadofHouse(userID = current_user.id)
+    sqlalch.add(HeadOfHouse)
+    sqlalch.commit()
     CreateFamilyform = CreateFamilyForm()
     CreateDogform = CreateDogForm()
     familyName = CreateFamilyform.surName.data
     cur, db = Tlbx.dbConnectDict()
     cursor= Database.Session()
     query = ("INSERT INTO tFamily (familyName, headofHouseID) VALUES(%s, %s);")
-    data = (familyName, current_user.id)
+    data = (familyName, HeadOfHouse.headofHouseID)
     cur.execute(query, data)
     session['familyID'] = db.insert_id()
     x = cursor.query(Database.tUser).get(current_user.id)
@@ -286,6 +290,12 @@ def DogCreation():
     data = (session.get('dogName'), session.get('gender'), breedID, session.get('fixed'), session.get('age'), session.get('size'), session.get('weight'), session.get('bio'), image, favToyID, favParkID, session.get('familyID') )
     cur.execute(dogQuery, data)
     db.commit()
+
+    #Default to follow the dog
+    dogID = cur.lastrowid
+    FollowDogs(dogID)
+
+    #Redirect to the dashboard
     return redirect('/dashboard')
 
 @app.route("/logout")
