@@ -33,6 +33,7 @@ def imgToJPG(location, image):
     imageName = imageName[0]
     fullPath =  path + imageName
     savePath = dirpath + '/static/pictures/' + location + '/' + imageName
+    thumbPath =  savePath
     if imageName != '' and not os.path.exists(fullPath):
         image = Image.open(image.stream)
         if hasattr(image, '_getexif'):
@@ -47,19 +48,22 @@ def imgToJPG(location, image):
                 }
                 if orientation in rotations:
                     image = image.transpose(rotations[orientation])
-        if location == "Profile":
-            thumbnailGen(image, savePath)
         savePath = savePath +  ".jpg"
-        image.save(savePath,optimize=True,quality=100)
+        width, height = image.size
+        print(width)
+        print(height)
+        image.save(savePath,optimize=True,quality=80)
+        if location == "Profile":
+            thumbnailGen(image, thumbPath)
     else: 
         fullPath = None
     return fullPath
 
 def thumbnailGen(image, path):
     size = 128, 128
-    thumbnail = image
-    thumbnail.thumbnail(size)
-    thumbnail.save(path + ".thumbnail", "JPEG" )
+    image.thumbnail(size)
+    print(path)
+    image.save(path + ".thumbnail", "JPEG" )
     
 
 #Insert the new account information into the database
