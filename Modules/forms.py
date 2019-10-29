@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, ValidationError, EqualTo
+from flask_wtf.file import FileAllowed, FileField
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -17,6 +18,7 @@ class UserInfoForm(FlaskForm):
     city = StringField('city', validators=[DataRequired()])
     state = StringField('state', validators=[DataRequired()])
     zipCode = StringField('zipCode', validators=[DataRequired()])
+    profileImage = FileField('profileImage', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Register')
 class CreateFamilyForm(FlaskForm):
     surName = StringField('surName', validators=[DataRequired()])
@@ -34,6 +36,7 @@ class CreateDogForm(FlaskForm):
     size = SelectField('fixed', choices = Sizes, validators = [DataRequired()])
     weight = StringField('weight', validators=[DataRequired()])
     bio = StringField('bio')
+    profileImage = FileField('profileImage', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Next')
 class FavoriteParkForm(FlaskForm):
     parkName = StringField('surName', validators=[DataRequired()])

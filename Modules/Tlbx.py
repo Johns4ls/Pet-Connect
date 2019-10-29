@@ -1,20 +1,21 @@
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, UserMixin
-
+import os
+from PIL import Image, ExifTags
 
 #Connectors to database
 def dbConnect():
 
-  db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-  # db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-  cur = db.cursor()
-  return cur
+    #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    cur = db.cursor()
+    return cur
 def dbConnectDict():
-  db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-  # db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-  cur = db.cursor(pymysql.cursors.DictCursor)
-  return cur, db
+  #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    cur = db.cursor(pymysql.cursors.DictCursor)
+    return cur, db
 
 #Validate that the Email does not already exist
 def validate_email(email):
@@ -24,14 +25,54 @@ def validate_email(email):
     if Result is not ():
         return False
 
+
+def imgToJPG(location, image):
+    dirpath = os.getcwd()
+    path =  'pictures/' + location + '/'
+    imageName = image.filename.split('.')
+    imageName = imageName[0]
+    fullPath =  path + imageName
+    savePath = dirpath + '/static/pictures/' + location + '/' + imageName
+    thumbPath =  savePath
+    if imageName != '' and not os.path.exists(fullPath):
+        image = Image.open(image.stream)
+        if hasattr(image, '_getexif'):
+            orientation = 0x0112
+            exif = image._getexif()
+            if exif is not None:
+                orientation = exif[orientation]
+                rotations = {
+                    3: Image.ROTATE_180,
+                    6: Image.ROTATE_270,
+                    8: Image.ROTATE_90
+                }
+                if orientation in rotations:
+                    image = image.transpose(rotations[orientation])
+        savePath = savePath +  ".jpg"
+        width, height = image.size
+        print(width)
+        print(height)
+        image.save(savePath,optimize=True,quality=80)
+        if location == "Profile":
+            thumbnailGen(image, thumbPath)
+    else: 
+        fullPath = None
+    return fullPath
+
+def thumbnailGen(image, path):
+    size = 128, 128
+    image.thumbnail(size)
+    print(path)
+    image.save(path + ".thumbnail", "JPEG" )
+    
+
 #Insert the new account information into the database
-def new_Account(firstName, lastName, email, password, address, city, state, zipCode):
+def new_Account(firstName, lastName, email, password, address, city, state, zipCode, image):
     cur, db = dbConnectDict()
     addressQuery = ("INSERT INTO tAddress (address, city, state, zip) VALUES(%s, %s, %s, %s);")
     data = (address, city, state, zipCode)
     cur.execute(addressQuery, data)
     userQuery = ("INSERT INTO tUser (firstName, lastName, email, familyID, password, image, addressID) VALUES(%s, %s, %s, NULL, %s, %s, LAST_INSERT_ID());")
-    image = None
     data = (firstName, lastName, email, password, image)
     cur.execute(userQuery, data)
     db.commit()

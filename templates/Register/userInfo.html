@@ -7,7 +7,7 @@
 <div class="backgroundContainer">
   <div class="mainContainer">
     <h2>Tell Us About You</h2>
-    <form action="/Create/User" method="post" novalidate>
+    <form action="/Create/User" method="post" enctype="multipart/form-data">
       <ul class="formRegistration">
         <p><strong>Full Name</strong></p>
         {{ UserInfoform.hidden_tag() }}
@@ -23,6 +23,7 @@
           {{ UserInfoform.state(placeholder="State", class_="field-half") }}
         </li>
         <li>{{ UserInfoform.zipCode(placeholder="Zip Code", class_="field-half") }}</li>
+        <li>{{UserInfoform.profileImage()}}</li>
         <li>{{ UserInfoform.submit() }}</li>
       </ul>
     </form>
