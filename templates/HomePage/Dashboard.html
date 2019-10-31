@@ -49,7 +49,7 @@
       <div class="container">
         {% for post, like in postResults %}
         <div class="well well-lg"><p><br>{{post.firstName}} {{post.lastName}} wrote this about {{post.name}}: <b>{{ post.Post }}</b></p></div>
-        <button id="{{post.postID}}" value = "{{like}}" onclick="changeLike({{post.postID}});">{{like}}</button>
+        <input type="button" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
         <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
         <textarea name="Comment"></textarea>
         <button onclick="window.location='/Create/Comment/{{post.postID}}';">Comment</button>

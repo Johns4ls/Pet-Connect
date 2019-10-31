@@ -59,7 +59,7 @@ def index():
         likes[react.postID] = 'Like'
     for yourReact in yourReacts:
         if yourReact.postID in likes.keys():
-            likes[yourReact.postID] = 'Dislike'         
+            likes[yourReact.postID] = 'Unlike'         
     for react in postResults:
         like.append(likes[react.postID])
 
@@ -127,12 +127,12 @@ def Like(postID):
     return '', 204
 
 #Remove a like
-@app.route('/Dislike/<int:postID>', methods=['GET', 'POST'])
+@app.route('/Unlike/<int:postID>', methods=['GET', 'POST'])
 def Unlike(postID):
     postID=str(postID)
     session = Database.Session()
-    Like = Database.tReacts(userID=current_user.id, postID=postID)
-    session.add(Like)
+    session.query(Database.tReacts).filter(Database.tReacts.reactID==postID) \
+    .filter(Database.tReacts.userID==current_user.id).delete()
     session.commit()
     return '', 204
 
@@ -289,7 +289,7 @@ def CreatePost():
         likes[react.postID] = 'Like'
     for yourReact in yourReacts:
         if yourReact.postID in likes.keys():
-            likes[yourReact.postID] = 'Dislike'   
+            likes[yourReact.postID] = 'Unlike'   
     for react in postResults:
         like.append(likes[react.postID])
 
