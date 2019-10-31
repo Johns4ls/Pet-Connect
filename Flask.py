@@ -51,7 +51,21 @@ def index():
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
     .filter(Database.tFollowers.userID == current_user.id)
-    return render_template('HomePage/Dashboard.html', user = user, dogResults = dogResults, postResults = postResults, commentResults = commentResults, reactResults = reactResults)
+
+    yourReacts = session.query(Database.tReacts.postID).filter(Database.tReacts.userID == current_user.id)
+
+    likes={}
+    like =[]
+    for react in postResults:
+        likes[react.postID] = 'Like'
+    for yourReact in yourReacts:
+        if yourReact.postID in likes.keys():
+            likes[yourReact.postID] = 'Unlike'         
+    for react in postResults:
+        like.append(likes[react.postID])
+
+
+    return render_template('HomePage/Dashboard.html', user = user, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
 
 #Renders the login page
 @app.route('/', methods=['GET', 'POST'])
@@ -109,8 +123,8 @@ def userInfo():
     flash("Please input data in all fields")
     return render_template('Register/userInfo.html', UserInfoform = UserInfoform)
 
-#Create a new User
-@app.route('/Create/Like/<int:postID>', methods=['GET', 'POST'])
+#Add a like
+@app.route('/Like/<int:postID>', methods=['GET', 'POST'])
 def Like(postID):
     postID=str(postID)
     session = Database.Session()
@@ -119,7 +133,17 @@ def Like(postID):
     session.commit()
     return '', 204
 
-#Create a new User
+#Remove a like
+@app.route('/Unlike/<int:postID>', methods=['GET', 'POST'])
+def Unlike(postID):
+    postID=str(postID)
+    session = Database.Session()
+    session.query(Database.tReacts).filter(Database.tReacts.reactID==postID) \
+    .filter(Database.tReacts.userID==current_user.id).delete()
+    session.commit()
+    return '', 204
+
+#Add a comment
 @app.route('/Create/Comment/<int:postID>', methods=['GET', 'POST'])
 def Comment(postID):
     postID = str(postID)
@@ -200,7 +224,6 @@ def UnfollowDogs(dogID):
 @app.route('/Search', methods=['GET','POST'])
 @login_required
 def Search():
-    #Do we want to do a like to prevent ALL dogs from being searched and sorted by relevance?
     session = Database.Session()
     Name = request.form['Search']
     dogs = session.query(Database.tDog).filter(Database.tDog.name.contains(Name) | (Database.tDog.name.op('SOUNDS LIKE')(Name))).order_by(Database.tDog.name.match(Name).desc()).all()
@@ -257,13 +280,40 @@ def CreatePost():
     user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
     for user in user:
         user = user
+    #Collect dogs in your family
     dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
-    postResults = session.query(Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName)\
+
+    #Get comments of posts
+    commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.firstName, Database.tUser.lastName) \
+        .join(Database.tUser, Database.tComments.userID == Database.tUser.userID)\
+        .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID)
+
+    #Get reacts of posts
+    reactResults = session.query(Database.tReacts.postID, Database.tUser.firstName, Database.tUser.lastName) \
+        .join(Database.tUser, Database.tReacts.userID == Database.tUser.userID)\
+        .join(Database.tPosts, Database.tReacts.postID == Database.tPosts.postID)
+
+    #Get Posts
+    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName)\
     .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
     .filter(Database.tFollowers.userID == current_user.id)
-    return render_template('HomePage/Dashboard.html', user = user, posts = postResults, dogResults = dogResults, postResults = postResults)
+
+    yourReacts = session.query(Database.tReacts.postID).filter(Database.tReacts.userID == current_user.id)
+
+    likes={}
+    like =[]
+    for react in postResults:
+        likes[react.postID] = 'Like'
+    for yourReact in yourReacts:
+        if yourReact.postID in likes.keys():
+            likes[yourReact.postID] = 'Unlike'   
+    for react in postResults:
+        like.append(likes[react.postID])
+
+
+    return render_template('HomePage/Dashboard.html', user = user, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
 
 @app.route('/Create/Finish/Dog', methods=['GET','POST'])
 @login_required

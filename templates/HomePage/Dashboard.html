@@ -3,6 +3,18 @@
 <html>
   {% block head %}
       <title> Dashboard</title>
+      <script>
+        function changeLike(id) {
+        value = document.getElementById(id).value;
+              window.location = '/' + value + '/' + id;
+        if (value == 'Unlike'){
+        document.getElementById(id).value = 'Like';
+        }
+        else {
+        document.getElementById(id).value = 'Unlike';
+          }
+        }
+      </script>
   {% endblock %}
   {% block body %}
   <div class="backgroundContainer">
@@ -37,9 +49,9 @@
       <h2>Your Feed</h2>
       <div class="feed">
       <div class="container">
-        {% for post in postResults %}
+        {% for post, like in postResults %}
         <div class="well well-lg"><p><br>{{post.firstName}} {{post.lastName}} wrote this about {{post.name}}: <b>{{ post.Post }}</b></p></div>
-        <button onclick="window.location='/Create/Like/{{post.postID}}';">like</button>
+        <input type="button" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
         <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
         <textarea name="Comment"></textarea>
         <button onclick="window.location='/Create/Comment/{{post.postID}}';">Comment</button>
@@ -56,8 +68,10 @@
       {% endfor %}  
       {% if count.a > 1 %}
       and {{count.a - 1}} others liked this</p>
-      {% else %}
+      {% elif count.a == 1 %}
       liked this</p>
+      {{else}}
+        </p>
       {% endif %}
         <br>
           {% for comment in commentResults %}
