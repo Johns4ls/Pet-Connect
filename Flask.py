@@ -127,7 +127,7 @@ def Like(postID):
     return '', 204
 
 #Remove a like
-@app.route('/Disike/<int:postID>', methods=['GET', 'POST'])
+@app.route('/Dislike/<int:postID>', methods=['GET', 'POST'])
 def Unlike(postID):
     postID=str(postID)
     session = Database.Session()
