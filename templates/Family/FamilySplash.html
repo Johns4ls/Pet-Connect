@@ -4,7 +4,16 @@
 {% block nav %}
 {% endblock %}
 {% block body %}
-<h1> Family</h1>
-<input type="submit" value="Create a new family" onclick="window.location='/Create/Start/Family'">
-<input type="submit" value="Join an existing family" onclick="window.location='/Join/Family'">
+<div class="backgroundContainer">
+  <div class="mainContainer">
+    <h2>Tell Us About Your Family</h2>
+    <br><br><br>
+    <p><strong>I Want To Create a Family</strong></p>
+    <input type="submit" value="Create" onclick="window.location='/Create/Start/Family'">
+    <br><br>
+    <p><strong>I Want To Join an Existing Family</strong></p>
+    <input type="submit" value="Join" onclick="window.location='/Join/Family'">
+
+  </div>
 {% endblock %}
+</div>

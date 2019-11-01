@@ -4,10 +4,19 @@
 {% block nav %}
 {% endblock %}
 {% block body %}
-<form action="/Create/Finish/Family" method="post" novalidate>
-    {{ CreateFamilyform.hidden_tag() }}
-    <h1>Family Last Name</h1>
-    {{ CreateFamilyform.surName(placeholder="Last Name") }}<br>
-    {{ CreateFamilyform.submit() }}
-</form>
+<div class="backgroundContainer">
+  <div class="mainContainer">
+    <h2>Tell Us About Your Family</h2>
+    <br><br><br>
+    <form action="/Create/Finish/Family" method="post" novalidate>
+      <ul class="formRegistration">
+        {{ CreateFamilyform.hidden_tag() }}
+        <li></li>
+        <li><p>Last Name: </p>{{ CreateFamilyform.surName(placeholder="Last Name", class_="field-75") }}</li>
+        <br><li>{{ CreateFamilyform.submit() }}</li>
+      </ul>
+    </form>
+
+  </div>
 {% endblock %}
+</div>

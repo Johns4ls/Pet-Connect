@@ -51,11 +51,40 @@
   width: 70%;
   margin: 0 auto;
 }
+
+.formRegistration li {
+  padding: 0;
+	display: block;
+	list-style: none;
+	margin: 10px 0 0 0;
+  width: 30%;
+}
+.formRegistration p {
+  display: inline;
+}
+.formRegistration .field-half {
+  width: 49.5%;
+}
+.formRegistration .field-full {
+  width: 100%;
+}
+.formRegistration .field-80 {
+  width: 80%;
+  float: right;
+}
+.formRegistration .field-75 {
+  width: 75%;
+  float: right;
+}
+.searchnavbar {
+  float: right;
+}
 /* navbar
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .navBar{
   background-color: #33363b;
   overflow: hidden;
+
 }
 
 /*Floats each item to the left with padding of 14 & 16 px.
@@ -67,6 +96,14 @@ Removes the underline with text decoration = none.*/
   text-decoration: none;
   font-size: 17px;
 }
+.navBar p{
+  float: right;
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
 
 /*Background color change during hover state*/
 .navBar a:hover{
@@ -236,7 +273,7 @@ body {
   line-height: 1.6;
   font-weight: 400;
   font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #222; 
+  color: #222;
 
 
 /* Typography
