@@ -37,17 +37,22 @@ def imgToJPG(location, image):
     if imageName != '' and not os.path.exists(fullPath):
         image = Image.open(image.stream)
         if hasattr(image, '_getexif'):
-            orientation = 0x0112
             exif = image._getexif()
             if exif is not None:
-                orientation = exif[orientation]
-                rotations = {
-                    3: Image.ROTATE_180,
-                    6: Image.ROTATE_270,
-                    8: Image.ROTATE_90
-                }
-                if orientation in rotations:
-                    image = image.transpose(rotations[orientation])
+                if exif is 2:
+                    Image.transpose(Image.FLIP_LEFT_RIGHT)
+                elif exif is 3:
+                    Image.rotate(180),
+                elif orientation is 4: 
+                    Image.rotate(180).transpose(Image.FLIP_LEFT_RIGHT)
+                elif orientation is 5: 
+                    Image.rotate(-90).transpose(Image.FLIP_LEFT_RIGHT)
+                elif orientation is 6: 
+                    Image.rotate(-90)
+                elif orientation is 7: 
+                    Image.rotate(90).transpose(Image.FLIP_LEFT_RIGHT)
+                elif orientation is 8: 
+                    Image.rotate(90)
         savePath = savePath +  ".jpg"
         width, height = image.size
         print(width)
