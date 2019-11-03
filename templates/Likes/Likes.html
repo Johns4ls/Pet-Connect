@@ -1,0 +1,9 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+{% for react in Reacts %}
+<h1>{{react.firstName}} {{react.lastName}}</h1>
+<br>
+{% endfor %}
+{% endblock %}

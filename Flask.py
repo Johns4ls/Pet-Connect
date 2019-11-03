@@ -221,6 +221,14 @@ def UnfollowDogs(dogID):
     session.commit()
     return '', 204
 
+@app.route('/Likes/Post/<int:postID>', methods=['GET','POST'])
+def likes(postID):
+    session = Database.Session()
+    Reacts = session.query(Database.tUser.firstName, Database.tUser.lastName).join(Database.tReacts, Database.tReacts.userID == Database.tUser.userID) \
+    .filter(Database.tReacts.postID==postID)
+    return render_template('/Likes/Likes.html', Reacts = Reacts)
+
+
 @app.route('/Search', methods=['GET','POST'])
 @login_required
 def Search():

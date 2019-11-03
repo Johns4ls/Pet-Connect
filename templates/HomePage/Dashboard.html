@@ -81,7 +81,7 @@
             {% endif %}
           {% endfor %}
           {% if count.a > 1 %}
-          and {{count.a - 1}} others liked this</p>
+          <a href="/Likes/Post/{{post.postID}}">and {{count.a - 1}} others liked this</a></p>
           {% elif count.a == 1 %}
           liked this</p>
           {{else}}
