@@ -52,39 +52,52 @@
       </div>
       <br>
       <h2>Your Feed</h2>
+      <br>
       <div class="feed">
       <div class="container">
         {% for post, like in postResults %}
-        <div class="well well-lg"><p><br>{{post.firstName}} {{post.lastName}} wrote this about {{post.name}}: <b>{{ post.Post }}</b></p></div>
-        <input type="button" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
-        <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
+        <div class="postContainer">
+        <div class="well well-lg">
+          <p><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b> wrote this about <b style="color: #0d6591;">{{post.name}}</b>:</p>
+          <p>{{ post.Post }}</p>
+
+        </div>
+      <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
         <textarea name="Comment"></textarea>
-        <button onclick="window.location='/Create/Comment/{{post.postID}}';">Comment</button>
+        <br>
+        <button onclick="window.location='/Create/Comment/{{post.postID}}';" style="font-size: 70%;">Comment</button>
+        <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
       </form>
       <br>
-      {% set count = namespace(a=0) %}
-      {% for react in reactResults %}
-        {% if post.postID == react.postID %}
-        {% if count.a == 0 %}
-        <p>{{react.firstName}} {{react.lastName}}
-        {% endif %}
-        {% set count.a = count.a + 1 %}
-        {% endif %}
-      {% endfor %}  
-      {% if count.a > 1 %}
-      and {{count.a - 1}} others liked this</p>
-      {% elif count.a == 1 %}
-      liked this</p>
-      {{else}}
-        </p>
-      {% endif %}
-        <br>
-          {% for comment in commentResults %}
-            {% if post.postID == comment.postID %}
-            <p>{{comment.firstName}} {{comment.lastName}} said {{comment.Comment}}</p>
+        <div class="commentResultContainer">
+
+          {% set count = namespace(a=0) %}
+          {% for react in reactResults %}
+            {% if post.postID == react.postID %}
+            {% if count.a == 0 %}
+            <p><b style="color: #0d6591;">{{react.firstName}} {{react.lastName}}</b>
+            {% endif %}
+            {% set count.a = count.a + 1 %}
             {% endif %}
           {% endfor %}
-        {% endfor %}
+          {% if count.a > 1 %}
+          and {{count.a - 1}} others liked this</p>
+          {% elif count.a == 1 %}
+          liked this</p>
+          {{else}}
+            </p>
+          {% endif %}
+          <hr>
+          {% for comment in commentResults %}
+            {% if post.postID == comment.postID %}
+            <p><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b> said: </p>
+            <p>{{comment.Comment}}</p>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+
       </div>
     </div>
   </div>
@@ -92,7 +105,7 @@
   <script>
   window.setTimeout(function() {
     $(".alert").fadeTo(500, 0).slideUp(500, function(){
-        $(this).remove(); 
+        $(this).remove();
     });
 }, 4000);
   </script>
