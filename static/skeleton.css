@@ -26,15 +26,25 @@
 */
 /* custom stuff
 -------------------------------------------------- */
+.commentResultContainer {
+  width: 100%;
+  margin: 0 auto;
+  text-align: left;
+}
+.postContainer {
+  border: 2px solid #DCDCDC;
+  margin-bottom: 10px;
+  padding: 10px;
+}
 .backgroundContainer{
-  background-color: #778899;
+  background-color: #e3e1e1;
 }
 .mainContainer {
   width: 70%;
   margin: 0 auto;
-  background-color:#eaeaea;
-  box-shadow: 0 0 10px #000000;
+  box-shadow: -5px 0 5px -5px #333, 5px 0 5px -5px #333;
   padding: 10px;
+  background-color:#eaeaea;
   overflow: auto !important;
 }
 .mainContainer h2{
@@ -82,7 +92,7 @@
 /* navbar
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .navBar{
-  background-color: #33363b;
+  background-color: #0b83bf;
   overflow: hidden;
 
 }
