@@ -179,7 +179,7 @@ def familyCreation():
     sqlalch = Database.Session()
     HeadOfHouse = Database.tHeadofHouse(userID = current_user.id)
     sqlalch.add(HeadOfHouse)
-    sqlalch.commit()
+    id = sqlalch.commit()
     CreateFamilyform = CreateFamilyForm()
     if CreateFamilyform.validate_on_submit():
         CreateDogform = CreateDogForm()
@@ -187,7 +187,7 @@ def familyCreation():
         cur, db = Tlbx.dbConnectDict()
         cursor= Database.Session()
         query = ("INSERT INTO tFamily (familyName, headofHouseID) VALUES(%s, %s);")
-        data = (familyName, current_user.id)
+        data = (familyName, id)
         cur.execute(query, data)
         session['familyID'] = db.insert_id()
         x = cursor.query(Database.tUser).get(current_user.id)

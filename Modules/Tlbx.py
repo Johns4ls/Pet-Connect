@@ -34,32 +34,26 @@ def imgToJPG(location, image):
     fullPath =  path + imageName
     savePath = dirpath + '/static/pictures/' + location + '/' + imageName
     thumbPath =  savePath
-    if imageName != '' and not os.path.exists(fullPath):
-        image = Image.open(image.stream)
-        if hasattr(image, '_getexif'):
-            exif = image._getexif()
-            if exif is not None:
-                if exif is 2:
-                    Image.transpose(Image.FLIP_LEFT_RIGHT)
-                elif exif is 3:
-                    Image.rotate(180),
-                elif orientation is 4: 
-                    Image.rotate(180).transpose(Image.FLIP_LEFT_RIGHT)
-                elif orientation is 5: 
-                    Image.rotate(-90).transpose(Image.FLIP_LEFT_RIGHT)
-                elif orientation is 6: 
-                    Image.rotate(-90)
-                elif orientation is 7: 
-                    Image.rotate(90).transpose(Image.FLIP_LEFT_RIGHT)
-                elif orientation is 8: 
-                    Image.rotate(90)
-        savePath = savePath +  ".jpg"
-        width, height = image.size
-        print(width)
-        print(height)
-        image.save(savePath,optimize=True,quality=80)
-        if location == "Profile":
-            thumbnailGen(image, thumbPath)
+    try:
+        if imageName != '' and not os.path.exists(fullPath):
+            image = Image.open(image.stream)
+            for orientation in ExifTags.TAGS.keys():
+                if ExifTags.TAGS[orientation]=='Orientation':
+                    break
+            exif=dict(image._getexif().items())
+            if exif[orientation] == 3:
+                image=image.rotate(180, expand=True)
+            elif exif[orientation] == 6:
+                image=image.rotate(270, expand=True)
+            elif exif[orientation] == 8:
+                image=image.rotate(90, expand=True)
+    except (AttributeError, KeyError, IndexError):
+        # cases: image doesn't have getexif
+        pass
+    savePath = savePath +  ".jpg"
+    image.save(savePath,optimize=True,quality=80)
+    if location == "Profile":
+        thumbnailGen(image, thumbPath)
     else: 
         fullPath = None
     return fullPath
