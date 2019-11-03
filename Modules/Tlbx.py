@@ -30,6 +30,7 @@ def imgToJPG(location, image):
     dirpath = os.getcwd()
     path =  'pictures/' + location + '/'
     imageName = image.filename.split('.')
+    imageType = imageName[1]
     imageName = imageName[0]
     fullPath =  path + imageName
     savePath = dirpath + '/static/pictures/' + location + '/' + imageName
@@ -51,6 +52,9 @@ def imgToJPG(location, image):
         # cases: image doesn't have getexif
         pass
     savePath = savePath +  ".jpg"
+    print(imageType)
+    if imageType == 'PNG' or 'png':
+        image = image.convert('RGB')
     image.save(savePath,optimize=True,quality=80)
     if location == "Profile":
         thumbnailGen(image, thumbPath)
