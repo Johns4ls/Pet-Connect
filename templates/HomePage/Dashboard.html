@@ -33,8 +33,8 @@
     {% endwith %}
       <h2>Hello, {{user.firstName}}!</h2>
       {% if user.image == None %}
-      <a href="{{ url_for('static', filename = '/pictures/Profile/thor' + '.jpg') }}">
-        <img src="{{ url_for('static', filename = '/pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+      <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+        <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
       {% elif user.image != None %}
         <a href="{{ url_for('static', filename = user.image + '.jpg') }}">
           <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="img-thumbnail"></a>
