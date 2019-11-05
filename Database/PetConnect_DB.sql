@@ -7,7 +7,9 @@ CREATE TABLE `tUser` (
   `password` varchar(255) NOT NULL,
   `image` varchar(255),
   `addressID` int,
-  FULLTEXT KEY (firstName, lastName, email)
+  FULLTEXT KEY (firstName, lastName, email),
+  FULLTEXT KEY (firstName, lastName),
+  FULLTEXT KEY (email)
 );
 
 CREATE TABLE `tAddress` (

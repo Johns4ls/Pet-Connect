@@ -203,6 +203,17 @@ def familyCreation():
 def JoinFamily():
     return render_template('/Family/JoinFamily.html')
 
+@app.route('/Join/Family/Search', methods=['GET','POST'])
+@login_required
+def JoinFamilySearch():
+
+    session = Database.Session()
+    Name = request.form['Search']
+    Users = session.query(Database.tUser.firstName).join(Database.tHeadofHouse, Database.tHeadofHouse.userID == Database.tUser.userID) \
+        .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name))).order_by(Database.tUser.email.match(Name).desc()).all()
+
+    return render_template('/Family/JoinFamily.Search.html', Users = Users)
+
 @app.route('/Follow/<int:dogID>', methods=['GET','POST'])
 @login_required
 def FollowDogs(dogID):
