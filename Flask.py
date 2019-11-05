@@ -358,6 +358,8 @@ def DogCreation():
         familyID = session.get('familyID')
         if familyID is None:
             familyID = cursor.query(Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
+            for familyID in familyID:
+                familyID = familyID.familyID
 
         #finally commit all the dog data into the database.
         dogQuery = "Insert into tDog (name, gender, breedID, fixed, age, Size, Weight, bio, image, favToyID, favParkID, familyID) VALUES (%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s)"
