@@ -250,8 +250,14 @@ def Search():
 @app.route('/Create/New/Dog', methods=['GET','POST'])
 @login_required
 def CreateNewDog():
+    session = Database.Session()
+    followed = session.query(Database.tDog.dogID).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID) \
+    .filter(Database.tUser.userID == current_user.id)
     CreateDogform = CreateDogForm()
-    return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
+    if followed is not None:
+        return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
+    else: 
+        return render_template('Dog/Initial_NewDog.html', CreateDogForm = CreateDogform)
 
 @app.route('/Create/Start/Park', methods=['GET','POST'])
 @login_required

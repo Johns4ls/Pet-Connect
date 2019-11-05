@@ -20,12 +20,20 @@
  <table style="width:100%">
    <h1>
    <tr>
+     <td><b>profile</b></td>
      <td><b>Name</b></td>
      <td><b>Follow</b></td>
   </tr>
   </h1>
 {% for dogs, text in results %}
    <tr>
+      {% if dogs.image == None %}
+      <td><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+        <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a></td>
+      {% elif dogs.image != None %}
+        <td><a href="{{ url_for('static', filename = dogs.image + '.jpg') }}">
+          <img src="{{ url_for('static', filename = dogs.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
+      {% endif %}
      <td><h3><b>{{dogs.name}}</b></h3> </td>
      <td><input type="button" id="{{dogs.dogID}}" value="{{text}}" onclick="changeFollow({{dogs.dogID}})"></td>
    </tr>
