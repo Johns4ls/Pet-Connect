@@ -200,19 +200,25 @@ def familyCreation():
 
 @app.route('/Join/Family', methods=['GET','POST'])
 @login_required
-def JoinFamily():
-    return render_template('/Family/JoinFamily.html')
+def JoinFamily(userID):
+    session = Database.Session()
+    familyID = session.query(Database.tUser.familyID).filter(Database.tUser.userID == userID)
+    for family in familyID:
+        familyID = family.familyID
+    x = session.query(Database.tUser).get(current_user.id)
+    x.familyID = familyID
+    session.commit()
+    return redirect('/dashboard')
 
 @app.route('/Join/Family/Search', methods=['GET','POST'])
 @login_required
 def JoinFamilySearch():
-
     session = Database.Session()
     Name = request.form['Search']
-    Users = session.query(Database.tUser.firstName).join(Database.tHeadofHouse, Database.tHeadofHouse.userID == Database.tUser.userID) \
+    Users = session.query(Database.tUser).join(Database.tHeadofHouse, Database.tHeadofHouse.userID == Database.tUser.userID) \
         .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name))).order_by(Database.tUser.email.match(Name).desc()).all()
 
-    return render_template('/Family/JoinFamily.Search.html', Users = Users)
+    return render_template('/Family/JoinFamilySearch.html', Users = Users)
 
 @app.route('/Follow/<int:dogID>', methods=['GET','POST'])
 @login_required
