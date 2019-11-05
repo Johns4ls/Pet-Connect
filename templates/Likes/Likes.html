@@ -2,8 +2,25 @@
 {% block head %}
 {% endblock %}
 {% block body %}
+<table>
+<tr>
+        <h1><td><b>profile</b></td></h1>
+        <h1><td><b>Name</b></td></h1>
+        <h1><td><b>Friend</b></td></h1>
+     </tr>
 {% for react in Reacts %}
-<h1>{{react.firstName}} {{react.lastName}}</h1>
-<br>
+<tr>
+{% if react.image == None %}
+
+<td><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+  <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a></td>
+{% elif react.image != None %}
+  <td><a href="{{ url_for('static', filename = react.image + '.jpg') }}">
+    <img src="{{ url_for('static', filename = react.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
+{% endif %}
+<td><h1>{{react.firstName}} {{react.lastName}}</h1></td>
+<td><input type="button" id="{{react.userID}}" value="Friend"></td>
+</tr>
 {% endfor %}
+</table>
 {% endblock %}

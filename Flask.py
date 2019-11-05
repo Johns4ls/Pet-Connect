@@ -224,7 +224,7 @@ def UnfollowDogs(dogID):
 @app.route('/Likes/Post/<int:postID>', methods=['GET','POST'])
 def likes(postID):
     session = Database.Session()
-    Reacts = session.query(Database.tUser.firstName, Database.tUser.lastName).join(Database.tReacts, Database.tReacts.userID == Database.tUser.userID) \
+    Reacts = session.query(Database.tUser).join(Database.tReacts, Database.tReacts.userID == Database.tUser.userID) \
     .filter(Database.tReacts.postID==postID)
     return render_template('/Likes/Likes.html', Reacts = Reacts)
 
@@ -295,6 +295,7 @@ def CreatePost():
     session.commit()
     flash('Posted successfully')
     return redirect('/dashboard')
+
 @app.route('/Create/Finish/Dog', methods=['GET','POST'])
 @login_required
 def DogCreation():
