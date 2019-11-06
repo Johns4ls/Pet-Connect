@@ -66,6 +66,10 @@
                     <div class="alert alert-danger" role="alert">
                       [{{ error }}]</div>
                       {% endfor %}
+                    {% for error in Registerform.passwordConfirm.errors %}
+                    <div class="alert alert-danger" role="alert">
+                      [{{ error }}]</div>
+                      {% endfor %}
                     {{ Registerform.submit() }}
             </form>
 			</div>
