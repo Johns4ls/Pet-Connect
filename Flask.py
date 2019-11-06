@@ -198,17 +198,10 @@ def familyCreation():
     return render_template('/Family/FamilyCreate.html', CreateFamilyform = CreateFamilyform )
 
 
-@app.route('/Join/Family', methods=['GET','POST'])
+@app.route('/Join/Family/Landing', methods=['GET','POST'])
 @login_required
-def JoinFamily(userID):
-    session = Database.Session()
-    familyID = session.query(Database.tUser.familyID).filter(Database.tUser.userID == userID)
-    for family in familyID:
-        familyID = family.familyID
-    x = session.query(Database.tUser).get(current_user.id)
-    x.familyID = familyID
-    session.commit()
-    return redirect('/dashboard')
+def JoinFamilyLanding():
+    return render_template('/Family/JoinFamily.html')
 
 @app.route('/Join/Family/Search', methods=['GET','POST'])
 @login_required
@@ -219,6 +212,23 @@ def JoinFamilySearch():
         .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name))).order_by(Database.tUser.email.match(Name).desc()).all()
 
     return render_template('/Family/JoinFamilySearch.html', Users = Users)
+
+@app.route('/Join/Family/<int:userID>', methods=['GET','POST'])
+@login_required
+def JoinFamily(userID):
+    session = Database.Session()
+    familyID = session.query(Database.tUser.familyID).filter(Database.tUser.userID == userID)
+    for family in familyID:
+        familyID = family.familyID
+    x = session.query(Database.tUser).get(current_user.id)
+    x.familyID = familyID
+    session.commit()
+    dogIDs = session.query(Database.tDog.dogID).filter(Database.tDog.familyID == familyID)
+    for dogID in dogIDs:
+        dog = Database.tFollowers(dogID = dogID.dogID, userID = current_user.id)
+        session.add(dog)
+        session.commit()
+    return redirect('/dashboard')
 
 @app.route('/Follow/<int:dogID>', methods=['GET','POST'])
 @login_required
@@ -268,8 +278,8 @@ def Search():
 @login_required
 def CreateNewDog():
     session = Database.Session()
-    headOfHouse = session.query(Database.tHeadofHouse).filter(Database.tHeadofHouse.userID == current_user.id)
-    if headOfHouse is None:
+    headOfHouse = session.query(Database.tHeadofHouse).filter(Database.tHeadofHouse.userID == current_user.id).all()
+    if headOfHouse == []:
         flash("You must be the head of household to create a new dog")
         return redirect('/dashboard')
     followed = session.query(Database.tDog.dogID).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID) \
