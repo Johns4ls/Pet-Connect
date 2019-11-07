@@ -259,10 +259,12 @@ def likes(postID):
 @app.route('/Search', methods=['GET','POST'])
 @login_required
 def Search():
-    session = Database.Session()
+    db = Database.Session()
     Name = request.form['Search']
-    dogs = session.query(Database.tDog).filter(Database.tDog.name.contains(Name) | (Database.tDog.name.op('SOUNDS LIKE')(Name))).order_by(Database.tDog.name.match(Name).desc()).all()
-    followed = session.query(Database.tFollowers).filter(Database.tFollowers.userID == current_user.id)
+    session['Name'] = Name
+    #Get top 5 most relevant dogs
+    dogs = db.query(Database.tDog).filter(Database.tDog.name.contains(Name) | (Database.tDog.name.op('SOUNDS LIKE')(Name))).order_by(Database.tDog.name.match(Name).desc()).limit(5).all()
+    followed = db.query(Database.tFollowers).filter(Database.tFollowers.userID == current_user.id)
     texts={}
     text =[]
     for dog in dogs:
@@ -272,7 +274,51 @@ def Search():
             texts[follower.dogID] = 'Unfollow'         
     for dog in dogs:
         text.append(texts[dog.dogID])
-    return render_template('/Search/Search.html', results = zip(dogs, text))
+
+
+    #Get top 5 most relevant users
+    Users = db.query(Database.tUser) \
+        .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name)) \
+        | (Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name))) \
+        | (Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name)))) \
+        .order_by(Database.Match([Database.tUser.email, Database.tUser.firstName, Database.tUser.lastName], Name)) \
+        .limit(5).all()
+
+    return render_template('/Search/Search.html', results = zip(dogs, text), Users = Users)
+
+@app.route('/Search/Dogs', methods=['GET','POST'])
+@login_required
+def SearchDogs():
+    db = Database.Session()
+    Name = session.get('Name')
+    #Get top 5 most relevant dogs and whether or not they are being followed.
+    dogs = db.query(Database.tDog).filter(Database.tDog.name.contains(Name) | (Database.tDog.name.op('SOUNDS LIKE')(Name))).order_by(Database.tDog.name.match(Name).desc()).all()
+    followed = db.query(Database.tFollowers).filter(Database.tFollowers.userID == current_user.id)
+    texts={}
+    text =[]
+    for dog in dogs:
+        texts[dog.dogID] = 'Follow'
+    for follower in followed:
+        if follower.dogID in texts.keys():
+            texts[follower.dogID] = 'Unfollow'         
+    for dog in dogs:
+        text.append(texts[dog.dogID])
+
+    return render_template('/Search/SearchDogs.html', results = zip(dogs, text))
+
+@app.route('/Search/Users', methods=['GET','POST'])
+@login_required
+def SearchUsers():
+    db = Database.Session()
+    Name = session.get('Name')
+    #Get top 5 most relevant users
+    Users = db.query(Database.tUser) \
+        .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name)) \
+        | (Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name))) \
+        | (Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name)))) \
+        .order_by(Database.Match([Database.tUser.email, Database.tUser.firstName, Database.tUser.lastName], Name)) \
+        .all()    
+    return render_template('/Search/SearchUsers.html', Users = Users)
 
 @app.route('/Create/New/Dog', methods=['GET','POST'])
 @login_required

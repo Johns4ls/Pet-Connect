@@ -39,30 +39,5 @@
    </tr>
 {% endfor %}
 </table>
-<a href="/Search/Dogs">View All Dogs</a>
-
-<table style="width:100%">
-    <h1>
-    <tr>
-      <td><b>profile</b></td>
-      <td><b>Name</b></td>
-      <td><b>Message</b></td>
-   </tr>
-   </h1>
- {% for User in Users %}
-    <tr>
-       {% if User.image == None %}
-       <td><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
-         <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a></td>
-       {% elif User.image != None %}
-         <td><a href="{{ url_for('static', filename = User.image + '.jpg') }}">
-           <img src="{{ url_for('static', filename = User.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
-       {% endif %}
-      <td><h3><b>{{User.firstName}} {{User.lastName}}</b></h3> </td>
-      <td><input type="button" id="{{User.userID}}" value="Message" onclick=""></td>
-    </tr>
- {% endfor %}
- </table>
- <a href="/Search/Users">View All Users</a>
 
 {% endblock %}
