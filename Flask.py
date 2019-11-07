@@ -278,9 +278,9 @@ def Search():
 
     #Get top 5 most relevant users
     Users = db.query(Database.tUser) \
-        .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name)) \
-        | (Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name))) \
-        | (Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name)))) \
+        .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name))) \
+        .filter(Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name))) \
+        .filter(Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name))) \
         .order_by(Database.Match([Database.tUser.email, Database.tUser.firstName, Database.tUser.lastName], Name)) \
         .limit(5).all()
 
