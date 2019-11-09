@@ -14,9 +14,19 @@
             {{message}}
           </div>
         {% endfor %}
-    </ul>
     {% endif %}
     {% endwith %}
+    {% for error in Registerform.password.errors %}
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      [{{ error }}]</div>
+      {% endfor %}
+    {% for error in Registerform.passwordConfirm.errors %}
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      The passwords must be the same</div>
+      {% endfor %}
+    </ul>
 <div class="login-reg-panel">
 		<div class="login-info-box">
 			<h2>Have an account?</h2>
