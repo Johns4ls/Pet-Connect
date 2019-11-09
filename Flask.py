@@ -50,8 +50,7 @@ def index():
     .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
-    .filter(Database.tFollowers.userID == current_user.id)
-
+    .filter(Database.tFollowers.userID == current_user.id).order_by(Database.tPosts.postID.desc())
     yourReacts = session.query(Database.tReacts.postID).filter(Database.tReacts.userID == current_user.id)
 
     likes={}
@@ -138,7 +137,7 @@ def Like(postID):
 def Unlike(postID):
     postID=str(postID)
     session = Database.Session()
-    session.query(Database.tReacts).filter(Database.tReacts.reactID==postID) \
+    session.query(Database.tReacts).filter(Database.tReacts.postID==postID) \
     .filter(Database.tReacts.userID==current_user.id).delete()
     session.commit()
     return '', 204
@@ -278,10 +277,9 @@ def Search():
 
     #Get top 5 most relevant users
     Users = db.query(Database.tUser) \
-        .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name))) \
-        .filter(Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name))) \
-        .filter(Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name))) \
-        .order_by(Database.Match([Database.tUser.email, Database.tUser.firstName, Database.tUser.lastName], Name)) \
+        .filter(Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name)) \
+        | (Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name)))) \
+        .order_by(Database.Match([Database.tUser.firstName, Database.tUser.lastName], Name)) \
         .limit(5).all()
 
     return render_template('/Search/Search.html', results = zip(dogs, text), Users = Users)
@@ -311,10 +309,8 @@ def SearchDogs():
 def SearchUsers():
     db = Database.Session()
     Name = session.get('Name')
-    #Get top 5 most relevant users
     Users = db.query(Database.tUser) \
-        .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name)) \
-        | (Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name))) \
+        .filter(Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name)) \
         | (Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name)))) \
         .order_by(Database.Match([Database.tUser.email, Database.tUser.firstName, Database.tUser.lastName], Name)) \
         .all()    
@@ -407,11 +403,17 @@ def DogCreation():
             for familyID in familyID:
                 familyID = familyID.familyID
 
-        #finally commit all the dog data into the database.
+        # commit all the dog data into the database.
         dogQuery = "Insert into tDog (name, gender, breedID, fixed, age, Size, Weight, bio, image, favToyID, favParkID, familyID) VALUES (%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s)"
         data = (session.get('dogName'), session.get('gender'), breedID, session.get('fixed'), session.get('age'), session.get('size'), session.get('weight'), session.get('bio'), session.get('image'), favToyID, favParkID, familyID )
         cur.execute(dogQuery, data)
         db.commit()
+
+        #Follow the dog
+        sqlalch = Database.Session()
+        Query = Database.tFollowers(dogID=cur.lastrowid, userID=current_user.id) 
+        sqlalch.add(Query)
+        sqlalch.commit()
         return redirect('/dashboard')
     flash("please input your dogs favorite park")
     return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
