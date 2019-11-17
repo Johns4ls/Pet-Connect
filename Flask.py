@@ -59,7 +59,7 @@ def index():
         likes[react.postID] = 'Like'
     for yourReact in yourReacts:
         if yourReact.postID in likes.keys():
-            likes[yourReact.postID] = 'Unlike'         
+            likes[yourReact.postID] = 'Unlike'
     for react in postResults:
         like.append(likes[react.postID])
 
@@ -270,7 +270,7 @@ def Search():
         texts[dog.dogID] = 'Follow'
     for follower in followed:
         if follower.dogID in texts.keys():
-            texts[follower.dogID] = 'Unfollow'         
+            texts[follower.dogID] = 'Unfollow'
     for dog in dogs:
         text.append(texts[dog.dogID])
 
@@ -298,7 +298,7 @@ def SearchDogs():
         texts[dog.dogID] = 'Follow'
     for follower in followed:
         if follower.dogID in texts.keys():
-            texts[follower.dogID] = 'Unfollow'         
+            texts[follower.dogID] = 'Unfollow'
     for dog in dogs:
         text.append(texts[dog.dogID])
 
@@ -313,7 +313,7 @@ def SearchUsers():
         .filter(Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name)) \
         | (Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name)))) \
         .order_by(Database.Match([Database.tUser.email, Database.tUser.firstName, Database.tUser.lastName], Name)) \
-        .all()    
+        .all()
     return render_template('/Search/SearchUsers.html', Users = Users)
 
 @app.route('/Create/New/Dog', methods=['GET','POST'])
@@ -329,7 +329,7 @@ def CreateNewDog():
     CreateDogform = CreateDogForm()
     if followed is not None:
         return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
-    else: 
+    else:
         return render_template('Dog/Initial_NewDog.html', CreateDogForm = CreateDogform)
 
 @app.route('/Create/Start/Park', methods=['GET','POST'])
@@ -411,7 +411,7 @@ def DogCreation():
 
         #Follow the dog
         sqlalch = Database.Session()
-        Query = Database.tFollowers(dogID=cur.lastrowid, userID=current_user.id) 
+        Query = Database.tFollowers(dogID=cur.lastrowid, userID=current_user.id)
         sqlalch.add(Query)
         sqlalch.commit()
         return redirect('/dashboard')
@@ -430,6 +430,16 @@ def DogCreation():
 
     #Redirect to the dashboard
     return redirect('/dashboard')
+
+@app.route('/User/Profile', methods=['GET', 'POST'])
+def userProfile():
+    session = Database.Session()
+    user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
+    for user in user:
+        user = user
+    #Collect dogs in your family
+    dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
+    return render_template('Account/Profile.html', user = user, dogResults = dogResults)
 
 @app.route("/logout")
 @login_required
