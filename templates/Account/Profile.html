@@ -1,0 +1,45 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<div class="backgroundContainer">
+  <div class="mainContainer">
+    <h2>$User's Profile</h2>
+    {% if user.image == None %}
+    <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+    {% elif user.image != None %}
+      <a href="{{ url_for('static', filename = user.image + '.jpg') }}">
+        <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="img-thumbnail"></a>
+    {% endif %}
+    <br>
+    <br>
+    <div class="profileMain">
+      <section class="profileButtonsText">
+        <div class="dogButtonHalfText">
+          <p>View Dog Profile(s) for $User</p>
+        </div>
+        <div class="playdateButtonHalfText">
+          <p style="float: right;">Schedule a Playdate</p>
+        </div>
+      </section>
+      <section class="profileButtonsText">
+        <div class="dogButtonHalfText">
+          <button>$Dog's Profile</button>
+        </div>
+        <div class="playdateButtonHalfText">
+          <button style="float: right;">Schedule Playdate</button>
+        </div>
+        <br><br><br>
+      </section>
+    </div>
+    <h2> add for loop to show a new button for each $dog that the $user is the owner of. </h2>
+    <h2> this will likely stretch the page down a bit if the $user has multiple $dog's
+    <br><br><br><br>
+    <hr>
+    <h2> ALL POSTS RELATIVE TO $USER</h2>
+    <h2> add for loop to show the same post content from the dashboard, but this time only for the $user that the page is specific to. </h2>
+    <h2> it's important that we are referencing the "$user" that this page load is specific to (only this profile we're viewing), not the current logged in user.
+  </div>
+{% endblock %}
+</div>

@@ -61,7 +61,36 @@
   width: 70%;
   margin: 0 auto;
 }
+.profileMain {
+  width: 70%;
+  margin: 0 auto;
+}
+.profileButtonsText {
+  width: 70%;
+  margin: auto;
+}
+.dogButtonHalfText {
+  width: 49.5%;
+  float: left;
+}
+.playdateButtonHalfText {
+  width: 49.5%;
+  float: right;
+}
+.profileButtons {
+  width: 70%;
+  margin: auto;
+}
+.dogButtonHalf {
+  width: 49.5%;
+  float: left;
 
+}
+.playdateButtonHalf {
+  width: 49.5%;
+  float: right;
+
+}
 .formRegistration li {
   padding: 0;
 	display: block;
