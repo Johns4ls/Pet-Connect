@@ -6,6 +6,7 @@ import pymysql
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql.expression import ClauseElement
 from sqlalchemy import literal
+from datetime import datetime
 engine = sqlalchemy.create_engine(
     'mysql+pymysql://Website:W3bsite!@ec2-13-59-203-226.us-east-2.compute.amazonaws.com:3306/PetConnect',
     echo=True, pool_size=30)
@@ -22,6 +23,7 @@ class tUser(Base):
     password = Column('password', String(255))
     image = Column('image', String(255))
     addressID = Column(Integer, ForeignKey('tAddress.addressID'))
+    last_message_read_time = Column('last_message_read_time', DateTime)
 
 class tAddress(Base):
     __tablename__ = 'tAddress'
@@ -136,12 +138,19 @@ class tPlayDate(Base):
     dogID = Column(Integer, ForeignKey('tDog.dogID'))
     userID = Column(Integer, ForeignKey('tUser.userID'))
 
+class tFriend(Base):
+    __tablename__ = 'tFriend'
+    friendID = Column(Integer, primary_key=True)
+    friend1 = Column(Integer, ForeignKey('tUser.userID'))
+    friend2 = Column(Integer, ForeignKey('tUser.userID'))
+
 class tMessage(Base):
     __tablename__ = 'tMessage'
     messageID = Column(Integer, primary_key=True)
-    userTo_ID = Column(Integer, ForeignKey('tUser.userID'))
-    userFrom_ID = Column(Integer, ForeignKey('tUser.userID'))
-    ts = Column('ts', DateTime)
+    sender = Column(Integer, ForeignKey('tUser.userID'))
+    recipient = Column(Integer, ForeignKey('tUser.userID'))
+    time_Sent  = Column('time_Sent', DateTime), 
+    message = Column('Message', String(255))
 
 class tPictureMessage(Base):
     __tablename__ = 'tPictureMessage'
@@ -188,6 +197,11 @@ def Session():
     Session.configure(bind=engine)
     session = Session()
     return session
+
+def new_messages(current_user):
+    session = Session()
+    last_read_time = session.query(tUser.last_message_read_time) or datetime(1900, 1, 1)
+    return session.query(tMessage).filter(tMessage.recipient == current_user.id).filter(tMessage.time_Sent > last_read_time).count()
 
 ''' Example queries
 # Add a user

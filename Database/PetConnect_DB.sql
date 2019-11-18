@@ -7,6 +7,7 @@ CREATE TABLE `tUser` (
   `password` varchar(255) NOT NULL,
   `image` varchar(255),
   `addressID` int,
+  `last_message_read_time` timestamp,
   FULLTEXT KEY (firstName, lastName, email),
   FULLTEXT KEY (firstName, lastName),
   FULLTEXT KEY (email)
@@ -127,11 +128,18 @@ CREATE TABLE `tPlayDate` (
   `userID` int
 );
 
+CREATE TABLE `tFriend` (
+  `friendID` int PRIMARY KEY AUTO_INCREMENT,
+  `friend1` int,
+  `friend2` int
+);
+
 CREATE TABLE `tMessage` (
   `messageID` int PRIMARY KEY AUTO_INCREMENT,
-  `userTo_ID` int,
-  `userFrom_ID` int,
-  `ts` timestamp NOT NULL DEFAULT NOW()
+  `sender` int,
+  `recipient` int,
+  `time_Sent` timestamp NOT NULL DEFAULT NOW()
+  `message` varchar(255)
 );
 
 CREATE TABLE `tPictureMessage` (
@@ -220,9 +228,13 @@ ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
 
 ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
-ALTER TABLE `tMessage` ADD FOREIGN KEY (`userTo_ID`) REFERENCES `tUser` (`userID`);
+ALTER TABLE `tFriend` ADD FOREIGN KEY (`friend1`) REFERENCES `tUser` (`userID`);
 
-ALTER TABLE `tMessage` ADD FOREIGN KEY (`userFrom_ID`) REFERENCES `tUser` (`userID`);
+ALTER TABLE `tFriend` ADD FOREIGN KEY (`friend2`) REFERENCES `tUser` (`userID`);
+
+ALTER TABLE `tMessage` ADD FOREIGN KEY (`sender`) REFERENCES `tUser` (`userID`);
+
+ALTER TABLE `tMessage` ADD FOREIGN KEY (`recipient`) REFERENCES `tUser` (`userID`);
 
 ALTER TABLE `tPictureMessage` ADD FOREIGN KEY (`messageID`) REFERENCES `tMessage` (`messageID`);
 

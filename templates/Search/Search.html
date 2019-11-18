@@ -3,13 +3,23 @@
 
 <script>
   function changeFollow(id) {
-	value = document.getElementById(id).value;
+	value = document.getElementById("Dog/" + id).value;
         window.location = '/' + value + '/' + id;
 	if (value == 'Unfollow'){
-	document.getElementById(id).value = 'Follow';
+	document.getElementById("Dog/" + id).value = 'Follow';
 	}
 	else {
-	document.getElementById(id).value = 'Unfollow'
+	document.getElementById("Dog/" +id).value = 'Unfollow'
+    }
+  }
+  function changeFriend(id) {
+	value = document.getElementById("Friend/" + id).value;
+        window.location = '/' + value + '/' + id;
+	if (value == 'Unfollow'){
+	document.getElementById("Friend/" + id).value = 'Friend';
+	}
+	else {
+	document.getElementById("Friend/" + id).value = 'UnFriend'
     }
   }
 </script>
@@ -35,7 +45,7 @@
           <img src="{{ url_for('static', filename = dogs.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
       {% endif %}
      <td><h3><b>{{dogs.name}}</b></h3> </td>
-     <td><input type="button" id="{{dogs.dogID}}" value="{{text}}" onclick="changeFollow({{dogs.dogID}})"></td>
+     <td><input type="button" id="Dog/{{dogs.dogID}}" value="{{text}}" onclick="changeFollow({{dogs.dogID}})"></td>
    </tr>
 {% endfor %}
 </table>
@@ -59,7 +69,8 @@
            <img src="{{ url_for('static', filename = User.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
        {% endif %}
       <td><h3><b>{{User.firstName}} {{User.lastName}}</b></h3> </td>
-      <td><input type="button" id="{{User.userID}}" value="Message" onclick=""></td>
+      <td><input type="button" id="Message/{{User.userID}}" value="Message" onclick="window.location = '/Messages';"></td>
+      <td><input type="button" id="Friend/{{User.userID}}" value="Friend" onclick="changeFriend({{User.userID}})"></td>
     </tr>
  {% endfor %}
  </table>

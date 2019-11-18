@@ -63,7 +63,9 @@ def index():
     for react in postResults:
         like.append(likes[react.postID])
 
-
+    #Get unread messages
+    messages = Database.new_messages(current_user)
+    print(messages)
     return render_template('HomePage/Dashboard.html', user = user, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
 
 #Renders the login page
@@ -254,6 +256,47 @@ def likes(postID):
     .filter(Database.tReacts.postID==postID)
     return render_template('/Likes/Likes.html', Reacts = Reacts)
 
+@app.route('/Friend/<int:userID>', methods=['GET','POST'])
+@login_required
+def AddFriend(userID):
+    session = Database.Session()
+    addFriend = Database.tFriend(friend1 = current_user.id, friend2 = userID)
+    session.add(addFriend)
+    session.commit()
+    return('', 204)
+
+@app.route('/Friend/<int:userID>', methods=['GET','POST'])
+@login_required
+def UnFriend(userID):
+    session = Database.Session()
+    session.query(Database.tFriend) \
+        .filter(Database.tFriend.friend1 == userID) \
+        .filter(Database.tFriend.friend2 == userID) \
+        .filter(Database.tFriend.friend1 == current_user.id) \
+        .filter(Database.tFriend.friend2 == current_user.id) \
+        .delete()
+    session.commit()
+    return('', 204)
+
+@app.route('/Send/Message', methods=['GET','POST'])
+@login_required
+def sendMessage():
+    return('', 204)
+
+
+
+@app.route('/Messages', methods=['GET','POST'])
+@login_required
+def Messages():
+    session = Database.Session()
+    Users = session.query(Database.tMessage) \
+        .join(Database.tUser, Database.tMessage.recipient == Database.tUser.userID) \
+        .join(Database.tUser, Database.tMessage.sender == Database.tUser.userID) \
+        .join(Database.tUser, Database.tFriend.friend1 == Database.tUser.userID) \
+        .join(Database.tUser, Database.tFriend.friend2 == Database.tUser.userID) \
+        .filter(Database.tFriend.friend1 != current_user.id, Database.tFriend.friend2 == current_user.id \
+            | Database.tFriend.friend1 == current_user.id, Database.tFriend.friend2 != current_user.id)
+    return render_template('/Messages/Messages.html')
 
 @app.route('/Search', methods=['GET','POST'])
 @login_required
