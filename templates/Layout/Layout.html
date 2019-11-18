@@ -18,6 +18,13 @@
  <!--navbar styled with bootstrap classes-->
  <div class="navBar" id="mainNavBar">
     <div class="form-inline">
+            {% if currentUser.image == None %}
+            <a href="/User/Profile/{{currentUser.userID}}">
+              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"style="max-height: 50px; max-width: 50px;"></a>
+            {% elif currentUser.image != None %}
+              <a href="/User/Profile/{{currentUser.userID}}">
+                <img src="{{ url_for('static', filename = currentUser.image + '.thumbnail') }}"class="img-thumbnail"style="max-height: 50px; max-width: 50px;"></a>
+            {% endif %}
         <a href="/dashboard">Home</a>
         <a href="/Create/New/Dog">Create a new dog</a>
         <a href="/Messages">Messages</a>

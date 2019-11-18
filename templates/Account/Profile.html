@@ -1,0 +1,88 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<div class="backgroundContainer">
+  <div class="mainContainer">
+    <h2>{{user.firstName}} {{user.lastName}}'s profile</h2>
+    {% if user.image == None %}
+    <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+    {% elif user.image != None %}
+      <a href="{{ url_for('static', filename = user.image + '.jpg') }}">
+        <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="img-thumbnail"></a>
+    {% endif %}
+    <br>
+    <br>
+    <div class="profileMain">
+      
+      <section class="profileButtonsText">
+        <div class="dogButtonHalfText">
+          <p>View Dog Profile(s) for {{user.firstName}}</p>
+        </div>
+        <div class="playdateButtonHalfText">
+          <p style="float: right;">Schedule a Playdate</p>
+        </div>
+      </section>
+      {% for dog in dogResults %}
+      <section class="profileButtonsText">
+        <div class="dogButtonHalfText">
+          <button onclick="window.location='/Dog/Profile/{{dog.dogID}}';">{{dog.name}} Profile</button>
+        </div>
+        <div class="playdateButtonHalfText">
+          <button style="float: right;" onclick="window.location='';">Schedule Playdate</button>
+        </div>
+        {% endfor %}
+        <br><br><br>
+      </section>
+    </div>
+    <div class="feed">
+        <div class="container">
+          {% for post, like in postResults %}
+          <div class="postContainer">
+          <div class="well well-lg">
+            <p><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b> wrote this about <b style="color: #0d6591;">{{post.name}}</b>:</p>
+            <p>{{ post.Post }}</p>
+  
+          </div>
+        <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
+          <textarea name="Comment"></textarea>
+          <br>
+          <button onclick="window.location='/Create/Comment/{{post.postID}}';" style="font-size: 70%;">Comment</button>
+          <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
+        </form>
+        <br>
+          <div class="commentResultContainer">
+  
+            {% set count = namespace(a=0) %}
+            {% for react in reactResults %}
+              {% if post.postID == react.postID %}
+              {% if count.a == 0 %}
+              <p><b style="color: #0d6591;">{{react.firstName}} {{react.lastName}}</b>
+              {% endif %}
+              {% set count.a = count.a + 1 %}
+              {% endif %}
+            {% endfor %}
+            {% if count.a > 1 %}
+            <a href="/Likes/Post/{{post.postID}}">and {{count.a - 1}} others liked this</a></p>
+            {% elif count.a == 1 %}
+            liked this</p>
+            {{else}}
+              </p>
+            {% endif %}
+            <hr>
+            {% for comment in commentResults %}
+              {% if post.postID == comment.postID %}
+              <p><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b> said: </p>
+              <p>{{comment.Comment}}</p>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+  
+        </div>
+      </div>
+  </div>
+{% endblock %}
+</div>
