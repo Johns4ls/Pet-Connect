@@ -29,9 +29,7 @@ def index():
     '''Do a normal select for comments and reacts. Then in jinja during the for loop for posts
     do a for loop for reacts and comments. Do an if post.postID == comment.postID and if post.postiD == react.postID'''
     session = Database.Session()
-    user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
-    for user in user:
-        user = user
+    currentUser = Tlbx.currentUserInfo(current_user.id)
     #Collect dogs in your family
     dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
 
@@ -64,7 +62,7 @@ def index():
         like.append(likes[react.postID])
 
 
-    return render_template('HomePage/Dashboard.html', user = user, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
+    return render_template('HomePage/Dashboard.html', currentUser = currentUser, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
 
 #Renders the login page
 @app.route('/', methods=['GET', 'POST'])
@@ -274,6 +272,7 @@ def Search():
     for dog in dogs:
         text.append(texts[dog.dogID])
 
+    currentUser = Tlbx.currentUserInfo(current_user.id)
 
     #Get top 5 most relevant users
     Users = db.query(Database.tUser) \
@@ -282,7 +281,7 @@ def Search():
         .order_by(Database.Match([Database.tUser.firstName, Database.tUser.lastName], Name)) \
         .limit(5).all()
 
-    return render_template('/Search/Search.html', results = zip(dogs, text), Users = Users)
+    return render_template('/Search/Search.html', results = zip(dogs, text), Users = Users, currentUser = currentUser)
 
 @app.route('/Search/Dogs', methods=['GET','POST'])
 @login_required
@@ -301,8 +300,8 @@ def SearchDogs():
             texts[follower.dogID] = 'Unfollow'
     for dog in dogs:
         text.append(texts[dog.dogID])
-
-    return render_template('/Search/SearchDogs.html', results = zip(dogs, text))
+    currentUser = Tlbx.currentUserInfo(current_user.id)
+    return render_template('/Search/SearchDogs.html', results = zip(dogs, text), currentUser = currentUser)
 
 @app.route('/Search/Users', methods=['GET','POST'])
 @login_required
@@ -314,11 +313,13 @@ def SearchUsers():
         | (Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name)))) \
         .order_by(Database.Match([Database.tUser.email, Database.tUser.firstName, Database.tUser.lastName], Name)) \
         .all()
-    return render_template('/Search/SearchUsers.html', Users = Users)
+    currentUser = Tlbx.currentUserInfo(current_user.id)
+    return render_template('/Search/SearchUsers.html', Users = Users, currentUser = currentUser)
 
 @app.route('/Create/New/Dog', methods=['GET','POST'])
 @login_required
 def CreateNewDog():
+    currentUser = Tlbx.currentUserInfo(current_user.id)
     session = Database.Session()
     headOfHouse = session.query(Database.tHeadofHouse).filter(Database.tHeadofHouse.userID == current_user.id).all()
     if headOfHouse == []:
@@ -328,7 +329,7 @@ def CreateNewDog():
     .filter(Database.tUser.userID == current_user.id)
     CreateDogform = CreateDogForm()
     if followed is not None:
-        return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
+        return render_template('Dog/NewDog.html', currentUser = currentUser, CreateDogform = CreateDogform)
     else:
         return render_template('Dog/Initial_NewDog.html', CreateDogForm = CreateDogform)
 
@@ -431,15 +432,45 @@ def DogCreation():
     #Redirect to the dashboard
     return redirect('/dashboard')
 
-@app.route('/User/Profile', methods=['GET', 'POST'])
-def userProfile():
+@app.route('/User/Profile/<int:userID>', methods=['GET', 'POST'])
+def userProfile(userID):
+    currentUser = Tlbx.currentUserInfo(current_user.id)
     session = Database.Session()
-    user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
+    user = session.query(Database.tUser).filter(Database.tUser.userID == userID)
     for user in user:
         user = user
+
+    #Get comments of posts
+    commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.firstName, Database.tUser.lastName) \
+        .join(Database.tUser, Database.tComments.userID == Database.tUser.userID)\
+        .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID)
+
+    #Get reacts of posts
+    reactResults = session.query(Database.tReacts.postID, Database.tUser.firstName, Database.tUser.lastName) \
+        .join(Database.tUser, Database.tReacts.userID == Database.tUser.userID)\
+        .join(Database.tPosts, Database.tReacts.postID == Database.tPosts.postID)
+
+    #Get Posts
+    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName)\
+    .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
+    .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
+    .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
+    .filter(Database.tFollowers.userID == current_user.id).order_by(Database.tPosts.postID.desc())
+    yourReacts = session.query(Database.tReacts.postID).filter(Database.tReacts.userID == userID)
+
+    likes={}
+    like =[]
+    for react in postResults:
+        likes[react.postID] = 'Like'
+    for yourReact in yourReacts:
+        if yourReact.postID in likes.keys():
+            likes[yourReact.postID] = 'Unlike'
+    for react in postResults:
+        like.append(likes[react.postID])
+
     #Collect dogs in your family
-    dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
-    return render_template('Account/Profile.html', user = user, dogResults = dogResults)
+    dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == userID)
+    return render_template('Account/Profile.html', currentUser = currentUser, user = user, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
 
 @app.route("/logout")
 @login_required

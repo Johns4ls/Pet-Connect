@@ -4,7 +4,7 @@
 {% block body %}
 <div class="backgroundContainer">
   <div class="mainContainer">
-    <h2>$User's Profile</h2>
+    <h2>{{user.firstName}} {{user.lastName}}'s profile</h2>
     {% if user.image == None %}
     <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
       <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
@@ -15,31 +15,74 @@
     <br>
     <br>
     <div class="profileMain">
+      
       <section class="profileButtonsText">
         <div class="dogButtonHalfText">
-          <p>View Dog Profile(s) for $User</p>
+          <p>View Dog Profile(s) for {{user.firstName}}</p>
         </div>
         <div class="playdateButtonHalfText">
           <p style="float: right;">Schedule a Playdate</p>
         </div>
       </section>
+      {% for dog in dogResults %}
       <section class="profileButtonsText">
         <div class="dogButtonHalfText">
-          <button>$Dog's Profile</button>
+          <button onclick="window.location='/Dog/Profile/{{dog.dogID}}';">{{dog.name}} Profile</button>
         </div>
         <div class="playdateButtonHalfText">
-          <button style="float: right;">Schedule Playdate</button>
+          <button style="float: right;" onclick="window.location='';">Schedule Playdate</button>
         </div>
+        {% endfor %}
         <br><br><br>
       </section>
     </div>
-    <h2> add for loop to show a new button for each $dog that the $user is the owner of. </h2>
-    <h2> this will likely stretch the page down a bit if the $user has multiple $dog's
-    <br><br><br><br>
-    <hr>
-    <h2> ALL POSTS RELATIVE TO $USER</h2>
-    <h2> add for loop to show the same post content from the dashboard, but this time only for the $user that the page is specific to. </h2>
-    <h2> it's important that we are referencing the "$user" that this page load is specific to (only this profile we're viewing), not the current logged in user.
+    <div class="feed">
+        <div class="container">
+          {% for post, like in postResults %}
+          <div class="postContainer">
+          <div class="well well-lg">
+            <p><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b> wrote this about <b style="color: #0d6591;">{{post.name}}</b>:</p>
+            <p>{{ post.Post }}</p>
+  
+          </div>
+        <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
+          <textarea name="Comment"></textarea>
+          <br>
+          <button onclick="window.location='/Create/Comment/{{post.postID}}';" style="font-size: 70%;">Comment</button>
+          <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
+        </form>
+        <br>
+          <div class="commentResultContainer">
+  
+            {% set count = namespace(a=0) %}
+            {% for react in reactResults %}
+              {% if post.postID == react.postID %}
+              {% if count.a == 0 %}
+              <p><b style="color: #0d6591;">{{react.firstName}} {{react.lastName}}</b>
+              {% endif %}
+              {% set count.a = count.a + 1 %}
+              {% endif %}
+            {% endfor %}
+            {% if count.a > 1 %}
+            <a href="/Likes/Post/{{post.postID}}">and {{count.a - 1}} others liked this</a></p>
+            {% elif count.a == 1 %}
+            liked this</p>
+            {{else}}
+              </p>
+            {% endif %}
+            <hr>
+            {% for comment in commentResults %}
+              {% if post.postID == comment.postID %}
+              <p><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b> said: </p>
+              <p>{{comment.Comment}}</p>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+  
+        </div>
+      </div>
   </div>
 {% endblock %}
 </div>
