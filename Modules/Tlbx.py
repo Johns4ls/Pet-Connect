@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, UserMixin
 import os
 from PIL import Image, ExifTags
+import Database
 
 #Connectors to database
 def dbConnect():
@@ -106,6 +107,13 @@ def check_password(email, password):
 def loginUser(email):
     user = User(email)
     login_user(user)
+
+def currentUserInfo(userID):
+    session = Database.Session()
+    user = session.query(Database.tUser).filter(Database.tUser.userID == userID)
+    for user in user:
+        user = user
+    return user
 
 class userRefresh(UserMixin):
     def __init__(self, id):

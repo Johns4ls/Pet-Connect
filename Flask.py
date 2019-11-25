@@ -4,7 +4,8 @@ from werkzeug.utils import secure_filename
 from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm, PasswordResetForm
 from Modules import Tlbx, Database
 from flask_sqlalchemy import SQLAlchemy, functools
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
+from sqlalchemy.orm import aliased
 from flask_login import LoginManager, login_required, logout_user, current_user
 import datetime
 app = Flask(__name__)
@@ -192,7 +193,8 @@ def familyCreation():
         x = cursor.query(Database.tUser).get(current_user.id)
         x.familyID = db.insert_id()
         cursor.commit()
-        return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
+        currentUser = Tlbx.currentUserInfo(current_user.id)
+        return render_template('Dog/NewDog.html', CreateDogform = CreateDogform, currentUser = currentUser)
     flash("Please add a family name")
     return render_template('/Family/FamilyCreate.html', CreateFamilyform = CreateFamilyform )
 
@@ -258,8 +260,10 @@ def likes(postID):
 @login_required
 def AddFriend(userID):
     session = Database.Session()
-    addFriend = Database.tFriend(friend1 = current_user.id, friend2 = userID)
+    addFriend = Database.tFriend(friend = current_user.id, user = userID)
+    addUser = Database.tFriend(user = current_user.id, friend = userID)
     session.add(addFriend)
+    session.add(addUser)
     session.commit()
     return('', 204)
 
@@ -268,10 +272,12 @@ def AddFriend(userID):
 def UnFriend(userID):
     session = Database.Session()
     session.query(Database.tFriend) \
-        .filter(Database.tFriend.friend1 == userID) \
-        .filter(Database.tFriend.friend2 == userID) \
-        .filter(Database.tFriend.friend1 == current_user.id) \
-        .filter(Database.tFriend.friend2 == current_user.id) \
+        .filter(Database.tFriend.user == userID) \
+        .filter(Database.tFriend.friend == current_user.id) \
+        .delete()
+    session.query(Database.tFriend) \
+        .filter(Database.tFriend.user == current_user.id) \
+        .filter(Database.tFriend.friend == userID) \
         .delete()
     session.commit()
     return('', 204)
@@ -286,15 +292,25 @@ def sendMessage():
 @app.route('/Messages', methods=['GET','POST'])
 @login_required
 def Messages():
-    session = Database.Session()
-    Users = session.query(Database.tMessage) \
-        .join(Database.tUser, Database.tMessage.recipient == Database.tUser.userID) \
-        .join(Database.tUser, Database.tMessage.sender == Database.tUser.userID) \
-        .join(Database.tUser, Database.tFriend.friend1 == Database.tUser.userID) \
-        .join(Database.tUser, Database.tFriend.friend2 == Database.tUser.userID) \
-        .filter(Database.tFriend.friend1 != current_user.id, Database.tFriend.friend2 == current_user.id \
-            | Database.tFriend.friend1 == current_user.id, Database.tFriend.friend2 != current_user.id)
-    return render_template('/Messages/Messages.html')
+    #Get all friendIDs where you're involved
+    cur, db = Tlbx.dbConnectDict()
+
+    #Get all messages from you and your friends. Also need friendID to link it up with jinja
+    cur, db = Tlbx.dbConnectDict()
+    #2 friend ID's creates 2 1, 1 2. Also need message twice with both friendID's. 
+    #Double insert FriendIDs, Double insert Messages with those friendIDs. 
+    query = ("SELECT tMessage.friendID, tMessage.message, tUser.firstName, tUser.lastName from tMessage \
+    LEFT JOIN tFriend ON tMessage.friendID = tFriend.friendID \
+    JOIN tUser ON tFriend.friend = tUser.userID \
+    WHERE tFriend.user = %s \
+    ORDER BY tFriend.friend;")
+    data = (current_user.id)
+    cur.execute(query, data)
+    messages = cur.fetchall()
+    for message in messages:
+        print(message.message)
+    currentUser = Tlbx.currentUserInfo(current_user.id)
+    return render_template('/Messages/Messages.html', messages = messages)
 
 @app.route('/Search', methods=['GET','POST'])
 @login_required

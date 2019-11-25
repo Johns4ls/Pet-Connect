@@ -141,8 +141,8 @@ class tPlayDate(Base):
 class tFriend(Base):
     __tablename__ = 'tFriend'
     friendID = Column(Integer, primary_key=True)
-    friend1 = Column(Integer, ForeignKey('tUser.userID'))
-    friend2 = Column(Integer, ForeignKey('tUser.userID'))
+    user = Column(Integer, ForeignKey('tUser.userID'))
+    friend = Column(Integer, ForeignKey('tUser.userID'))
 
 class tMessage(Base):
     __tablename__ = 'tMessage'
@@ -150,7 +150,7 @@ class tMessage(Base):
     sender = Column(Integer, ForeignKey('tUser.userID'))
     recipient = Column(Integer, ForeignKey('tUser.userID'))
     time_Sent  = Column('time_Sent', DateTime), 
-    message = Column('Message', String(255))
+    message = Column('message', String(255))
 
 class tPictureMessage(Base):
     __tablename__ = 'tPictureMessage'

@@ -130,15 +130,16 @@ CREATE TABLE `tPlayDate` (
 
 CREATE TABLE `tFriend` (
   `friendID` int PRIMARY KEY AUTO_INCREMENT,
-  `friend1` int,
-  `friend2` int
+  `user` int,
+  `friend` int
 );
 
 CREATE TABLE `tMessage` (
   `messageID` int PRIMARY KEY AUTO_INCREMENT,
+  `friendID` int NOT NULL,
   `sender` int,
   `recipient` int,
-  `time_Sent` timestamp NOT NULL DEFAULT NOW()
+  `time_Sent` timestamp NOT NULL DEFAULT NOW(),
   `message` varchar(255)
 );
 
@@ -228,9 +229,11 @@ ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
 
 ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
-ALTER TABLE `tFriend` ADD FOREIGN KEY (`friend1`) REFERENCES `tUser` (`userID`);
+ALTER TABLE `tFriend` ADD FOREIGN KEY (`user`) REFERENCES `tUser` (`userID`);
 
-ALTER TABLE `tFriend` ADD FOREIGN KEY (`friend2`) REFERENCES `tUser` (`userID`);
+ALTER TABLE `tFriend` ADD FOREIGN KEY (`friend`) REFERENCES `tUser` (`userID`);
+
+ALTER TABLE `tMessage` ADD FOREIGN KEY (`friendID`) REFERENCES `tFriend` (`friendID`);
 
 ALTER TABLE `tMessage` ADD FOREIGN KEY (`sender`) REFERENCES `tUser` (`userID`);
 
