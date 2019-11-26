@@ -281,10 +281,36 @@ def UnFriend(userID):
     session.commit()
     return('', 204)
 
-@app.route('/Send/Message', methods=['GET','POST'])
+@app.route('/Send/Message/<int:userID>', methods=['GET','POST'])
 @login_required
-def sendMessage():
-    return('', 204)
+def sendMessage(userID):
+    #user userID to get both friendIDs to submit messages
+    
+    #Get both friendIDs associated with friendship
+    cur, db = Tlbx.dbConnectDict()
+    query = ("SELECT friendID from tFriend \
+        WHERE tFriend.user = %s \
+        AND tFriend.friend = %s;")
+    data = (current_user.id, userID)
+    cur.execute(query, data)
+    UserFriendID = cur.fetchone()
+    data = (userID, current_user.id)
+    cur.execute(query, data)
+    FriendFriendID = cur.fetchone()
+    session = Database.Session()
+    message = request.form['message']
+
+    addMessageFriend = Database.tMessage(friendID = FriendFriendID['friendID'], sender = current_user.id, \
+        recipient = userID, time_Sent = datetime.datetime.now(), message = message)
+    
+    addMessageUser = Database.tMessage(friendID = UserFriendID['friendID'], sender = current_user.id, \
+        recipient = userID, time_Sent = datetime.datetime.now(), message = message)
+
+
+    session.add(addMessageUser)
+    session.add(addMessageFriend)
+    session.commit()
+    return redirect('/Messages')
 
 
 
@@ -295,7 +321,7 @@ def Messages():
     #Get all messages from you and your friends. Also need friendID to link it up with jinja
     friends, db = Tlbx.dbConnectDict()
     #Don't forget to insert message with both friendIDs.
-    friendQuery = ("Select friendID, tUser.firstName, tUser.lastName, tUser.image from tFriend \
+    friendQuery = ("Select friendID, tUser.userID, tUser.firstName, tUser.lastName, tUser.image from tFriend \
         JOIN tUser ON tFriend.friend = tUser.userID \
         WHERE tFriend.user = %s;")
     data = (current_user.id)

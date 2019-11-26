@@ -8,7 +8,7 @@ from sqlalchemy.sql.expression import ClauseElement
 from sqlalchemy import literal
 from datetime import datetime
 engine = sqlalchemy.create_engine(
-    'mysql+pymysql://Website:W3bsite!@127.0.0.1:3306/PetConnect',
+    'mysql+pymysql://Website:W3bsite!@ec2-13-59-203-226.us-east-2.compute.amazonaws.com:3306/PetConnect',
     echo=True, pool_size=30)
 
 # Define and create all tables in the DB
@@ -147,6 +147,7 @@ class tFriend(Base):
 class tMessage(Base):
     __tablename__ = 'tMessage'
     messageID = Column(Integer, primary_key=True)
+    friendID = Column(Integer, ForeignKey('tFriend.friendID'))
     sender = Column(Integer, ForeignKey('tUser.userID'))
     recipient = Column(Integer, ForeignKey('tUser.userID'))
     time_Sent  = Column('time_Sent', DateTime), 
