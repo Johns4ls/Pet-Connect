@@ -49,13 +49,13 @@
                 </div>
               </div>
             </div>
+          </div>
         </div>
         {% endif %}
         {% endfor %}
         {% for user in users %}
         {% for message in messages %}
         {% if user.recipient == message.recipient %}
-        <div class="messages_{{message.recipient}}" visibility: hidden;>
         <div class="mesgs">
           <div class="msg_history">
             {% if message.recipient == current_user.id %}
