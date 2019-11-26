@@ -22,7 +22,6 @@ login_manager.login_view = "/"
 @login_manager.user_loader
 def load_user(userid):
     return Tlbx.userRefresh(userid)
-
 #Initial screen upon entering website.
 @app.route("/dashboard")
 @login_required
@@ -292,25 +291,26 @@ def sendMessage():
 @app.route('/Messages', methods=['GET','POST'])
 @login_required
 def Messages():
-    #Get all friendIDs where you're involved
-    cur, db = Tlbx.dbConnectDict()
 
     #Get all messages from you and your friends. Also need friendID to link it up with jinja
-    cur, db = Tlbx.dbConnectDict()
-    #2 friend ID's creates 2 1, 1 2. Also need message twice with both friendID's. 
-    #Double insert FriendIDs, Double insert Messages with those friendIDs. 
-    query = ("SELECT tMessage.friendID, tMessage.message, tUser.firstName, tUser.lastName from tMessage \
-    LEFT JOIN tFriend ON tMessage.friendID = tFriend.friendID \
-    JOIN tUser ON tFriend.friend = tUser.userID \
-    WHERE tFriend.user = %s \
-    ORDER BY tFriend.friend;")
+    friends, db = Tlbx.dbConnectDict()
+    #Don't forget to insert message with both friendIDs.
+    friendQuery = ("Select friendID, tUser.firstName, tUser.lastName, tUser.image from tFriend \
+        JOIN tUser ON tFriend.friend = tUser.userID \
+        WHERE tFriend.user = %s;")
     data = (current_user.id)
-    cur.execute(query, data)
-    messages = cur.fetchall()
-    for message in messages:
-        print(message.message)
+    friends.execute(friendQuery, data)
+    #Still need to orderby timestamp
+    messageQuery = ("Select tMessage.friendID, tMessage.message, tMessage.time_Sent, tMessage.recipient, tUser.firstName, tUser.lastName from tMessage \
+        LEFT JOIN tFriend ON tFriend.friendID = tMessage.friendID \
+        JOIN tUser ON tFriend.friend = tUser.userID \
+        WHERE tFriend.user = %s")
+    cur, db = Tlbx.dbConnectDict()
+    data = (current_user.id)
+    cur.execute(messageQuery, data)
+
     currentUser = Tlbx.currentUserInfo(current_user.id)
-    return render_template('/Messages/Messages.html', messages = messages)
+    return render_template('/Messages/Messages.html', messages = cur.fetchall(), friends = friends.fetchall(), currentUser=currentUser)
 
 @app.route('/Search', methods=['GET','POST'])
 @login_required

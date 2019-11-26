@@ -1,7 +1,15 @@
-{% extends "Layout/Layout.html" %}
-{% block head %}
-{% endblock %}
-{% block body %}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+
+<html>
+<head>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
+<link href="/static/css.css" type="text/css" rel="stylesheet">
+</head>
 <body>
 <div class="container">
 <h3 class=" text-center">Messaging</h3>
@@ -20,65 +28,86 @@
                 </span> </div>
             </div>
           </div>
-          {% for user in users %}
+          {% for friend in friends %}
           {% if loop.first %}
+          {% set count = namespace(a=0) %}
+          {% for message in messages %}
+          {% if count.a == 0 %}
+          {% if friend.friendID == message.friendID %}
           <div class="inbox_chat">
             <div class="chat_list active_chat">
               <div class="chat_people">
-                <div class="chat_img"> <img src="{{user.image}}" > </div>
+                <div class="chat_img"> <img src="{{friend.image}}" > </div>
                 <div class="chat_ib">
-                  <h5>{{user.firstName}} {{user.lastName}} <span class="chat_date">{{user.time_Sent}}</span></h5>
-                  <p>{{user.message}}</p>
+                  <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{message.time_Sent}}</span></h5>
+                  <p>{{message.message}}</p>
                 </div>
               </div>
             </div>
+          {% set count.a = count.a + 1 %}
+          {% endif %}
+          {% endif %}
+          {% endfor %}
             {% else %}
+            {% set count = namespace(a=0) %}
+            {% for message in messages %}
+            {% if count.a == 0 %}
+            {% if friend.friendID == message.friendID %}         
             <div class="chat_list">
               <div class="chat_people">
-                {% if user.image == None %}
+                {% if friend.image == None %}
                 <div class="chat_img"><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
                   <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a></div>
-                {% elif user.image != None %}
-                <div class="chat_img"><a href="{{ url_for('static', filename = user.image + '.jpg') }}">
-                    <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="img-thumbnail"></a></div>
+                {% elif friend.image != None %}
+                <div class="chat_img"><a href="{{ url_for('static', filename = friend.image + '.jpg') }}">
+                    <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="img-thumbnail"></a></div>
                 {% endif %}
           
                 <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>{{user.message}}</p>
+                  <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{message.time_Sent}}</span></h5>
+                  <p>{{message.message}}</p>
                 </div>
               </div>
             </div>
         </div>
+        {% set count.a = count.a + 1 %}
+        {% endif %}
         {% endif %}
         {% endfor %}
-        {% for user in users %}
-        {% for message in messages %}
-        {% if user.recipient == message.recipient %}
-        <div class="messages_{{message.recipient}}" visibility: hidden;>
+        {% endif %}
+        {% endfor %}
         <div class="mesgs">
           <div class="msg_history">
+              {% for friend in friends %}
+              {% if loop.first %}
+              {% for message in messages %}
+              {% if friend.friendID == message.friendID %} 
             {% if message.recipient == current_user.id %}
             <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              {% if friend.image == None %}
+              <div class="incoming_msg_img"><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a></div>
+              {% elif friend.image != None %}
+              <div class="incoming_msg_img"><a href="{{ url_for('static', filename = friend.image + '.jpg') }}">
+                  <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="img-thumbnail"></a></div>
+              {% endif %}
               <div class="received_msg">
                 <div class="received_withd_msg">
-                  <p>Test which is a new approach to have all
-                    solutions</p>
-                  <span class="time_date"> 11:01 AM    |    June 9</span></div>
+                  <p>{{message.message}}</p>
+                  <span class="time_date"> {{message.time_Sent}}</span></div>
               </div>
             </div>
             {% endif %}
             {% if message.recipient != current_user.id %}
             <div class="outgoing_msg">
               <div class="sent_msg">
-                <p>Test which is a new approach to have all
-                  solutions</p>
-                <span class="time_date"> 11:01 AM    |    June 9</span> </div>
+                <p>{{message.message}}</p>
+                <span class="time_date">{{message.time_Sent}}</span> </div>
             </div>
             {% endif %}
             {% endif %}
             {% endfor %}
+            {% endif %}
             {% endfor %}
           </div>
           <form action="/Send/Message" method="post" novalidate></form>
@@ -93,5 +122,5 @@
     </div>
     </div>
 </div>
+</div>
 </body>
-{% endblock %}
