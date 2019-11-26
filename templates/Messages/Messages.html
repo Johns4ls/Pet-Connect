@@ -71,7 +71,9 @@
         {% endfor %}
         <div class="mesgs">
           <div class="msg_history">
+              <!-- This will probably need to move up to msgs to have a container to set to hidden that will include the send button -->
               {% for friend in friends %}
+              <!-- This loop.first is what is preventing this from being rendered for the next friend. -->
               {% if loop.first %}
               {% for message in messages %}
               {% if friend.friendID == message.friendID %} 
@@ -100,6 +102,7 @@
             {% endif %}
             {% endif %}
             {% endfor %}
+            <!-- this is the end of the loop.first -->
             {% endif %}
           </div>
           <form action="/Send/Message/{{friend.userID}}" method="post" novalidate>
