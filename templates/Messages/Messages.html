@@ -27,14 +27,27 @@
           {% if count.a == 0 %}
           {% if friend.friendID == message.friendID %}
           <div class="inbox_chat">
-            <div class="chat_list active_chat">
+            <div class="chat_list active_chat" id="chatHead{{friend.friendID}}">
+            <script>
+            var current = "message" + {{friend.friendID}};
+            </script>
+              <radio-group>
+              <radio-button tabindex="{{friend.friendID}}" onclick="changeFocus({{friend.friendID}});">
               <div class="chat_people">
-                <div class="chat_img"> <img src="{{friend.image}}" > </div>
+                <div class="chat_img">     
+                  {% if friend.image == None %}
+                    <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+                    {% elif friend.image != None %}
+                      <a href="{{ url_for('static', filename = friend.image + '.jpg') }}">
+                        <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="img-thumbnail"></a>
+                    {% endif %}</div>
                 <div class="chat_ib">
                   <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{message.time_Sent}}</span></h5>
                   <p>{{message.message}}</p>
                 </div>
               </div>
+              </radio-button>
             </div>
           {% set count.a = count.a + 1 %}
           {% endif %}
@@ -45,7 +58,8 @@
             {% for message in messages %}
             {% if count.a == 0 %}
             {% if friend.friendID == message.friendID %}         
-            <div class="chat_list">
+            <div class="chat_list" id="chatHead{{friend.friendID}}">
+              <radio-button tabindex="{{friend.friendID}}" onclick="changeFocus({{friend.friendID}});">
               <div class="chat_people">
                 {% if friend.image == None %}
                 <div class="chat_img"><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
@@ -60,6 +74,8 @@
                   <p>{{message.message}}</p>
                 </div>
               </div>
+            </radio-button>
+            </radio-group>
             </div>
         </div>
       </div>
@@ -69,12 +85,11 @@
         {% endfor %}
         {% endif %}
         {% endfor %}
-        <div class="mesgs">
+        <!-- This will probably need to move up to msgs to have a container to set to hidden that will include the send button -->
+        {% set count = namespace(a=0) %}
+        {% for friend in friends %}
+        <div class="mesgs"style="display: none;" id=message{{friend.friendID}}>
           <div class="msg_history">
-              <!-- This will probably need to move up to msgs to have a container to set to hidden that will include the send button -->
-              {% for friend in friends %}
-              <!-- This loop.first is what is preventing this from being rendered for the next friend. -->
-              {% if loop.first %}
               {% for message in messages %}
               {% if friend.friendID == message.friendID %} 
             {% if message.recipient == current_user.id %}
@@ -102,8 +117,6 @@
             {% endif %}
             {% endif %}
             {% endfor %}
-            <!-- this is the end of the loop.first -->
-            {% endif %}
           </div>
           <form action="/Send/Message/{{friend.userID}}" method="post" novalidate>
           <div class="type_msg">
@@ -114,9 +127,23 @@
           </div>
         </form>
         </div>
+        {% set count.a = count.a + 1 %}
         {% endfor %}
     </div>
     </div>
 </div>
 </body>
+<script>
+    function initialFocus() {
+                document.getElementById(current).style.display = "inline";
+                console.log("We ran this")
+            }
+            window.onload = initialFocus();
+    function changeFocus(id){
+      id = "message" + id;
+      document.getElementById(current).style.display = "none";
+      document.getElementById(id).style.display = "inline";
+      current = id;
+    }
+    </script>
 {% endblock %}
