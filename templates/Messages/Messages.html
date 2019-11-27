@@ -140,9 +140,11 @@
             }
             window.onload = initialFocus();
     function changeFocus(id){
-      id = "message" + id;
-      document.getElementById(current).style.display = "none";
-      document.getElementById(id).style.display = "inline";
+      document.getElementById("message" + current).style.display = "none";
+      document.getElementById("message" + id).style.display = "inline";
+      document.getElementById("chatHead" + current).classList.remove("active_chat");
+      document.getElementById("chatHead" + id).classList.add("active_chat");
+          
       current = id;
     }
     </script>
