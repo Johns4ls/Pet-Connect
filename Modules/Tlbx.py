@@ -4,6 +4,7 @@ from flask_login import login_user, logout_user, UserMixin
 import os
 from PIL import Image, ExifTags
 import Database
+from Database import *
 
 #Connectors to database
 def dbConnect():
