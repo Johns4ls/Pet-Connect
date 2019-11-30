@@ -116,6 +116,27 @@ def currentUserInfo(userID):
         user = user
     return user
 
+def notifications(userID):
+    cur, db = dbConnectDict()
+    query = "SELECT tUser.firstName, tUser.lastName, tPosts.postID, tReacts.ts, 'reacted to your post' as information\
+        FROM tUser \
+        JOIN tReacts ON tReacts.userID = tUser.userID \
+        JOIN tPosts ON tPosts.userID = tUser.userID \
+        WHERE tPosts.UserID = %s \
+        AND tReacts.ts > (SELECT tUser.last_message_read_time FROM tUser WHERE userID = %s) \
+        UNION \
+        SELECT tUser.firstName, tUser.lastName, tPosts.postID, tComments.ts, 'commented on your post' as information \
+        FROM tUser \
+        JOIN tComments ON tComments.userID = tUser.userID \
+        JOIN tPosts ON tPosts.userID = tUser.useriD \
+        WHERE tPosts.userID = %s \
+        AND tComments.ts > (SELECT tUser.last_message_read_time FROM tUser Where userID = %s);"
+
+    data = (userID, userID, userID, userID)
+    cur.execute(query, data)
+    return cur.fetchall()
+
+
 class userRefresh(UserMixin):
     def __init__(self, id):
         cur, db = dbConnectDict()

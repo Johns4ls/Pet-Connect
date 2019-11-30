@@ -115,6 +115,7 @@ class tReacts(Base):
     reactID = Column(Integer, primary_key=True)
     userID = Column(Integer, ForeignKey('tUser.userID'))
     postID = Column(Integer, ForeignKey('tPosts.postID'))
+    ts = Column('ts', DateTime)
 
 class tAvailability(Base):
     __tablename__ = 'tAvailability'

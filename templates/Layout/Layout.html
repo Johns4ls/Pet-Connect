@@ -19,22 +19,29 @@
  <div class="navBar" id="mainNavBar">
     <div class="form-inline">
             {% if currentUser.image == None %}
-            <a href="/User/Profile/{{currentUser.userID}}">
+            <a href="/dashboard">
               <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"style="max-height: 50px; max-width: 50px;"></a>
             {% elif currentUser.image != None %}
-              <a href="/User/Profile/{{currentUser.userID}}">
+              <a href="/dashboard">
                 <img src="{{ url_for('static', filename = currentUser.image + '.thumbnail') }}"class="img-thumbnail"style="max-height: 50px; max-width: 50px;"></a>
             {% endif %}
-        <a href="/dashboard">Home</a>
         <a href="/Create/New/Dog">Create a new dog</a>
         <a href="/Messages">Messages</a>
-   <a href="/logout">Logout</a>
+        <div class="dropdown">
+            <button onclick="dropdown()" class="dropbtn">Dropdown</button>
+            <div id="myDropdown" class="dropdown-content">
+              {% for notification in notifications %}
+              <a href="/view/post/{{notification.postID}}">{{notification.firstName}} {{notification.lastName}} {{notification.information}}.</a>
+              {% endfor %}
+            </div>
+          </div>
    <a href="javascript:void(0);" class="icon" onClick="openDrawerMenu()">&#9776;</a>
    <!--&#9776; is the code for the 3 line menu button-->
    <form action="/Search" method="post" novalidate>
        <input class="form-control mr-lg-6" type="search" name="Search" placeholder="Search" aria-label="Search">
        <button class="btn btn-secondary" type="submit">Search</button>
    </form>
+   <a href="/logout">Logout</a>
    </div>
  </div>
 

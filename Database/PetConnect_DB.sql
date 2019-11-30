@@ -103,7 +103,8 @@ CREATE TABLE `tComments` (
 CREATE TABLE `tReacts` (
   `reactID` int PRIMARY KEY AUTO_INCREMENT,
   `userID` int,
-  `postID` int
+  `postID` int, 
+  `ts` timestamp NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE `tAvailability` (

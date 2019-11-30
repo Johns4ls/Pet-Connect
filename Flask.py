@@ -62,9 +62,10 @@ def index():
         like.append(likes[react.postID])
 
     #Get unread messages
-    messages = Database.new_messages(current_user)
-    print(messages)
-    return render_template('HomePage/Dashboard.html', currentUser = currentUser, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
+    #messages = Database.new_messages(current_user.id)
+    #print(messages)
+    notifications = Tlbx.notifications(current_user.id)
+    return render_template('HomePage/Dashboard.html', notifications = notifications, currentUser = currentUser, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
 
 #Renders the login page
 @app.route('/', methods=['GET', 'POST'])
@@ -127,7 +128,7 @@ def userInfo():
 def Like(postID):
     postID=str(postID)
     session = Database.Session()
-    Like = Database.tReacts(userID=current_user.id, postID=postID)
+    Like = Database.tReacts(userID=current_user.id, postID=postID, ts=datetime.datetime.now())
     session.add(Like)
     session.commit()
     return redirect('/dashboard')
