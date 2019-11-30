@@ -675,7 +675,7 @@ def dogProfile(dogID):
     return render_template('Account/DogProfile.html', postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults, yourReacts = yourReacts, count = count, notifications = notifications, dog=dog, currentUser = currentUser)
 
 @app.route('/Dog/Info/<int:dogID>', methods=['GET', 'POST'])
-def dogInfo():
+def dogInfo(dogID):
     currentUser = Tlbx.currentUserInfo(current_user.id)
     count, notifications = Tlbx.getNotifications(current_user.id)
     session = Database.Session()
@@ -683,8 +683,13 @@ def dogInfo():
     for user in user:
         user = user
     #Collect dogs in your family
-    dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
-    return render_template('Account/DogInfo.html', count = count, notifications = notifications, user = user, dogResults = dogResults, currentUser = currentUser)
+    dog = session.query(Database.tDog, Database.tBreed, Database.tFavoriteToy).filter(Database.tDog.dogID == dogID) \
+    .join(Database.tBreed, Database.tBreed.breedID == Database.tDog.dogID) \
+    .join(Database.tFavoriteToy, Database.tDog.favToyID == Database.tFavoriteToy.favToyID)
+    for dog in dog:
+        dog = dog
+
+    return render_template('Account/DogInfo.html', count = count, notifications = notifications, dog = dog, currentUser = currentUser)
 
 @app.route("/logout")
 @login_required

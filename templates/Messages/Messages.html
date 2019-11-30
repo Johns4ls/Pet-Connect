@@ -90,8 +90,8 @@
         <div class="mesgs"style="display: none;" id=message{{friend.friendID}}>
           <div class="msg_history">
               {% for message in messages %}
-              {% if friend.friendID == message.friendID %} 
-            {% if message.recipient == current_user.id %}
+              {% if friend.friendID == message.friendID %}
+            {% if message.recipient == userID %}
             <div class="incoming_msg">
               {% if friend.image == None %}
               <div class="incoming_msg_img"><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
@@ -107,7 +107,7 @@
               </div>
             </div>
             {% endif %}
-            {% if message.recipient != current_user.id %}
+            {% if message.recipient != userID %}
             <div class="outgoing_msg">
               <div class="sent_msg">
                 <p>{{message.message}}</p>
