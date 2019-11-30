@@ -366,18 +366,22 @@ def sendMessage(userID):
 @login_required
 def Messages():
 
-    #Get all messages from you and your friends. Also need friendID to link it up with jinja
+    #Get all friends you have that you've sent messages with.
     friends, db = Tlbx.dbConnectDict()
-    friendQuery = ("Select friendID, tUser.userID, tUser.firstName, tUser.lastName, tUser.image from tFriend \
-        JOIN tUser ON tFriend.friend = tUser.userID \
-        WHERE tFriend.user = %s;")
+    friendQuery = ("Select MAX(tMessage.time_sent) as ts, tFriend.friendID, tUser.userID, tUser.firstName, tUser.lastName, tUser.image from tUser \
+        JOIN tFriend ON tUser.userID = tFriend.friend \
+        LEFT JOIN tMessage ON tMessage.friendID = tFriend.friendID\
+        WHERE tFriend.user = %s \
+        GROUP BY tFriend.friendID \
+        ORDER BY ts DESC;")
     data = (current_user.id)
     friends.execute(friendQuery, data)
-    #Still need to orderby timestamp
+
     messageQuery = ("Select tMessage.friendID, tMessage.message, tMessage.time_Sent, tMessage.recipient, tUser.firstName, tUser.lastName from tMessage \
         JOIN tFriend ON tFriend.friendID = tMessage.friendID \
         JOIN tUser ON tFriend.friend = tUser.userID \
-        WHERE tFriend.user = %s")
+        WHERE tFriend.user = %s \
+        ORDER BY tMessage.time_sent")
     cur, db = Tlbx.dbConnectDict()
     data = (current_user.id)
     cur.execute(messageQuery, data)

@@ -43,7 +43,7 @@
                     {% for message in messages %}
                     {% if count.a == 0 %}
                     {% if friend.friendID == message.friendID %}
-                  <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{message.time_Sent}}</span></h5>
+                  <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{friend.ts}}</span></h5>
                   <p>{{message.message}}</p>
                   {% set count.a = count.a + 1 %}
                   {% endif %}
@@ -70,7 +70,7 @@
                     {% for message in messages %}
                     {% if count.a == 0 %}
                     {% if friend.friendID == message.friendID %}    
-                  <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{message.time_Sent}}</span></h5>
+                  <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{friend.ts}}</span></h5>
                   <p>{{message.message}}</p>
                   {% set count.a = count.a + 1 %}
                   {% endif %}
@@ -128,6 +128,7 @@
         </div>
         {% set count.a = count.a + 1 %}
         {% endfor %}
+        
     </div>
     </div>
 </div>
