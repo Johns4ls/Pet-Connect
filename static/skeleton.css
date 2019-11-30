@@ -38,6 +38,7 @@
 }
 .backgroundContainer{
   background-color: #e3e1e1;
+  height:100%;
 }
 .mainContainer {
   width: 70%;
@@ -46,6 +47,7 @@
   padding: 10px;
   background-color:#eaeaea;
   overflow: auto !important;
+  height:100%;
 }
 .mainContainer h2{
   width: 70%;
@@ -65,8 +67,12 @@
   width: 70%;
   margin: 0 auto;
 }
-.profileButtonsText {
+.profileButtonsText70 {
   width: 70%;
+  margin: auto;
+}
+.profileButtonsText40 {
+  width: 40%;
   margin: auto;
 }
 .dogButtonHalfText {

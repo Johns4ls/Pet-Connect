@@ -285,7 +285,7 @@ def UnFriend(userID):
 @login_required
 def sendMessage(userID):
     #user userID to get both friendIDs to submit messages
-    
+
     #Get both friendIDs associated with friendship
     cur, db = Tlbx.dbConnectDict()
     query = ("SELECT friendID from tFriend \
@@ -302,7 +302,7 @@ def sendMessage(userID):
 
     addMessageFriend = Database.tMessage(friendID = FriendFriendID['friendID'], sender = current_user.id, \
         recipient = userID, time_Sent = datetime.datetime.now(), message = message)
-    
+
     addMessageUser = Database.tMessage(friendID = UserFriendID['friendID'], sender = current_user.id, \
         recipient = userID, time_Sent = datetime.datetime.now(), message = message)
 
@@ -556,6 +556,28 @@ def userProfile(userID):
     #Collect dogs in your family
     dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == userID)
     return render_template('Account/Profile.html', currentUser = currentUser, user = user, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
+
+@app.route('/DogProfile', methods=['GET', 'POST'])
+def dogProfile():
+    currentUser = Tlbx.currentUserInfo(current_user.id)
+    session = Database.Session()
+    user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
+    for user in user:
+        user = user
+    #Collect dogs in your family
+    dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
+    return render_template('Account/DogProfile.html', user = user, dogResults = dogResults, currentUser = currentUser)
+
+@app.route('/DogInfo', methods=['GET', 'POST'])
+def dogInfo():
+    currentUser = Tlbx.currentUserInfo(current_user.id)
+    session = Database.Session()
+    user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
+    for user in user:
+        user = user
+    #Collect dogs in your family
+    dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
+    return render_template('Account/DogInfo.html', user = user, dogResults = dogResults, currentUser = currentUser)
 
 @app.route("/logout")
 @login_required
