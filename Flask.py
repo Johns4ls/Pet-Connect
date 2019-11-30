@@ -34,17 +34,17 @@ def index():
     dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
 
     #Get comments of posts
-    commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.firstName, Database.tUser.lastName) \
+    commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName) \
         .join(Database.tUser, Database.tComments.userID == Database.tUser.userID)\
         .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID)
 
     #Get reacts of posts
-    reactResults = session.query(Database.tReacts.postID, Database.tUser.firstName, Database.tUser.lastName) \
+    reactResults = session.query(Database.tReacts.postID, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName) \
         .join(Database.tUser, Database.tReacts.userID == Database.tUser.userID)\
         .join(Database.tPosts, Database.tReacts.postID == Database.tPosts.postID)
 
     #Get Posts
-    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName)\
+    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.dogID, Database.tDog.name, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName)\
     .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
@@ -64,8 +64,8 @@ def index():
     #Get unread messages
     #messages = Database.new_messages(current_user.id)
     #print(messages)
-    notifications = Tlbx.notifications(current_user.id)
-    return render_template('HomePage/Dashboard.html', notifications = notifications, currentUser = currentUser, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
+    count, notifications = Tlbx.getNotifications(current_user.id)
+    return render_template('HomePage/Dashboard.html', count = count, notifications = notifications, currentUser = currentUser, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
 
 #Renders the login page
 @app.route('/', methods=['GET', 'POST'])
@@ -254,7 +254,52 @@ def likes(postID):
     session = Database.Session()
     Reacts = session.query(Database.tUser).join(Database.tReacts, Database.tReacts.userID == Database.tUser.userID) \
     .filter(Database.tReacts.postID==postID)
-    return render_template('/Likes/Likes.html', Reacts = Reacts)
+    count, notifications = Tlbx.getNotifications(current_user.id)
+    return render_template('/Likes/Likes.html', Reacts = Reacts, count = count, notifications = notifications)
+
+@app.route('/View/Post/<int:postID>', methods=['GET','POST'])
+def viewPost(postID):
+    session = Database.Session()
+    #Get post information
+    post = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName) \
+    .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
+    .join(Database.tDog, Database.tDog.dogID == Database.tPosts.dogID) \
+    .filter(Database.tPosts.postID==postID)
+    for post in post:
+        post = post
+        #Get comments of posts
+    comments = session.query( Database.tComments.Comment, Database.tUser.firstName, Database.tUser.lastName) \
+        .join(Database.tUser, Database.tComments.userID == Database.tUser.userID) \
+        .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID) \
+        .filter(Database.tPosts.postID == postID)
+
+    #Get reacts of posts
+    reacts = session.query(Database.tReacts.reactID, Database.tUser.firstName, Database.tUser.lastName) \
+        .join(Database.tUser, Database.tReacts.userID == Database.tUser.userID) \
+        .join(Database.tPosts, Database.tReacts.postID == Database.tPosts.postID) \
+        .filter(Database.tPosts.postID == postID)
+
+    yourReacts = session.query(Database.tReacts.postID).filter(Database.tReacts.userID == current_user.id) \
+        .filter(Database.tReacts.postID == postID)
+    yourLike = None
+    for yourLike in yourReacts:
+        yourLike = yourLike
+    if yourLike is not None:
+        like = "Unlike"
+    else:
+        like = "Like"
+
+    cur, db = Tlbx.dbConnectDict()
+    query = "UPDATE tUser \
+    SET last_message_read_time = %s \
+    WHERE userID = %s;"
+    data = (datetime.datetime.now(), current_user.id)
+    cur.execute(query, data)
+
+    count, notifications = Tlbx.getNotifications(current_user.id)
+    currentUser = Tlbx.currentUserInfo(current_user.id)
+    return render_template('/post/Post.html', like = like, count = count, notifications = notifications, currentUser = currentUser, post = post, comments = comments, reacts = reacts)
+
 
 @app.route('/Friend/<int:userID>', methods=['GET','POST'])
 @login_required
@@ -311,6 +356,7 @@ def sendMessage(userID):
     session.add(addMessageUser)
     session.add(addMessageFriend)
     session.commit()
+
     return redirect('/Messages')
 
 
@@ -337,7 +383,8 @@ def Messages():
     cur.execute(messageQuery, data)
 
     currentUser = Tlbx.currentUserInfo(current_user.id)
-    return render_template('/Messages/Messages.html', messages = cur.fetchall(), friends = friends.fetchall(), currentUser=currentUser)
+    count, notifications = Tlbx.getNotifications(current_user.id)
+    return render_template('/Messages/Messages.html', messages = cur.fetchall(), friends = friends.fetchall(), currentUser=currentUser, count = count, notifications = notifications)
 
 @app.route('/Search', methods=['GET','POST'])
 @login_required
@@ -367,7 +414,8 @@ def Search():
         .order_by(Database.Match([Database.tUser.firstName, Database.tUser.lastName], Name)) \
         .limit(5).all()
 
-    return render_template('/Search/Search.html', results = zip(dogs, text), Users = Users, currentUser = currentUser)
+    count, notifications = Tlbx.getNotifications(current_user.id)
+    return render_template('/Search/Search.html', results = zip(dogs, text), Users = Users, currentUser = currentUser, count = count, notifications = notifications)
 
 @app.route('/Search/Dogs', methods=['GET','POST'])
 @login_required
@@ -387,7 +435,8 @@ def SearchDogs():
     for dog in dogs:
         text.append(texts[dog.dogID])
     currentUser = Tlbx.currentUserInfo(current_user.id)
-    return render_template('/Search/SearchDogs.html', results = zip(dogs, text), currentUser = currentUser)
+    count, notifications = Tlbx.getNotifications(current_user.id)
+    return render_template('/Search/SearchDogs.html', results = zip(dogs, text), currentUser = currentUser, count = count, notifications = notifications)
 
 @app.route('/Search/Users', methods=['GET','POST'])
 @login_required
@@ -400,7 +449,8 @@ def SearchUsers():
         .order_by(Database.Match([Database.tUser.email, Database.tUser.firstName, Database.tUser.lastName], Name)) \
         .all()
     currentUser = Tlbx.currentUserInfo(current_user.id)
-    return render_template('/Search/SearchUsers.html', Users = Users, currentUser = currentUser)
+    count, notifications = Tlbx.getNotifications(current_user.id)
+    return render_template('/Search/SearchUsers.html', Users = Users, currentUser = currentUser, count = count, notifications = notifications)
 
 @app.route('/Create/New/Dog', methods=['GET','POST'])
 @login_required
@@ -414,8 +464,9 @@ def CreateNewDog():
     followed = session.query(Database.tDog.dogID).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID) \
     .filter(Database.tUser.userID == current_user.id)
     CreateDogform = CreateDogForm()
+    count, notifications = Tlbx.getNotifications(current_user.id)
     if followed is not None:
-        return render_template('Dog/NewDog.html', currentUser = currentUser, CreateDogform = CreateDogform)
+        return render_template('Dog/NewDog.html', currentUser = currentUser, CreateDogform = CreateDogform, count = count, notifications = notifications)
     else:
         return render_template('Dog/Initial_NewDog.html', CreateDogForm = CreateDogform)
 
@@ -423,6 +474,7 @@ def CreateNewDog():
 @login_required
 def StartPark():
     CreateDogform = CreateDogForm()
+    dbsession = Database.Session()
     if CreateDogform.validate_on_submit():
         session['dogName'] = CreateDogform.dogName.data
         session['gender'] = CreateDogform.gender.data
@@ -436,9 +488,20 @@ def StartPark():
         image = request.files[CreateDogform.profileImage.name]
         session['image'] = Tlbx.imgToJPG("Profile", image)
         FavoriteParkform = FavoriteParkForm()
+        followed = dbsession.query(Database.tDog.dogID).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID) \
+        .filter(Database.tUser.userID == current_user.id)
+        count, notifications = Tlbx.getNotifications(current_user.id)
+        currentUser = Tlbx.currentUserInfo(current_user.id)
+        if followed is not None:
+            return render_template('/Dog/NewPark.html', currentUser = currentUser, FavoriteParkform = FavoriteParkform, count = count, notifications = notifications)
+        else:
+            return render_template('Dog/Initial_NewPark.html', FavoriteParkform = FavoriteParkform)
         return render_template('/Dog/NewPark.html', FavoriteParkform = FavoriteParkform)
     flash("Please fill out all fields")
-    return render_template('Dog/NewDog.html', CreateDogform = CreateDogform)
+    if followed is not None:
+        return render_template('Dog/NewDog.html', currentUser = currentUser, CreateDogform = CreateDogform, count = count, notifications = notifications)
+    else: 
+        return render_template('/Dog/Initial_NewDog.html', CreateDogForm = CreateDogForm)
 
 @app.route('/Create/Post', methods=['GET','POST'])
 @login_required
@@ -527,17 +590,17 @@ def userProfile(userID):
         user = user
 
     #Get comments of posts
-    commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.firstName, Database.tUser.lastName) \
+    commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName) \
         .join(Database.tUser, Database.tComments.userID == Database.tUser.userID)\
         .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID)
 
     #Get reacts of posts
-    reactResults = session.query(Database.tReacts.postID, Database.tUser.firstName, Database.tUser.lastName) \
+    reactResults = session.query(Database.tReacts.postID, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName) \
         .join(Database.tUser, Database.tReacts.userID == Database.tUser.userID)\
         .join(Database.tPosts, Database.tReacts.postID == Database.tPosts.postID)
 
     #Get Posts
-    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName)\
+    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.dogID, Database.tDog.name, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName)\
     .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
@@ -556,7 +619,8 @@ def userProfile(userID):
 
     #Collect dogs in your family
     dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == userID)
-    return render_template('Account/Profile.html', currentUser = currentUser, user = user, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
+    count, notifications = Tlbx.getNotifications(current_user.id)
+    return render_template('Account/Profile.html', currentUser = currentUser, user = user, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults, count = count, notifications = notifications)
 
 @app.route("/logout")
 @login_required

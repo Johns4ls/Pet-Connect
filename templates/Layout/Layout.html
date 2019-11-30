@@ -11,6 +11,25 @@
     <link rel="stylesheet" media="all" type="text/css" href="/static/style.css">
     <link rel="stylesheet" media="all" type="text/css" href="/static/skeleton.css">
     <script type="text/javascript" src="/static/script.js"></script>
+    <script>
+    function dropdown() {
+      document.getElementById("myDropdown").classList.toggle("show");
+    }
+    
+    // Close the dropdown menu if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+  </script>
     {% block head %}
     {% endblock %}
 </head>
@@ -28,10 +47,10 @@
         <a href="/Create/New/Dog">Create a new dog</a>
         <a href="/Messages">Messages</a>
         <div class="dropdown">
-            <button onclick="dropdown()" class="dropbtn">Dropdown</button>
+            <button onclick="dropdown()" class="dropbtn">notifications {{count}}</button>
             <div id="myDropdown" class="dropdown-content">
               {% for notification in notifications %}
-              <a href="/view/post/{{notification.postID}}">{{notification.firstName}} {{notification.lastName}} {{notification.information}}.</a>
+              <a href="/View/Post/{{notification.postID}}">{{notification.firstName}} {{notification.lastName}} {{notification.information}}.</a>
               {% endfor %}
             </div>
           </div>

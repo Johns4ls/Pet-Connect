@@ -28,10 +28,10 @@
      {% for User in Users %}
         <tr>
            {% if User.image == None %}
-           <td><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+           <td><a href="/User/Profile/{{User.userID}}">
              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a></td>
            {% elif User.image != None %}
-             <td><a href="{{ url_for('static', filename = User.image + '.jpg') }}">
+             <td><a href="/User/Profile/{{User.userID}}">
                <img src="{{ url_for('static', filename = User.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
            {% endif %}
           <td><h3><b>{{User.firstName}} {{User.lastName}}</b></h3> </td>
