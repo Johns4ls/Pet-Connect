@@ -365,7 +365,7 @@ def sendMessage(userID):
 @app.route('/Messages', methods=['GET','POST'])
 @login_required
 def Messages():
-
+    userID = int(current_user.id)
     #Get all friends you have that you've sent messages with.
     friends, db = Tlbx.dbConnectDict()
     friendQuery = ("Select MAX(tMessage.time_sent) as ts, tFriend.friendID, tUser.userID, tUser.firstName, tUser.lastName, tUser.image from tUser \
@@ -387,7 +387,7 @@ def Messages():
     cur.execute(messageQuery, data)
     currentUser = Tlbx.currentUserInfo(current_user.id)
     count, notifications = Tlbx.getNotifications(current_user.id)
-    return render_template('/Messages/Messages.html', messages = cur.fetchall(), friends = friends.fetchall(), currentUser=currentUser, count = count, notifications = notifications)
+    return render_template('/Messages/Messages.html', userID = userID, messages = cur.fetchall(), friends = friends.fetchall(), currentUser=currentUser, count = count, notifications = notifications)
 
 @app.route('/Search', methods=['GET','POST'])
 @login_required
