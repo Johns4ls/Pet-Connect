@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.engine import create_engine
+from sqlalchemy.orm import relationship
 import sqlalchemy
 import pymysql
 from sqlalchemy.ext.compiler import compiles
@@ -144,11 +145,12 @@ class tFriend(Base):
     friendID = Column(Integer, primary_key=True)
     user = Column(Integer, ForeignKey('tUser.userID'))
     friend = Column(Integer, ForeignKey('tUser.userID'))
+    message = relationship("tMessage", passive_deletes=True)
 
 class tMessage(Base):
     __tablename__ = 'tMessage'
     messageID = Column(Integer, primary_key=True)
-    friendID = Column(Integer, ForeignKey('tFriend.friendID'))
+    friendID = Column(Integer, ForeignKey('tFriend.friendID', ondelete='CASCADE'))
     sender = Column(Integer, ForeignKey('tUser.userID'))
     recipient = Column(Integer, ForeignKey('tUser.userID'))
     time_Sent  = Column('time_Sent', DateTime), 
@@ -189,6 +191,7 @@ class tHeadofHouse(Base):
     __tablename__ = 'tHeadofHouse'
     headofHouseID = Column(Integer, primary_key=True)
     userID = Column(Integer, ForeignKey('tUser.userID'))
+
 
 
 Base.metadata.create_all(engine)

@@ -234,7 +234,7 @@ ALTER TABLE `tFriend` ADD FOREIGN KEY (`user`) REFERENCES `tUser` (`userID`);
 
 ALTER TABLE `tFriend` ADD FOREIGN KEY (`friend`) REFERENCES `tUser` (`userID`);
 
-ALTER TABLE `tMessage` ADD FOREIGN KEY (`friendID`) REFERENCES `tFriend` (`friendID`);
+ALTER TABLE `tMessage` ADD FOREIGN KEY (`friendID`) REFERENCES `tFriend` (`friendID`) ON DELETE CASCADE;
 
 ALTER TABLE `tMessage` ADD FOREIGN KEY (`sender`) REFERENCES `tUser` (`userID`);
 

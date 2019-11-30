@@ -15,11 +15,11 @@
   function changeFriend(id) {
 	value = document.getElementById("Friend/" + id).value;
         window.location = '/' + value + '/' + id;
-	if (value == 'Unfollow'){
+	if (value == 'Unfriend'){
 	document.getElementById("Friend/" + id).value = 'Friend';
 	}
 	else {
-	document.getElementById("Friend/" + id).value = 'UnFriend'
+	document.getElementById("Friend/" + id).value = 'Unfriend'
     }
   }
 </script>
@@ -59,7 +59,7 @@
       <td><b>Message</b></td>
    </tr>
    </h1>
- {% for User in Users %}
+ {% for User in users %}
     <tr>
        {% if User.image == None %}
        <td><a href="/User/Profile/{{User.userID}}">
@@ -70,7 +70,7 @@
        {% endif %}
       <td><h3><b>{{User.firstName}} {{User.lastName}}</b></h3> </td>
       <td><input type="button" id="Message/{{User.userID}}" value="Message" onclick="window.location = '/Messages';"></td>
-      <td><input type="button" id="Friend/{{User.userID}}" value="Friend" onclick="changeFriend({{User.userID}})"></td>
+      <td><input type="button" id="Friend/{{User.userID}}" value={{friends[User.userID]}} onclick="changeFriend({{User.userID}})"></td>
     </tr>
  {% endfor %}
  </table>

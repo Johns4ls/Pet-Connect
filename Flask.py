@@ -313,7 +313,7 @@ def AddFriend(userID):
     session.commit()
     return('', 204)
 
-@app.route('/Friend/<int:userID>', methods=['GET','POST'])
+@app.route('/Unfriend/<int:userID>', methods=['GET','POST'])
 @login_required
 def UnFriend(userID):
     session = Database.Session()
@@ -414,11 +414,18 @@ def Search():
     Users = db.query(Database.tUser) \
         .filter(Database.tUser.firstName.contains(Name) | (Database.tUser.firstName.op('SOUNDS LIKE')(Name)) \
         | (Database.tUser.lastName.contains(Name) | (Database.tUser.lastName.op('SOUNDS LIKE')(Name)))) \
+        .filter(Database.tUser.userID != current_user.id) \
         .order_by(Database.Match([Database.tUser.firstName, Database.tUser.lastName], Name)) \
         .limit(5).all()
-
+    friended = db.query(Database.tFriend).filter(Database.tFriend.user == current_user.id)
+    friends={}
+    for user in Users:
+        friends[user.userID] = 'Friend'
+    for friend in friended:
+        if friend.friend in friends.keys():
+            friends[friend.friend] = 'Unfriend'
     count, notifications = Tlbx.getNotifications(current_user.id)
-    return render_template('/Search/Search.html', results = zip(dogs, text), Users = Users, currentUser = currentUser, count = count, notifications = notifications)
+    return render_template('/Search/Search.html', results = zip(dogs, text), users = Users, friends = friends, currentUser = currentUser, count = count, notifications = notifications)
 
 @app.route('/Search/Dogs', methods=['GET','POST'])
 @login_required
