@@ -367,7 +367,6 @@ def Messages():
 
     #Get all messages from you and your friends. Also need friendID to link it up with jinja
     friends, db = Tlbx.dbConnectDict()
-    #Don't forget to insert message with both friendIDs.
     friendQuery = ("Select friendID, tUser.userID, tUser.firstName, tUser.lastName, tUser.image from tFriend \
         JOIN tUser ON tFriend.friend = tUser.userID \
         WHERE tFriend.user = %s;")
@@ -375,13 +374,12 @@ def Messages():
     friends.execute(friendQuery, data)
     #Still need to orderby timestamp
     messageQuery = ("Select tMessage.friendID, tMessage.message, tMessage.time_Sent, tMessage.recipient, tUser.firstName, tUser.lastName from tMessage \
-        LEFT JOIN tFriend ON tFriend.friendID = tMessage.friendID \
+        JOIN tFriend ON tFriend.friendID = tMessage.friendID \
         JOIN tUser ON tFriend.friend = tUser.userID \
         WHERE tFriend.user = %s")
     cur, db = Tlbx.dbConnectDict()
     data = (current_user.id)
     cur.execute(messageQuery, data)
-
     currentUser = Tlbx.currentUserInfo(current_user.id)
     count, notifications = Tlbx.getNotifications(current_user.id)
     return render_template('/Messages/Messages.html', messages = cur.fetchall(), friends = friends.fetchall(), currentUser=currentUser, count = count, notifications = notifications)

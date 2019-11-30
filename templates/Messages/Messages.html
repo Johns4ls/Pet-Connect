@@ -23,13 +23,10 @@
           {% for friend in friends %}
           {% if loop.first %}
           {% set count = namespace(a=0) %}
-          {% for message in messages %}
-          {% if count.a == 0 %}
-          {% if friend.friendID == message.friendID %}
           <div class="inbox_chat">
             <div class="chat_list active_chat" id="chatHead{{friend.friendID}}">
             <script>
-            var current = "message" + {{friend.friendID}};
+            var current = {{friend.friendID}};
             </script>
               <radio-group>
               <radio-button tabindex="{{friend.friendID}}" onclick="changeFocus({{friend.friendID}});">
@@ -43,21 +40,21 @@
                         <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="img-thumbnail"></a>
                     {% endif %}</div>
                 <div class="chat_ib">
+                    {% for message in messages %}
+                    {% if count.a == 0 %}
+                    {% if friend.friendID == message.friendID %}
                   <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{message.time_Sent}}</span></h5>
                   <p>{{message.message}}</p>
+                  {% set count.a = count.a + 1 %}
+                  {% endif %}
+                  {% endif %}
+                  {% endfor %}
                 </div>
               </div>
               </radio-button>
             </div>
-          {% set count.a = count.a + 1 %}
-          {% endif %}
-          {% endif %}
-          {% endfor %}
             {% else %}
-            {% set count = namespace(a=0) %}
-            {% for message in messages %}
-            {% if count.a == 0 %}
-            {% if friend.friendID == message.friendID %}         
+            {% set count = namespace(a=0) %}     
             <div class="chat_list" id="chatHead{{friend.friendID}}">
               <radio-button tabindex="{{friend.friendID}}" onclick="changeFocus({{friend.friendID}});">
               <div class="chat_people">
@@ -70,22 +67,24 @@
                 {% endif %}
           
                 <div class="chat_ib">
+                    {% for message in messages %}
+                    {% if count.a == 0 %}
+                    {% if friend.friendID == message.friendID %}    
                   <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{message.time_Sent}}</span></h5>
                   <p>{{message.message}}</p>
+                  {% set count.a = count.a + 1 %}
+                  {% endif %}
+                  {% endif %}
+                  {% endfor %}
                 </div>
               </div>
             </radio-button>
             </radio-group>
             </div>
-        </div>
+        {% endif %}
+        {% endfor %}
       </div>
-        {% set count.a = count.a + 1 %}
-        {% endif %}
-        {% endif %}
-        {% endfor %}
-        {% endif %}
-        {% endfor %}
-        <!-- This will probably need to move up to msgs to have a container to set to hidden that will include the send button -->
+    </div>
         {% set count = namespace(a=0) %}
         {% for friend in friends %}
         <div class="mesgs"style="display: none;" id=message{{friend.friendID}}>
@@ -135,7 +134,7 @@
 </body>
 <script>
     function initialFocus() {
-                document.getElementById(current).style.display = "inline";
+                document.getElementById("message" + current).style.display = "inline";
                 console.log("We ran this")
             }
             window.onload = initialFocus();
