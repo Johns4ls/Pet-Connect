@@ -38,10 +38,10 @@
 {% for dogs, text in results %}
    <tr>
       {% if dogs.image == None %}
-      <td><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+      <td><a href="/Dog/Profile/{{dogs.dogID}}">
         <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a></td>
       {% elif dogs.image != None %}
-        <td><a href="{{ url_for('static', filename = dogs.image + '.jpg') }}">
+        <td><a href="/Dog/Profile/{{dogs.dogID}}">
           <img src="{{ url_for('static', filename = dogs.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
       {% endif %}
      <td><h3><b>{{dogs.name}}</b></h3> </td>

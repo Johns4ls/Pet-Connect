@@ -4,25 +4,25 @@
 {% block body %}
 <div class="backgroundContainer">
   <div class="mainContainer">
-    <h2>Need to load dog name in and name this $dog's profile. Also need $dog's picture below. Anywhere I have $dog needs to be jinja'd</h2>
-    {% if user.image == None %}
+    <h2>{{dog.tDog.name}}'s profile</h2>
+    {% if dog.tDog.image == None %}
     <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
       <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
-    {% elif user.image != None %}
-      <a href="{{ url_for('static', filename = user.image + '.jpg') }}">
-        <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="img-thumbnail"></a>
-        <br><br>
-        <button onclick="window.location='/DogInfo';">More About $Dog</button>
+    {% elif dog.tDog.image != None %}
+      <a href="{{ url_for('static', filename = dog.tDog.image + '.jpg') }}">
+        <img src="{{ url_for('static', filename = dog.tDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
     {% endif %}
+    <br><br>
+    <button onclick="window.location='/Dog/Info/{{dog.tDog.dogID}}';">More About {{dog.tDog.name}}</button>
     <br>
     <br>
     <div class="profileMain">
       <section class="profileButtonsText40">
         <div class="dogButtonHalfText">
-          <p>$Dog's Breed</p>
+          <p>{{dog.tDog.name}}'s breed is {{dog.tBreed.breed}}</p>
         </div>
         <div class="playdateButtonHalfText">
-          <p style="float: right;">$Dog's Age</p>
+          <p style="float: right;">Thor is {{dog.tDog.age}} years old.</p>
         </div>
         <br><br><br>
       </section>
@@ -31,7 +31,7 @@
             {% for post, like in postResults %}
             <div class="postContainer">
             <div class="well well-lg">
-              <p><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b> wrote this about <b style="color: #0d6591;">{{post.name}}</b>:</p>
+              <p><a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b></a> wrote this about <a href="/Dog/Profile/{{post.dogID}}"><b style="color: #0d6591;">{{post.name}}</b></a>:</p>
               <p>{{ post.Post }}</p>
             </div>
           <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
@@ -47,7 +47,7 @@
               {% for react in reactResults %}
                 {% if post.postID == react.postID %}
                 {% if count.a == 0 %}
-                <p><b style="color: #0d6591;">{{react.firstName}} {{react.lastName}}</b>
+                <p><a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{react.firstName}} {{react.lastName}}</b></a>
                 {% endif %}
                 {% set count.a = count.a + 1 %}
                 {% endif %}
@@ -62,7 +62,7 @@
               <hr>
               {% for comment in commentResults %}
                 {% if post.postID == comment.postID %}
-                <p><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b> said: </p>
+                <p><a href="/User/Profile/{{comment.userID}}"><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b></a> said: </p>
                 <p>{{comment.Comment}}</p>
                 {% endif %}
               {% endfor %}

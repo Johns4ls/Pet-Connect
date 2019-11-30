@@ -18,7 +18,7 @@
   <td><a href="{{ url_for('static', filename = react.image + '.jpg') }}">
     <img src="{{ url_for('static', filename = react.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
 {% endif %}
-<td><h1>{{react.firstName}} {{react.lastName}}</h1></td>
+<td><a href="/User/Profile/{{react.userID}}"><h1>{{react.firstName}} {{react.lastName}}</h1></a></td>
 <td><input type="button" id="{{react.userID}}" value="Friend"></td>
 </tr>
 {% endfor %}

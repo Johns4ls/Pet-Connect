@@ -255,7 +255,8 @@ def likes(postID):
     Reacts = session.query(Database.tUser).join(Database.tReacts, Database.tReacts.userID == Database.tUser.userID) \
     .filter(Database.tReacts.postID==postID)
     count, notifications = Tlbx.getNotifications(current_user.id)
-    return render_template('/Likes/Likes.html', Reacts = Reacts, count = count, notifications = notifications)
+    currentUser = Tlbx.currentUserInfo(current_user.id)
+    return render_template('/Likes/Likes.html', currentUser = currentUser, Reacts = Reacts, count = count, notifications = notifications)
 
 @app.route('/View/Post/<int:postID>', methods=['GET','POST'])
 def viewPost(postID):
@@ -603,7 +604,7 @@ def userProfile(userID):
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
     .filter(Database.tFollowers.userID == current_user.id).order_by(Database.tPosts.postID.desc())
-    yourReacts = session.query(Database.tReacts.postID).filter(Database.tReacts.userID == userID)
+    yourReacts = session.query(Database.tReacts.postID).filter(Database.tReacts.userID == current_user.id)
 
     likes={}
     like =[]
@@ -620,27 +621,59 @@ def userProfile(userID):
     count, notifications = Tlbx.getNotifications(current_user.id)
     return render_template('Account/Profile.html', currentUser = currentUser, user = user, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults, count = count, notifications = notifications)
 
-@app.route('/DogProfile', methods=['GET', 'POST'])
-def dogProfile():
+@app.route('/Dog/Profile/<int:dogID>', methods=['GET', 'POST'])
+def dogProfile(dogID):
     currentUser = Tlbx.currentUserInfo(current_user.id)
+    count, notifications = Tlbx.getNotifications(current_user.id)
     session = Database.Session()
-    user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
-    for user in user:
-        user = user
-    #Collect dogs in your family
-    dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
-    return render_template('Account/DogProfile.html', user = user, dogResults = dogResults, currentUser = currentUser)
+    #Get information about the dog
+    dog = session.query(Database.tDog, Database.tBreed).filter(Database.tDog.dogID == dogID) \
+    .join(Database.tBreed, Database.tBreed.breedID == Database.tDog.dogID)
+    for dog in dog:
+        dog = dog
 
-@app.route('/DogInfo', methods=['GET', 'POST'])
+    #Get comments of posts
+    commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName) \
+        .join(Database.tUser, Database.tComments.userID == Database.tUser.userID)\
+        .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID)
+
+    #Get reacts of posts
+    reactResults = session.query(Database.tReacts.postID, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName) \
+        .join(Database.tUser, Database.tReacts.userID == Database.tUser.userID)\
+        .join(Database.tPosts, Database.tReacts.postID == Database.tPosts.postID)
+
+    #Get Posts
+    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.dogID, Database.tDog.name, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName)\
+    .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
+    .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
+    .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
+    .filter(Database.tFollowers.dogID == dogID).order_by(Database.tPosts.postID.desc())
+
+    yourReacts = session.query(Database.tReacts.postID).filter(Database.tReacts.userID == current_user.id)
+
+    likes={}
+    like =[]
+    for react in postResults:
+        likes[react.postID] = 'Like'
+    for yourReact in yourReacts:
+        if yourReact.postID in likes.keys():
+            likes[yourReact.postID] = 'Unlike'
+    for react in postResults:
+        like.append(likes[react.postID])
+
+    return render_template('Account/DogProfile.html', postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults, yourReacts = yourReacts, count = count, notifications = notifications, dog=dog, currentUser = currentUser)
+
+@app.route('/Dog/Info/<int:dogID>', methods=['GET', 'POST'])
 def dogInfo():
     currentUser = Tlbx.currentUserInfo(current_user.id)
+    count, notifications = Tlbx.getNotifications(current_user.id)
     session = Database.Session()
     user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
     for user in user:
         user = user
     #Collect dogs in your family
     dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
-    return render_template('Account/DogInfo.html', user = user, dogResults = dogResults, currentUser = currentUser)
+    return render_template('Account/DogInfo.html', count = count, notifications = notifications, user = user, dogResults = dogResults, currentUser = currentUser)
 
 @app.route("/logout")
 @login_required
