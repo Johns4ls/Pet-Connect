@@ -1,0 +1,35 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<div class="backgroundContainer">
+  <div class="mainContainer">
+    <h2>Need to load dog name in and name this $dog's profile. Also need $dog's picture below</h2>
+    {% if user.image == None %}
+    <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+    {% elif user.image != None %}
+      <a href="{{ url_for('static', filename = user.image + '.jpg') }}">
+        <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="img-thumbnail"></a>
+        <br><br>
+        <button onclick="window.location='/DogProfile';">Back To $Dog's Profile</button>
+    {% endif %}
+    <br>
+    <br>
+    <div class="profileMain">
+      <h2> Information about $dog </h2>
+      <br>
+      <p>Gender: all data below will likely be $dog.gender/breed/fixed/etc </p>
+      <p>Breed: </p>
+      <p>Fixed: </p>
+      <p>Age: </p>
+      <p>Size: </p>
+      <p>Weight: </p>
+      <p>Favorite Toy: </p>
+      <p>Fun Fact:  </p>
+    </div>
+
+      </div>
+  </div>
+{% endblock %}
+</div>
