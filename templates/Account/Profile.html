@@ -4,7 +4,7 @@
 {% block body %}
 <div class="backgroundContainer">
   <div class="mainContainer">
-    <h2>{{user.firstName}} {{user.lastName}}'s profile</h2>
+    <h1 style="text-align: center;">{{user.firstName}} {{user.lastName}}'s profile</h1>
     {% if user.image == None %}
     <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
       <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
@@ -18,7 +18,7 @@
 
       <section class="profileButtonsText70">
         <div class="dogButtonHalfText">
-          <p>View Dog Profile(s) for {{user.firstName}}</p>
+          <p>Dog's in {{user.firstName}}'s family</p>
         </div>
         <div class="playdateButtonHalfText">
           <p style="float: right;">Schedule a Playdate</p>
@@ -27,17 +27,27 @@
       {% for dog in dogResults %}
       <section class="profileButtonsText70">
         <div class="dogButtonHalfText">
-          <button onclick="window.location='/Dog/Profile/{{dog.dogID}}';">{{dog.name}} Profile</button>
+            {% if dog.image == None %}
+            <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% elif dog.image != None %}
+              <a href="{{ url_for('static', filename = dog.image + '.jpg') }}">
+                <img src="{{ url_for('static', filename = dog.image + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% endif %}
+          <button onclick="window.location='/Dog/Profile/{{dog.dogID}}';">{{dog.name}}'s Profile</button>
         </div>
         <div class="playdateButtonHalfText">
           <button style="float: right;" onclick="window.location='';">Schedule Playdate</button>
         </div>
         {% endfor %}
-        <br><br><br>
       </section>
     </div>
+    <br><br><br>
     <div class="feed">
         <div class="container">
+          <br>
+          <h1 style="text-align: center;">{{user.firstName}}'s feed</h1>
+          <br>
           {% for post, like in postResults %}
           <div class="postContainer">
           <div class="well well-lg">
