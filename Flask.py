@@ -614,7 +614,7 @@ def userProfile(userID):
     .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
-    .filter(Database.tFollowers.userID == current_user.id).order_by(Database.tPosts.postID.desc())
+    .filter(Database.tPosts.userID == userID).order_by(Database.tPosts.postID.desc())
     yourReacts = session.query(Database.tReacts.postID).filter(Database.tReacts.userID == current_user.id)
 
     likes={}
