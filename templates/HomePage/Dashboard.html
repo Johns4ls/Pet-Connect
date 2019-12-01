@@ -58,7 +58,23 @@
         {% for post, like in postResults %}
         <div class="postContainer">
         <div class="well well-lg">
-          <p><a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b></a> wrote this about <a href="/Dog/Profile/{{post.userID}}"><b style="color: #0d6591;">{{post.name}}</b></a>:</p>
+            <p>
+            {% if post.image == None %}
+            <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% elif post.image != None %}
+              <a href="{{ url_for('static', filename = post.image + '.jpg') }}">
+                <img src="{{ url_for('static', filename = post.image + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% endif %}
+          <a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b></a> wrote this about <a href="/Dog/Profile/{{post.userID}}"><b style="color: #0d6591;">{{post.tDog.name}}</b></a>:
+          {% if post.tDog.image == None %}
+          <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+            <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+          {% elif post.tDog.image != None %}
+            <a href="{{ url_for('static', filename = post.tDog.image + '.jpg') }}">
+              <img src="{{ url_for('static', filename = post.tDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
+          {% endif %}
+        </p>
           <p>{{ post.Post }}</p>
 
         </div>
@@ -75,7 +91,15 @@
           {% for react in reactResults %}
             {% if post.postID == react.postID %}
             {% if count.a == 0 %}
-            <p><a href="/User/Profile/{{react.userID}}"><b style="color: #0d6591;">{{react.firstName}} {{react.lastName}}</b></a>
+            <p>
+                {% if react.image == None %}
+                <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                  <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+                {% elif react.image != None %}
+                  <a href="{{ url_for('static', filename = react.image + '.jpg') }}">
+                    <img src="{{ url_for('static', filename = react.image + '.thumbnail') }}"class="img-thumbnail"></a>
+                {% endif %}
+                <a href="/User/Profile/{{react.userID}}"><b style="color: #0d6591;">{{react.firstName}} {{react.lastName}}</b></a>
             {% endif %}
             {% set count.a = count.a + 1 %}
             {% endif %}
@@ -90,7 +114,15 @@
           <hr>
           {% for comment in commentResults %}
             {% if post.postID == comment.postID %}
-            <p><a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b></a> said: </p>
+            <p>
+            {% if comment.image == None %}
+            <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% elif comment.image != None %}
+              <a href="{{ url_for('static', filename = comment.image + '.jpg') }}">
+                <img src="{{ url_for('static', filename = comment.image + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% endif %}
+              <a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b></a> said: </p>
             <p>{{comment.Comment}}</p>
             {% endif %}
           {% endfor %}

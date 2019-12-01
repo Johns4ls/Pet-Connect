@@ -34,17 +34,17 @@ def index():
     dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
 
     #Get comments of posts
-    commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName) \
+    commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName, Database.tUser.image) \
         .join(Database.tUser, Database.tComments.userID == Database.tUser.userID)\
         .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID)
 
     #Get reacts of posts
-    reactResults = session.query(Database.tReacts.postID, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName) \
+    reactResults = session.query(Database.tReacts.postID, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName, Database.tUser.image) \
         .join(Database.tUser, Database.tReacts.userID == Database.tUser.userID)\
         .join(Database.tPosts, Database.tReacts.postID == Database.tPosts.postID)
 
     #Get Posts
-    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.dogID, Database.tDog.name, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName)\
+    postResults = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName, Database.tUser.image)\
     .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
