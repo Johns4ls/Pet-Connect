@@ -49,6 +49,9 @@
                   {% endif %}
                   {% endif %}
                   {% endfor %}
+                  {% if count.a == 0 %}
+                  <h5>{{friend.firstName}} {{friend.lastName}}</h5>
+                  {% endif %}
                 </div>
               </div>
               </radio-button>
@@ -70,12 +73,15 @@
                     {% for message in messages %}
                     {% if count.a == 0 %}
                     {% if friend.friendID == message.friendID %}    
-                  <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{friend.ts}}</span></h5>
-                  <p>{{message.message}}</p>
-                  {% set count.a = count.a + 1 %}
+                    <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{friend.ts}}</span></h5>
+                    <p>{{message.message}}</p>
+                    {% set count.a = count.a + 1 %}
                   {% endif %}
                   {% endif %}
                   {% endfor %}
+                  {% if count.a == 0 %}
+                  <h5>{{friend.firstName}} {{friend.lastName}}</h5>
+                  {% endif %}
                 </div>
               </div>
             </radio-button>
