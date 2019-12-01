@@ -4,7 +4,7 @@
 {% block body %}
 <div class="backgroundContainer">
   <div class="mainContainer">
-    <h2>{{dog.tDog.name}}'s profile</h2>
+    <h1>{{dog.tDog.name}}'s profile</h1>
     {% if dog.tDog.image == None %}
     <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
       <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
@@ -19,15 +19,18 @@
     <div class="profileMain">
       <section class="profileButtonsText40">
         <div class="dogButtonHalfText">
-          <p>{{dog.tDog.name}}'s breed is {{dog.tBreed.breed}}</p>
+          <h2>{{dog.tDog.name}}'s breed is {{dog.tBreed.breed}}</h2>
         </div>
         <div class="playdateButtonHalfText">
-          <p style="float: right;">{{dog.tDog.name}} is {{dog.tDog.age}} years old.</p>
+          <h2 style="float: right;">{{dog.tDog.name}} is {{dog.tDog.age}} years old.</h2>
         </div>
         <br><br><br>
       </section>
       <div class="feed">
           <div class="container">
+            <br>
+              <h1 style="text-align: center;">{{dog.tDog.name}}'s feed</h1>
+              <br>
             {% for post, like in postResults %}
             <div class="postContainer">
             <div class="well well-lg">

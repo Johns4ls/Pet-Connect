@@ -6,6 +6,9 @@
 	background-size:cover;
 	background-position:center;
 }
+h1{
+  text-align: center;
+}
 body{
   font-family: 'Mukta', sans-serif;
 	height:100vh;
@@ -333,12 +336,11 @@ img{ max-width:100%;}
   display: block;
 }
 .search{
-    float: right;
-    padding: 6px;
+    padding: 3px;
     border: none;
-    margin-top: 8px;
-    margin-right: 16px;
-    font-size: 17px;
+    margin-top: 5px;
+    margin-left: 10px;
+    font-size: 15px;
 }
 
 /* Change color of dropdown links on hover */
