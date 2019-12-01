@@ -7,10 +7,10 @@
     <h1>{{dog.tDog.name}}'s profile</h1>
     {% if dog.tDog.image == None %}
     <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
-      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="profileImg"></a>
     {% elif dog.tDog.image != None %}
       <a href="{{ url_for('static', filename = dog.tDog.image + '.jpg') }}">
-        <img src="{{ url_for('static', filename = dog.tDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
+        <img src="{{ url_for('static', filename = dog.tDog.image + '.thumbnail') }}"class="profileImg"></a>
     {% endif %}
     <br><br>
     <button onclick="window.location='/Dog/Info/{{dog.tDog.dogID}}';">More About {{dog.tDog.name}}</button>

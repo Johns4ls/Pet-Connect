@@ -162,7 +162,20 @@ a{
 }
     
 .container{max-width:1170px; margin:auto;}
-img{ max-width:100%;}
+img{ 
+  max-width: 10% !important;
+  max-height: 7% !important;
+  height: auto;
+}
+.profileImg{
+  max-width: 14% !important;
+  max-height: 12% !important;
+}
+.notifyImg{
+  max-width: 25% !important;
+  max-height: 25% !important;
+  position: absolute;
+}
 .inbox_people {
   background: #f8f8f8 none repeat scroll 0 0;
   float: left;
@@ -323,7 +336,6 @@ img{ max-width:100%;}
   display: none;
   position: absolute;
   background-color: #f1f1f1;
-  min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
 }
@@ -331,7 +343,6 @@ img{ max-width:100%;}
 /* Links inside the dropdown */
 .dropdown-content a {
   color: black !important;
-  padding: 12px 16px;
   text-decoration: none;
   display: block;
 }

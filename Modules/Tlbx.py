@@ -143,14 +143,14 @@ def getCountNotifications(userID):
     return total
 def getNotifications(userID):
     cur, db = dbConnectDict()
-    query = "SELECT reactUser.firstName, reactUser.lastName, tPosts.postID, tReacts.ts as ts, 'reacted to your post' as information\
+    query = "SELECT reactUser.firstName, reactUser.lastName, reactUser.image, tPosts.postID, tReacts.ts as ts, 'reacted to your post' as information\
         FROM tUser as reactUser \
         JOIN tReacts ON tReacts.userID = reactUser.userID \
         JOIN tPosts ON tPosts.postID = tReacts.postID \
         JOIN tUser ON tPosts.userID = tUser.userID \
         WHERE tPosts.UserID = %s \
         UNION \
-        SELECT commentUser.firstName, commentUser.lastName, tPosts.postID, tComments.ts as ts, 'commented on your post' as information \
+        SELECT commentUser.firstName, commentUser.lastName, commentUser.image, tPosts.postID, tComments.ts as ts, 'commented on your post' as information \
         FROM tUser as commentUser \
         JOIN tComments ON tComments.userID = commentUser.userID \
         JOIN tPosts ON tPosts.postID = tComments.postiD \

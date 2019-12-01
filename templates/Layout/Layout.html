@@ -44,9 +44,19 @@
         <div class="dropdown">
             <button onclick="dropdown()" class="dropbtn">notifications {% if count != 0 %} {{count}} {% endif %}</button>
             <div id="myDropdown" class="dropdown-content">
+              <ul style="list-style-type:none;">
               {% for notification in notifications %}
-              <a href="/View/Post/{{notification.postID}}">{{notification.firstName}} {{notification.lastName}} {{notification.information}}.</a>
+              <li>      
+                {% if notification.image == None %}
+                  <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                    <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="notifyImg"></a>
+                  {% elif notification.image != None %}
+                    <a href="{{ url_for('static', filename = notification.image + '.jpg') }}">
+                      <img src="{{ url_for('static', filename = notification.image + '.thumbnail') }}"class="notifyImg"></a>
+                  {% endif %}
+                  <a href="/View/Post/{{notification.postID}}">{{notification.firstName}} {{notification.lastName}} {{notification.information}}.</a></li>
               {% endfor %}
+            </ul>
             </div>
           </div>
    <a href="javascript:void(0);" class="icon" onClick="openDrawerMenu()">&#9776;</a>

@@ -7,10 +7,10 @@
     <h1 style="text-align: center;">{{user.firstName}} {{user.lastName}}'s profile</h1>
     {% if user.image == None %}
     <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
-      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="profileImg"></a>
     {% elif user.image != None %}
       <a href="{{ url_for('static', filename = user.image + '.jpg') }}">
-        <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="img-thumbnail"></a>
+        <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="profileImg"></a>
     {% endif %}
     <br>
     <br>
