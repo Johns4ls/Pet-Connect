@@ -48,10 +48,10 @@
               {% for notification in notifications %}
               <li>      
                 {% if notification.image == None %}
-                  <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                  <a href="/User/Profile/{{notification.userID}}">
                     <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="notifyImg"></a>
                   {% elif notification.image != None %}
-                    <a href="{{ url_for('static', filename = notification.image + '.jpg') }}">
+                    <a href="/User/Profile/{{notification.userID}}">
                       <img src="{{ url_for('static', filename = notification.image + '.thumbnail') }}"class="notifyImg"></a>
                   {% endif %}
                   <a href="/View/Post/{{notification.postID}}">{{notification.firstName}} {{notification.lastName}} {{notification.information}}.</a></li>
