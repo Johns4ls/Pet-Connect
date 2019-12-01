@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" media="all" type="text/css" href="/static/style.css">
     <link rel="stylesheet" media="all" type="text/css" href="/static/skeleton.css">
     <script type="text/javascript" src="/static/script.js"></script>
@@ -47,7 +48,7 @@
         <a href="/Create/New/Dog">Create a new dog</a>
         <a href="/Messages">Messages</a>
         <div class="dropdown">
-            <button onclick="dropdown()" class="dropbtn">notifications {{count}}</button>
+            <button onclick="dropdown()" class="dropbtn">notifications {% if count != 0 %} {{count}} {% endif %}</button>
             <div id="myDropdown" class="dropdown-content">
               {% for notification in notifications %}
               <a href="/View/Post/{{notification.postID}}">{{notification.firstName}} {{notification.lastName}} {{notification.information}}.</a>
@@ -57,10 +58,10 @@
    <a href="javascript:void(0);" class="icon" onClick="openDrawerMenu()">&#9776;</a>
    <!--&#9776; is the code for the 3 line menu button-->
    <form action="/Search" method="post" novalidate>
-       <input class="form-control mr-lg-6" type="search" name="Search" placeholder="Search" aria-label="Search">
-       <button class="btn btn-secondary" type="submit">Search</button>
+       <input class="search" type="search" name="Search" placeholder="Search" aria-label="Search">
+       <button type="submit"><i class="fa fa-search"></i></button>
    </form>
-   <a href="/logout">Logout</a>
+   <a href="/logout" >Logout</a>
    </div>
  </div>
 
