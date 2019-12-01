@@ -26,7 +26,12 @@
 
 {% endblock %}
 {% block body %}
-
+<div class="backgroundContainer">
+    <div class="mainContainer">
+        <div class="feed">
+          <h1>Top Dog Results</h1>
+          <br>
+          <div class="postContainer">
  <table style="width:100%">
    <h1>
    <tr>
@@ -49,14 +54,17 @@
    </tr>
 {% endfor %}
 </table>
+</div>
 <a href="/Search/Dogs">View All Dogs</a>
-
+<br>
+<h1>Top user results</h1>
+<div class="postContainer">
 <table style="width:100%">
     <h1>
     <tr>
       <td><b>profile</b></td>
       <td><b>Name</b></td>
-      <td><b>Message</b></td>
+      <td><b>Friend</b></td>
    </tr>
    </h1>
  {% for User in users %}
@@ -69,11 +77,13 @@
            <img src="{{ url_for('static', filename = User.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
        {% endif %}
       <td><h3><b>{{User.firstName}} {{User.lastName}}</b></h3> </td>
-      <td><input type="button" id="Message/{{User.userID}}" value="Message" onclick="window.location = '/Messages';"></td>
       <td><input type="button" id="Friend/{{User.userID}}" value={{friends[User.userID]}} onclick="changeFriend({{User.userID}})"></td>
     </tr>
  {% endfor %}
  </table>
+ </div>
  <a href="/Search/Users">View All Users</a>
-
+</div>
+</div>
+</div>
 {% endblock %}
