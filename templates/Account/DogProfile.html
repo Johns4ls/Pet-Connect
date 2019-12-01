@@ -42,7 +42,7 @@
                     <a href="{{ url_for('static', filename = post.image + '.jpg') }}">
                       <img src="{{ url_for('static', filename = post.image + '.thumbnail') }}"class="img-thumbnail"></a>
                   {% endif %}
-                <a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b></a> wrote this about <a href="/Dog/Profile/{{post.dogID}}"><b style="color: #0d6591;">{{post.name}}</b></a>:
+                <a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b></a> wrote this about <a href="/Dog/Profile/{{post.dogID}}"><b style="color: #0d6591;">{{post.tDog.name}}</b></a>:
                 {% if post.tDog.image == None %}
                 <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
                   <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
