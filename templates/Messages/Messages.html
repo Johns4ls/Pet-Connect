@@ -36,10 +36,10 @@
                 <div class="chat_img">     
                   {% if friend.image == None %}
                     <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
-                      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="notifyImg"></a>
+                      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="Img"></a>
                     {% elif friend.image != None %}
                       <a href="{{ url_for('static', filename = friend.image + '.jpg') }}">
-                        <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="notifyImg"></a>
+                        <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="Img"></a>
                     {% endif %}</div>
                 <div class="chat_ib">
                     {% for message in messages %}
@@ -65,10 +65,10 @@
               <div class="chat_people">
                 {% if friend.image == None %}
                 <div class="chat_img"><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
-                  <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="notifyImg"></a></div>
+                  <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="Img"></a></div>
                 {% elif friend.image != None %}
                 <div class="chat_img"><a href="{{ url_for('static', filename = friend.image + '.jpg') }}">
-                    <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="notifyImg></a></div>
+                    <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="Img></a></div>
                 {% endif %}
           
                 <div class="chat_ib">
@@ -103,10 +103,10 @@
             <div class="incoming_msg">
               {% if friend.image == None %}
               <div class="incoming_msg_img"><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
-                <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="notifyImg"></a></div>
+                <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="Img"></a></div>
               {% elif friend.image != None %}
               <div class="incoming_msg_img"><a href="{{ url_for('static', filename = friend.image + '.jpg') }}">
-                  <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="notifyImg"></a></div>
+                  <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="Img"></a></div>
               {% endif %}
               <div class="received_msg">
                 <div class="received_withd_msg">
