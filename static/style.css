@@ -163,8 +163,8 @@ a{
     
 .container{max-width:1170px; margin:auto;}
 img{ 
-  max-width: 10% !important;
-  max-height: 7% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
   height: auto;
 }
 .profileImg{
