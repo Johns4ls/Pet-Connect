@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" media="all" type="text/css" href="/static/style.css">
     <link rel="stylesheet" media="all" type="text/css" href="/static/skeleton.css">
@@ -30,6 +31,38 @@
         }
       }
     }
+        // Connect to the Socket.IO server.
+        // The connection URL has the following format:
+        //     http[s]://<domain>:<port>[/<namespace>]
+        
+        // Event handler for new connections.
+        // The callback function is invoked when a connection with the
+        // server is established.
+    namespace = '/Notifications/';
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+    socket.emit('SendNotifications', {data: 'I\'m connected!'});
+    socket.on('GetNotifications', function(notifications) {
+      if(notifications.count > 0){
+      $('#NotificationButton').text("notifications " + notifications.count).html();
+      text = ""
+      for(var i in notifications.notifications){
+            text = text + "<li> \n"
+                if(notifications.notifications[i].image == null){
+                  text = text + "<a href='/User/Profile/" + notifications.notifications[i].userID + "'> \n"
+                  text = text + "<img src='/static/pictures/Profile/thor.thumbnail' class='notifyImg'></a> \n"
+                }
+                else if(notifications.notifications[i].image != null){
+                  text = text + "<a href='/User/Profile/" + notifications.notifications[i].userID + "'> \n"
+                  text = text + "<img src='/static/" + notifications.notifications[i].image + ".thumbnail" + "'class='notifyImg'></a> \n"
+                }
+                  text = text +  "<a href='/View/Post/" + notifications.notifications[i].postID + "'>" + notifications.notifications[i].firstName + " " + notifications.notifications[i].lastName + " " + notifications.notifications[i].information + ".</a></li> \n";
+      
+      }
+      $('#NotificationsList').html(text);
+    }
+    });
+
+
   </script>
     {% block head %}
     {% endblock %}
@@ -42,9 +75,9 @@
         <a href="/Create/New/Dog">Create a new dog</a>
         <a href="/Messages">Messages</a>
         <div class="dropdown">
-            <button onclick="dropdown()" class="dropbtn">notifications {% if count != 0 %} {{count}} {% endif %}</button>
+            <button onclick="dropdown()" id="NotificationButton" class="dropbtn">notifications {% if count != 0 %} {{count}} {% endif %}</button>
             <div id="myDropdown" class="dropdown-content">
-              <ul style="list-style-type:none;">
+              <ul id = "NotificationsList" style="list-style-type:none;">
               {% for notification in notifications %}
               <li>      
                 {% if notification.image == None %}

@@ -3,18 +3,22 @@ from flask import Flask, flash, render_template, redirect, session, request
 from werkzeug.utils import secure_filename
 from Modules.forms import LoginForm, RegisterForm, UserInfoForm, CreateFamilyForm, CreateDogForm, FavoriteParkForm, PasswordResetForm
 from Modules import Tlbx, Database
+from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy, functools
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import aliased
 from flask_login import LoginManager, login_required, logout_user, current_user
 import datetime
+import time
+import json
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 '''Secret to prevent Cross-Site Request Forgery(CSRF) attacks.
    This will need to be updated before the site goes live.'''
 app.secret_key = 'some_secret'
-
+async_mode = None
+socketio = SocketIO(app, async_mode=async_mode)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "/"
@@ -65,7 +69,8 @@ def index():
     #messages = Database.new_messages(current_user.id)
     #print(messages)
     count, notifications = Tlbx.getNotifications(current_user.id)
-    return render_template('HomePage/Dashboard.html', count = count, notifications = notifications, currentUser = currentUser, dogResults = dogResults, postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
+    return render_template('HomePage/Dashboard.html', count = count, notifications = notifications, currentUser = currentUser, dogResults = dogResults, \
+        postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults)
 
 #Renders the login page
 @app.route('/', methods=['GET', 'POST'])
@@ -690,6 +695,21 @@ def dogInfo(dogID):
         dog = dog
 
     return render_template('Account/DogInfo.html', count = count, notifications = notifications, dog = dog, currentUser = currentUser)
+
+@socketio.on('SendNotifications', namespace='/Notifications/')
+def Notifications(msg):
+        socketio.start_background_task(SendNotifications())
+def SendNotifications():
+    while(True):
+        count, notifications = Tlbx.getNotifications(current_user.id)
+        for notification in notifications:
+            notification['ts'] = str(notification['ts'])
+        socketio.emit('GetNotifications',
+                        {'count': count, 'notifications': notifications}, namespace='/Notifications/')
+        print(count, notifications)
+        time.sleep(50)
+
+
 
 @app.route("/logout")
 @login_required
