@@ -7,7 +7,8 @@ CREATE TABLE `tUser` (
   `password` varchar(255) NOT NULL,
   `image` varchar(255),
   `addressID` int,
-  `last_message_read_time` timestamp,
+  `last_notified_time` timestamp NOT NULL DEFAULT NOW(),
+  `last_message_read_time` timestamp NOT NULL DEFAULT NOW(),
   FULLTEXT KEY (firstName, lastName, email),
   FULLTEXT KEY (firstName, lastName),
   FULLTEXT KEY (email)

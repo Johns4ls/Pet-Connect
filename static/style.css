@@ -166,6 +166,10 @@ img{
   max-width: 100%;
   max-height: 100%;
 }
+.toastImg{
+  max-width: 25%;
+  max-height: 25%;
+}
 .profileImg{
   max-width: 14%;
   max-height: 12%;
