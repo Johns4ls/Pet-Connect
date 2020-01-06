@@ -49,10 +49,21 @@
         // Event handler for new connections.
         // The callback function is invoked when a connection with the
         // server is established.
-    namespace = '/Notifications/';
-    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
-    socket.emit('SendNotifications', {data: 'I\'m connected!'});
-    socket.on('GetNotifications', function(notifications) {
+        
+        //User Information handling
+        userInfoNamespace = '/userInformation/';
+    var userInformationSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
+    notificationSocketsocket.emit('AskInformation', {data: 'I\'m connected!'});
+    notificationSocketsocket.on('GetInformation', function(information) {
+        //Add jquery to update information here
+    });
+        
+        
+    //Notification Handling
+    notificationNamespace = '/Notifications/';
+    var notificationSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + notificationNamespace);
+    notificationSocketsocket.emit('SendNotifications', {data: 'I\'m connected!'});
+    notificationSocketsocket.on('GetNotifications', function(notifications) {
       if(notifications.count > 0){
         $('#NotificationButton').text("notifications " + notifications.count);
         if(notifications.NewNotifications > 0){
