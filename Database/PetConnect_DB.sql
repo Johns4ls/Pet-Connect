@@ -133,7 +133,8 @@ CREATE TABLE `tPlayDate` (
 CREATE TABLE `tFriend` (
   `friendID` int PRIMARY KEY AUTO_INCREMENT,
   `user` int,
-  `friend` int
+  `friend` int,
+  `last_thread_read_time` timestamp NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE `tMessage` (
