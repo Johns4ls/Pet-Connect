@@ -26,7 +26,7 @@
           {% if loop.first %}
           {% set count = namespace(a=0) %}
           <div class="inbox_chat">
-            <div class="chat_list active_chat" id="chatHead{{friend.friendID}}">
+            <div class="chat_list" id="chatHead{{friend.friendID}}">
             {% if friendID is none %}
               <script>
                 var current = {{friend.friendID}};
@@ -152,7 +152,7 @@
     function initialFocus() {
 
       document.getElementById("message" + current).style.display = "inline";
-      console.log("We ran this")
+      document.getElementById("chatHead" + current).classList.add("active_chat");
     }
     window.onload = initialFocus();
     function changeFocus(id){
