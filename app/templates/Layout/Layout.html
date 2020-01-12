@@ -50,11 +50,11 @@
         // The callback function is invoked when a connection with the
         // server is established.
         
-        //User Information handling
-        userInfoNamespace = '/userInformation/';
-    var userInformationSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
-    notificationSocketsocket.emit('AskInformation', {data: 'I\'m connected!'});
-    notificationSocketsocket.on('GetInformation', function(information) {
+        //new message handling
+        userInfoNamespace = '/Messages/';
+        var MessageSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
+        MessageSocket.emit('askMessages', {data: 'I\'m connected!'});
+        MessageSocket.on('getMessages', function(messages) {
         //Add jquery to update information here
     });
         
@@ -62,8 +62,8 @@
     //Notification Handling
     notificationNamespace = '/Notifications/';
     var notificationSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + notificationNamespace);
-    notificationSocketsocket.emit('SendNotifications', {data: 'I\'m connected!'});
-    notificationSocketsocket.on('GetNotifications', function(notifications) {
+    notificationSocket.emit('askNotifications', {data: 'I\'m connected!'});
+    notificationSocket.on('getNotifications', function(notifications) {
       if(notifications.count > 0){
         $('#NotificationButton').text("notifications " + notifications.count);
         if(notifications.NewNotifications > 0){

@@ -10,13 +10,13 @@ import datetime
 #Connectors to database
 def dbConnect():
 
-    db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-    #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
     cur = db.cursor()
     return cur
 def dbConnectDict():
-    db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-    #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
     cur = db.cursor(pymysql.cursors.DictCursor)
     return cur, db
 
@@ -116,90 +116,6 @@ def currentUserInfo(userID):
     for user in user:
         user = user
     return user
-
-def getCountNotifications(userID):
-    cur, db = dbConnectDict()
-    query = "SELECT count(reactUser.firstName)\
-    FROM tUser as reactUser \
-    JOIN tReacts ON tReacts.userID = reactUser.userID \
-    JOIN tPosts ON tPosts.postID = tReacts.postID \
-    JOIN tUser ON tPosts.userID = tUser.userID \
-    WHERE tPosts.UserID = %s \
-    AND tReacts.ts > (SELECT tUser.last_message_read_time FROM tUser WHERE userID = %s) \
-    UNION \
-    SELECT count(commentUser.firstName) \
-    FROM tUser as commentUser \
-    JOIN tComments ON tComments.userID = commentUser.userID \
-    JOIN tPosts ON tPosts.postID = tComments.postiD \
-    JOIN tUser ON tPosts.userID = tUser.userID \
-    WHERE tPosts.userID = %s \
-    AND tComments.ts > (SELECT tUser.last_message_read_time FROM tUser WHERE userID = %s);"
-    data = (userID, userID, userID, userID)
-    cur.execute(query, data)
-    counts = cur.fetchall()
-    total = 0
-    for count in counts:
-        total = total + count['count(reactUser.firstName)']
-    return total
-
-def getNewNotifications(userID):
-    cur, db = dbConnectDict()
-    query = "SELECT count(reactUser.firstName)\
-    FROM tUser as reactUser \
-    JOIN tReacts ON tReacts.userID = reactUser.userID \
-    JOIN tPosts ON tPosts.postID = tReacts.postID \
-    JOIN tUser ON tPosts.userID = tUser.userID \
-    WHERE tPosts.UserID = %s \
-    AND tReacts.ts > (SELECT tUser.last_notified_time FROM tUser WHERE userID = %s) \
-    UNION \
-    SELECT count(commentUser.firstName) \
-    FROM tUser as commentUser \
-    JOIN tComments ON tComments.userID = commentUser.userID \
-    JOIN tPosts ON tPosts.postID = tComments.postiD \
-    JOIN tUser ON tPosts.userID = tUser.userID \
-    WHERE tPosts.userID = %s \
-    AND tComments.ts > (SELECT tUser.last_notified_time FROM tUser WHERE userID = %s);"
-    data = (userID, userID, userID, userID)
-    cur.execute(query, data)
-    counts = cur.fetchall()
-    total = 0
-    for count in counts:
-        total = total + count['count(reactUser.firstName)']
-    return total
-def updateNotifyTime(userID):
-    cur, db = dbConnectDict()
-    query = "UPDATE tUser \
-    SET last_notified_time = %s \
-    WHERE userID = %s;"
-    data = (datetime.datetime.now(), userID)
-    cur.execute(query, data)
-
-def getNotifications(userID):
-    cur, db = dbConnectDict()
-    query = "SELECT reactUser.userID, reactUser.firstName, reactUser.lastName, reactUser.image, tPosts.postID, tReacts.ts as ts, 'reacted to your post' as information\
-        FROM tUser as reactUser \
-        JOIN tReacts ON tReacts.userID = reactUser.userID \
-        JOIN tPosts ON tPosts.postID = tReacts.postID \
-        JOIN tUser ON tPosts.userID = tUser.userID \
-        WHERE tPosts.UserID = %s \
-        UNION \
-        SELECT commentUser.userID, commentUser.firstName, commentUser.lastName, commentUser.image, tPosts.postID, tComments.ts as ts, 'commented on your post' as information \
-        FROM tUser as commentUser \
-        JOIN tComments ON tComments.userID = commentUser.userID \
-        JOIN tPosts ON tPosts.postID = tComments.postiD \
-        JOIN tUser ON tPosts.userID = tUser.userID \
-        WHERE tPosts.userID = %s \
-        ORDER BY ts;"
-
-    data = (userID, userID)
-    cur.execute(query, data)
-    notifications = cur.fetchall()
-    count = getCountNotifications(userID)
-    newNotifications = getNewNotifications(userID)
-    print(newNotifications)
-    updateNotifyTime(userID)
-    return newNotifications, count, notifications
-
 
 class userRefresh(UserMixin):
     def __init__(self, id):
