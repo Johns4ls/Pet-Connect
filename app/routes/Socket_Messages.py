@@ -10,7 +10,7 @@ def SendMessages():
     Initial = True
     while(True):
         newMessages, count = Messages.getMessages(current_user.id)
-        if(count != 0 and Initial is True):
+        if(count != 0 or Initial is True):
             if(newMessages != 0):
                 for message in newMessages:
                     message['ts'] = str(message['ts'])

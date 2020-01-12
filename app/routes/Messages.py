@@ -1,5 +1,5 @@
 from app import app
-from Modules import Database, Tlbx
+from Modules import Database, Tlbx, Messages
 from flask_login import login_required, current_user
 from flask import flash, redirect, render_template, request
 import datetime
@@ -39,7 +39,7 @@ def sendMessage(userID):
 
 @app.route('/Messages', methods=['GET','POST'])
 @login_required
-def Messages():
+def routeMessages():
     friendID = None
     userID = int(current_user.id)
     #Get all friends you have that you've sent messages with.
@@ -53,6 +53,20 @@ def Messages():
     data = (current_user.id)
     friends.execute(friendQuery, data)
 
+    latestMessageQuery = (
+    "Select tMessage.time_sent as ts, tFriend.friendID, tUser.userID, tUser.firstName, tUser.lastName, tMessage.message from tUser \
+        JOIN tFriend ON tUser.userID = tFriend.friend \
+        LEFT JOIN tMessage ON tMessage.friendID = tFriend.friendID\
+        JOIN (SELECT tMessage.friendID, MAX(tMessage.time_sent) as ts FROM tMessage \
+            GROUP by tMessage.friendID) \
+            AS t2 \
+            ON tMessage.friendID = t2.friendID  AND tMessage.time_sent = t2.ts\
+        WHERE tFriend.user = %s \
+        ORDER BY tMessage.time_sent DESC;")
+    latest, db = Tlbx.dbConnectDict()
+    data = (current_user.id)
+    latest.execute(latestMessageQuery, data)
+
     messageQuery = ("Select tMessage.friendID, tMessage.message, tMessage.time_Sent, tMessage.recipient, tUser.firstName, tUser.lastName from tMessage \
         JOIN tFriend ON tFriend.friendID = tMessage.friendID \
         JOIN tUser ON tFriend.friend = tUser.userID \
@@ -61,7 +75,7 @@ def Messages():
     cur, db = Tlbx.dbConnectDict()
     data = (current_user.id)
     cur.execute(messageQuery, data)
-    return render_template('/Messages/Messages.html', friendID = friendID, userID = userID, messages = cur.fetchall(), friends = friends.fetchall())
+    return render_template('/Messages/Messages.html', latest = latest.fetchall(), friendID = friendID, userID = userID, messages = cur.fetchall(), friends = friends.fetchall())
 
 @app.route('/Messages/<int:friendID>', methods=['GET','POST'])
 @login_required
@@ -78,6 +92,20 @@ def Message(friendID):
     data = (current_user.id)
     friends.execute(friendQuery, data)
 
+    latestMessageQuery = (
+    "Select tMessage.time_sent as ts, tFriend.friendID, tUser.userID, tUser.firstName, tUser.lastName, tMessage.message from tUser \
+        JOIN tFriend ON tUser.userID = tFriend.friend \
+        LEFT JOIN tMessage ON tMessage.friendID = tFriend.friendID\
+        JOIN (SELECT tMessage.friendID, MAX(tMessage.time_sent) as ts FROM tMessage \
+            GROUP by tMessage.friendID) \
+            AS t2 \
+            ON tMessage.friendID = t2.friendID  AND tMessage.time_sent = t2.ts\
+        WHERE tFriend.user = %s \
+        ORDER BY tMessage.time_sent DESC;")
+    latest, db = Tlbx.dbConnectDict()
+    data = (current_user.id)
+    latest.execute(latestMessageQuery, data)
+
     messageQuery = ("Select tMessage.friendID, tMessage.message, tMessage.time_Sent, tMessage.recipient, tUser.firstName, tUser.lastName from tMessage \
         JOIN tFriend ON tFriend.friendID = tMessage.friendID \
         JOIN tUser ON tFriend.friend = tUser.userID \
@@ -86,4 +114,5 @@ def Message(friendID):
     cur, db = Tlbx.dbConnectDict()
     data = (current_user.id)
     cur.execute(messageQuery, data)
-    return render_template('/Messages/Messages.html', friendID = friendID, userID = userID, messages = cur.fetchall(), friends = friends.fetchall())
+    
+    return render_template('/Messages/Messages.html', friendID = friendID, userID = userID, latest = latest.fetchall(), messages = cur.fetchall(), friends = friends.fetchall())

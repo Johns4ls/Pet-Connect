@@ -48,7 +48,7 @@
                         <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="Img"></a>
                     {% endif %}</div>
                 <div class="chat_ib">
-                    {% for message in messages %}
+                    {% for message in latest %}
                     {% if count.a == 0 %}
                     {% if friend.friendID == message.friendID %}
                   <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{friend.ts}}</span></h5>
@@ -78,7 +78,7 @@
                 {% endif %}
           
                 <div class="chat_ib">
-                    {% for message in messages %}
+                    {% for message in latest %}
                     {% if count.a == 0 %}
                     {% if friend.friendID == message.friendID %}    
                     <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{friend.ts}}</span></h5>
