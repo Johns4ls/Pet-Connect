@@ -36,7 +36,7 @@ def imgToJPG(location, image):
     imageType = imageName[1]
     imageName = imageName[0]
     fullPath =  path + imageName
-    savePath = dirpath + '/static/pictures/' + location + '/' + imageName
+    savePath = dirpath + '/app/static/pictures/' + location + '/' + imageName
     thumbPath =  savePath
     try:
         if imageName != '' and not os.path.exists(fullPath):
