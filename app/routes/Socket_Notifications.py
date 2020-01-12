@@ -7,10 +7,13 @@ from flask_login import current_user
 def asyncNotifications(msg):
         socketio.start_background_task(SendNotifications())
 def SendNotifications():
+    initial = True
     while(True):
         NewNotifications, count, notifications = Notifications.getNotifications(current_user.id)
-        for notification in notifications:
-            notification['ts'] = str(notification['ts'])
-        socketio.emit('getNotifications',
-                    {'NewNotifications': NewNotifications, 'count': count, 'notifications': notifications}, namespace='/Notifications/')    
-        time.sleep(1000)
+        if(count != 0 or initial is True):
+            for notification in notifications:
+                notification['ts'] = str(notification['ts'])
+            socketio.emit('getNotifications',
+                        {'NewNotifications': NewNotifications, 'count': count, 'notifications': notifications}, namespace='/Notifications/') 
+            initial = False;   
+        time.sleep(20)

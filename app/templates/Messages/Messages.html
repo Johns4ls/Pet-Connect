@@ -27,9 +27,15 @@
           {% set count = namespace(a=0) %}
           <div class="inbox_chat">
             <div class="chat_list active_chat" id="chatHead{{friend.friendID}}">
-            <script>
-            var current = {{friend.friendID}};
-            </script>
+            {% if friendID is none %}
+              <script>
+                var current = {{friend.friendID}};
+              </script>
+            {% else %}
+              <script>
+                var current = {{friendID}};
+              </script>
+            {%endif%}
               <radio-group>
               <radio-button tabindex="{{friend.friendID}}" onclick="changeFocus({{friend.friendID}});">
               <div class="chat_people">
@@ -136,7 +142,6 @@
         </div>
         {% set count.a = count.a + 1 %}
         {% endfor %}
-        
     </div>
     </div>
 </div>
@@ -145,10 +150,11 @@
 </body>
 <script>
     function initialFocus() {
-                document.getElementById("message" + current).style.display = "inline";
-                console.log("We ran this")
-            }
-            window.onload = initialFocus();
+
+      document.getElementById("message" + current).style.display = "inline";
+      console.log("We ran this")
+    }
+    window.onload = initialFocus();
     function changeFocus(id){
       document.getElementById("message" + current).style.display = "none";
       document.getElementById("message" + id).style.display = "inline";

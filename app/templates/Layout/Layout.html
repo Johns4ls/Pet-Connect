@@ -16,10 +16,23 @@
     <link rel="stylesheet" media="all" type="text/css" href="/static/skeleton.css">
     <script type="text/javascript" src="/static/script.js"></script>
     <script>
-    function dropdown() {
-      document.getElementById("myDropdown").classList.toggle("show");
+    function Notificationdropdown() {
+      document.getElementById("NotificationDropdown").classList.toggle("show");
     }
-   function toast(notifications) {
+    function Messagedropdown() {
+      document.getElementById("MessageDropdown").classList.toggle("show");
+    }
+   function Notificationtoast(notifications) {
+      $('#toastMessage').html("<a href='/View/Post/" + notifications.notifications[0].postID + "'>" + notifications.notifications[0].firstName + " " + notifications.notifications[0].lastName + " " + notifications.notifications[0].information + ".</a>");
+      $('#toastTime').html(notifications.notifications[0].ts);
+      $('#toastImage').attr("src","/static/" + notifications.notifications[0].image + ".thumbnail");
+      $('#toastProfile').attr("href","/User/Profile/" + notifications.notifications[0].userID);
+      $('.toast').toast({
+            delay: 5000
+        });
+      $('.toast').toast('show');
+   } 
+   function Messagetoast(notifications) {
       $('#toastMessage').html("<a href='/View/Post/" + notifications.notifications[0].postID + "'>" + notifications.notifications[0].firstName + " " + notifications.notifications[0].lastName + " " + notifications.notifications[0].information + ".</a>");
       $('#toastTime').html(notifications.notifications[0].ts);
       $('#toastImage').attr("src","/static/" + notifications.notifications[0].image + ".thumbnail");
@@ -51,11 +64,32 @@
         // server is established.
         
         //new message handling
-        userInfoNamespace = '/Messages/';
-        var MessageSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
-        MessageSocket.emit('askMessages', {data: 'I\'m connected!'});
-        MessageSocket.on('getMessages', function(messages) {
-        //Add jquery to update information here
+    userInfoNamespace = '/Messages/';
+    var MessageSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
+    MessageSocket.emit('askMessages', {data: 'I\'m connected!'});
+    MessageSocket.on('getMessages', function(messages) {
+      console.log(messages)
+      if (messages.count >= 0){
+        $('#MessageButton').text("Messages " + messages.count);
+        if(messages.NewMessages.length > 0){
+          //Messagetoast(messages.NewMessages);
+        }
+      text = "<li> <a href='/Messages'> Messages </a> </li> \n"
+      for(var i in messages.NewMessages){
+        text = text + "<li> \n"
+        if(messages.NewMessages[i].image == null){
+          text = text + "<a href='/Messages/" + messages.NewMessages[i].userID + "'> \n"
+          text = text + "<img src='/static/pictures/Profile/thor.thumbnail' class='notifyImg'></a> \n"
+        }
+        else if(messages.NewMessages[i].image != null){
+          text = text + "<a href='/Messages/" + messages.NewMessages[i].userID + "'> \n"
+          text = text + "<img src='/static/" + messages.NewMessages[i].image + ".thumbnail" + "'class='notifyImg'></a> \n"
+        }
+        text = text +  "<a href='/Messages/" + messages.NewMessages[i].userID + "'>" + messages.NewMessages[i].firstName + " " + messages.NewMessages[i].lastName + " " + messages.NewMessages[i].message + ".</a></li> \n";
+      
+      }
+      $('#MessagesList').html(text);
+      }
     });
         
         
@@ -64,10 +98,10 @@
     var notificationSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + notificationNamespace);
     notificationSocket.emit('askNotifications', {data: 'I\'m connected!'});
     notificationSocket.on('getNotifications', function(notifications) {
-      if(notifications.count > 0){
+      if(notifications.count >= 0){
         $('#NotificationButton').text("notifications " + notifications.count);
         if(notifications.NewNotifications > 0){
-        toast(notifications);
+        Notificationtoast(notifications);
         }
         text = ""
       for(var i in notifications.notifications){
@@ -98,25 +132,18 @@
     <div class="form-inline">
         <a href="/dashboard"> Home</a>
         <a href="/Create/New/Dog">Create a new dog</a>
-        <a href="/Messages">Messages</a>
         <div class="dropdown">
-            <button onclick="dropdown()" id="NotificationButton" class="dropbtn">notifications {% if count != 0 %} {{count}} {% endif %}</button>
-            <div id="myDropdown" class="dropdown-content">
-              <ul id = "NotificationsList" style="list-style-type:none;">
-              {% for notification in notifications %}
-              <li>      
-                {% if notification.image == None %}
-                  <a href="/User/Profile/{{notification.userID}}">
-                    <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="notifyImg"></a>
-                  {% elif notification.image != None %}
-                    <a href="/User/Profile/{{notification.userID}}">
-                      <img src="{{ url_for('static', filename = notification.image + '.thumbnail') }}"class="notifyImg"></a>
-                  {% endif %}
-                  <a href="/View/Post/{{notification.postID}}">{{notification.firstName}} {{notification.lastName}} {{notification.information}}.</a></li>
-              {% endfor %}
-            </ul>
-            </div>
+          <button onclick="Messagedropdown()" id="MessageButton" class="dropbtn">Messages 0</button>
+          <div id="MessageDropdown" class="dropdown-content">
+            <ul id = "MessagesList" style="list-style-type:none;">
           </div>
+        </div>
+        <div class="dropdown">
+          <button onclick="Notificationdropdown()" id="NotificationButton" class="dropbtn">Notifications 0</button>
+          <div id="NotificationDropdown" class="dropdown-content">
+            <ul id = "NotificationsList" style="list-style-type:none;">
+          </div>
+        </div>
    <a href="javascript:void(0);" class="icon" onClick="openDrawerMenu()">&#9776;</a>
    <!--&#9776; is the code for the 3 line menu button-->
    <form action="/Search" method="post" novalidate>
