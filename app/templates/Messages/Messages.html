@@ -102,7 +102,7 @@
         {% set count = namespace(a=0) %}
         {% for friend in friends %}
         <div class="mesgs"style="display: none;" id=message{{friend.friendID}}>
-          <div class="msg_history">
+          <div id = history{{friend.friendID}} class="msg_history">
               {% for message in messages %}
               {% if friend.friendID == message.friendID %}
             {% if message.recipient == userID %}
@@ -153,6 +153,8 @@
 
       document.getElementById("message" + current).style.display = "inline";
       document.getElementById("chatHead" + current).classList.add("active_chat");
+      var objDiv = document.getElementById("history" + current);
+      objDiv.scrollTop = objDiv.scrollHeight;
     }
     window.onload = initialFocus();
     function changeFocus(id){
@@ -160,7 +162,8 @@
       document.getElementById("message" + id).style.display = "inline";
       document.getElementById("chatHead" + current).classList.remove("active_chat");
       document.getElementById("chatHead" + id).classList.add("active_chat");
-          
+      var objDiv = document.getElementById("history" + id);
+      objDiv.scrollTop = objDiv.scrollHeight;    
       current = id;
     }
     </script>

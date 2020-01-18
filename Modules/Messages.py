@@ -13,7 +13,7 @@ def getLatestMessages(userID):
             AS t2 \
             ON tMessage.friendID = t2.friendID  AND tMessage.time_sent = t2.ts\
         WHERE tFriend.user = %s \
-        ORDER BY tMessage.time_sent;")
+        ORDER BY tMessage.time_sent DESC;")
     data = (userID, userID)
     cur.execute(Query, data)
     results = cur.fetchall()
