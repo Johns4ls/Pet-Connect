@@ -32,7 +32,7 @@ def getNewMessageCount(userID, LatestMessages):
     Query = ("Select Count(tMessage.message) from tUser \
         JOIN tFriend ON tUser.userID = tFriend.friend \
         LEFT JOIN tMessage ON tMessage.friendID = tFriend.friendID\
-        WHERE tFriend.user = %s \
+        WHERE tFriend.friend = %s \
         AND tMessage.recipient = %s    \
         AND tMessage.time_sent > tUser.last_message_read_time;")
     data = (userID, userID)
@@ -45,6 +45,5 @@ def getNewMessageCount(userID, LatestMessages):
 def getMessages(userID):
     LatestMessages = getLatestMessages(userID)
     MessageCount = getNewMessageCount(userID, LatestMessages)
-    updateMessageTime(userID)
     return LatestMessages, MessageCount
 

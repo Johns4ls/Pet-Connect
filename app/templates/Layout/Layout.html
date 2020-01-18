@@ -15,6 +15,7 @@
     <link rel="stylesheet" media="all" type="text/css" href="/static/style.css">
     <link rel="stylesheet" media="all" type="text/css" href="/static/skeleton.css">
     <script type="text/javascript" src="/static/script.js"></script>
+    {% block notifications %}
     <script>
     function Notificationdropdown() {
       document.getElementById("NotificationDropdown").classList.toggle("show");
@@ -123,6 +124,7 @@
 
 
   </script>
+  {% endblock %}
     {% block head %}
     {% endblock %}
 </head>

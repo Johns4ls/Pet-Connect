@@ -75,6 +75,7 @@ def routeMessages():
     cur, db = Tlbx.dbConnectDict()
     data = (current_user.id)
     cur.execute(messageQuery, data)
+    Messages.updateMessageTime(current_user.id)
     return render_template('/Messages/Messages.html', latest = latest.fetchall(), friendID = friendID, userID = userID, messages = cur.fetchall(), friends = friends.fetchall())
 
 @app.route('/Messages/<int:friendID>', methods=['GET','POST'])
@@ -114,5 +115,5 @@ def Message(friendID):
     cur, db = Tlbx.dbConnectDict()
     data = (current_user.id)
     cur.execute(messageQuery, data)
-    
+    Messages.updateMessageTime(current_user.id)
     return render_template('/Messages/Messages.html', friendID = friendID, userID = userID, latest = latest.fetchall(), messages = cur.fetchall(), friends = friends.fetchall())
