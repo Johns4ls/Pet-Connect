@@ -68,7 +68,6 @@
     var MessageSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
     MessageSocket.emit('askMessages', {data: 'I\'m connected!'});
     MessageSocket.on('getMessages', function(messages) {
-      console.log(messages)
       if (messages.count >= 0){
         $('#MessageButton').text("Messages " + messages.count);
         if(messages.NewMessages.length > 0){
@@ -98,8 +97,9 @@
     var notificationSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + notificationNamespace);
     notificationSocket.emit('askNotifications', {data: 'I\'m connected!'});
     notificationSocket.on('getNotifications', function(notifications) {
+      console.log(notifications)
       if(notifications.count >= 0){
-        $('#NotificationButton').text("notifications " + notifications.count);
+        $('#NotificationButton').text("Notifications " + notifications.count);
         if(notifications.NewNotifications > 0){
         Notificationtoast(notifications);
         }
