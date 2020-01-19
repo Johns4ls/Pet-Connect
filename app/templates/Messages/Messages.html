@@ -26,10 +26,10 @@
           {% if loop.first %}
           {% set count = namespace(a=0) %}
           <div class="inbox_chat">
-            <div class="chat_list" id="chatHead{{friend.friendID}}">
+            <div class="chat_list" id="chatHead{{friend.userID}}">
             {% if friendID is none %}
               <script>
-                var current = {{friend.friendID}};
+                var current = {{friend.userID}};
               </script>
             {% else %}
               <script>
@@ -37,7 +37,7 @@
               </script>
             {%endif%}
               <radio-group>
-              <radio-button tabindex="{{friend.friendID}}" onclick="changeFocus({{friend.friendID}});">
+              <radio-button tabindex="{{friend.userID}}" onclick="changeFocus({{friend.userID}});">
               <div class="chat_people">
                 <div class="chat_img">     
                   {% if friend.image == None %}
@@ -66,8 +66,8 @@
             </div>
             {% else %}
             {% set count = namespace(a=0) %}     
-            <div class="chat_list" id="chatHead{{friend.friendID}}">
-              <radio-button tabindex="{{friend.friendID}}" onclick="changeFocus({{friend.friendID}});">
+            <div class="chat_list" id="chatHead{{friend.userID}}">
+              <radio-button tabindex="{{friend.userID}}" onclick="changeFocus({{friend.userID}});">
               <div class="chat_people">
                 {% if friend.image == None %}
                 <div class="chat_img"><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
@@ -101,8 +101,8 @@
     </div>
         {% set count = namespace(a=0) %}
         {% for friend in friends %}
-        <div class="mesgs"style="display: none;" id=message{{friend.friendID}}>
-          <div id = history{{friend.friendID}} class="msg_history">
+        <div class="mesgs"style="display: none;" id=message{{friend.userID}}>
+          <div id = history{{friend.userID}} class="msg_history">
               {% for message in messages %}
               {% if friend.friendID == message.friendID %}
             {% if message.recipient == userID %}
@@ -150,7 +150,7 @@
 </body>
 <script>
     function initialFocus() {
-
+      console.log(current)
       document.getElementById("message" + current).style.display = "inline";
       document.getElementById("chatHead" + current).classList.add("active_chat");
       var objDiv = document.getElementById("history" + current);
