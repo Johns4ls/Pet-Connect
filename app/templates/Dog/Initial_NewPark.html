@@ -1,0 +1,30 @@
+{% extends "Layout/Layout.html" %}
+{% block notifications %}
+{% endblock %}
+{% block head %}
+{% for error in FavoriteParkform.errors %}
+<div class="alert alert-danger" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  {{error}}</div>
+  {% endfor %}
+{% endblock %}
+{% block nav %}
+{% endblock %}
+{% block body %}
+<div class="backgroundContainer">
+  <div class="mainContainer">
+    <h2>Tell Us About Your Favorite Park</h2>
+    <form action="/Create/Finish/Dog" method="post" novalidate>
+      <ul class="formRegistration">
+        {{ FavoriteParkform.hidden_tag() }}
+        <li><p>Name: </p>{{ FavoriteParkform.parkName(placeholder="Miami Meadows", class_="field-80") }}</li>
+        <li><p>Address: </p>{{ FavoriteParkform.address(placeholder="1234 Miami Ave.", class_="field-80") }}</li>
+        <li><p>City: </p>{{ FavoriteParkform.city(placeholder="Cincinnati", class_="field-80") }}</li>
+        <li><p>State: </p>{{ FavoriteParkform.state(placeholder="Ohio", class_="field-80") }}</li>
+        <li><p>Zip Code: </p>{{ FavoriteParkform.zipCode(placeholder="45244", class_="field-80") }}</li>
+        <br><li>{{ FavoriteParkform.submit() }}</li>
+      </ul>
+    </form>
+</div>
+{% endblock %}
+</div>

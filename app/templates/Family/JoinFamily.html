@@ -1,0 +1,14 @@
+{% extends "Layout/Layout.html" %}
+{% block notifications %}
+{% endblock %}
+{% block head %}
+{% endblock %}
+{% block nav %}
+{% endblock %}
+{% block body %}
+<h1>Search for the head of household in a family</h1>
+<form action="/Join/Family/Search" method="post" novalidate>
+    <input type="search" name="Search" placeholder="Search" aria-label="Search">
+    <button class="btn btn-secondary" type="submit">Search</button>
+</form>
+{% endblock %}

@@ -4,17 +4,19 @@ from flask_login import login_user, logout_user, UserMixin
 import os
 from PIL import Image, ExifTags
 import Database
+from Database import *
+import datetime
 
 #Connectors to database
 def dbConnect():
 
-    db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-    #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
     cur = db.cursor()
     return cur
 def dbConnectDict():
-    db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-    #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
     cur = db.cursor(pymysql.cursors.DictCursor)
     return cur, db
 
@@ -34,7 +36,7 @@ def imgToJPG(location, image):
     imageType = imageName[1]
     imageName = imageName[0]
     fullPath =  path + imageName
-    savePath = dirpath + '/static/pictures/' + location + '/' + imageName
+    savePath = dirpath + '/app/static/pictures/' + location + '/' + imageName
     thumbPath =  savePath
     try:
         if imageName != '' and not os.path.exists(fullPath):

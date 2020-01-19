@@ -1,0 +1,36 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<div class="backgroundContainer">
+    <div class="mainContainer">
+        <div class="feed">
+            <div class="postContainer">
+                <div class="well well-lg">
+<table>
+<tr>
+        <h1><td><b>profile</b></td></h1>
+        <h1><td><b>Name</b></td></h1>
+        <h1><td><b>Friend</b></td></h1>
+     </tr>
+{% for react in Reacts %}
+<tr>
+{% if react.image == None %}
+
+<td><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+  <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a></td>
+{% elif react.image != None %}
+  <td><a href="{{ url_for('static', filename = react.image + '.jpg') }}">
+    <img src="{{ url_for('static', filename = react.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
+{% endif %}
+<td><a href="/User/Profile/{{react.userID}}"><h1>{{react.firstName}} {{react.lastName}}</h1></a></td>
+<td><input type="button" id="{{react.userID}}" value="Friend"></td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

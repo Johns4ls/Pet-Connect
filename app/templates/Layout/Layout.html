@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!--gathering of external resources-->
+<head>
+    <link href="http://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" media="all" type="text/css" href="/static/style.css">
+    <link rel="stylesheet" media="all" type="text/css" href="/static/skeleton.css">
+    <script type="text/javascript" src="/static/script.js"></script>
+    {% block notifications %}
+    <script>
+    function Notificationdropdown() {
+      document.getElementById("NotificationDropdown").classList.toggle("show");
+    }
+    function Messagedropdown() {
+      document.getElementById("MessageDropdown").classList.toggle("show");
+    }
+   function Notificationtoast(notifications) {
+      $('#toastMessage').html("<a href='/View/Post/" + notifications.notifications[0].postID + "'>" + notifications.notifications[0].firstName + " " + notifications.notifications[0].lastName + " " + notifications.notifications[0].information + ".</a>");
+      $('#toastTime').html(notifications.notifications[0].ts);
+      $('#toastImage').attr("src","/static/" + notifications.notifications[0].image + ".thumbnail");
+      $('#toastProfile').attr("href","/User/Profile/" + notifications.notifications[0].userID);
+      $('.toast').toast({
+            delay: 5000
+        });
+      $('.toast').toast('show');
+   } 
+   function Messagetoast(notifications) {
+      $('#toastMessage').html("<a href='/View/Post/" + notifications.notifications[0].postID + "'>" + notifications.notifications[0].firstName + " " + notifications.notifications[0].lastName + " " + notifications.notifications[0].information + ".</a>");
+      $('#toastTime').html(notifications.notifications[0].ts);
+      $('#toastImage').attr("src","/static/" + notifications.notifications[0].image + ".thumbnail");
+      $('#toastProfile').attr("href","/User/Profile/" + notifications.notifications[0].userID);
+      $('.toast').toast({
+            delay: 5000
+        });
+      $('.toast').toast('show');
+   } 
+    // Close the dropdown menu if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+        // Connect to the Socket.IO server.
+        // The connection URL has the following format:
+        //     http[s]://<domain>:<port>[/<namespace>]
+        
+        // Event handler for new connections.
+        // The callback function is invoked when a connection with the
+        // server is established.
+        
+        //new message handling
+    userInfoNamespace = '/Messages/';
+    var MessageSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
+    MessageSocket.emit('askMessages', {data: 'I\'m connected!'});
+    MessageSocket.on('getMessages', function(messages) {
+      if (messages.count >= 0){
+        $('#MessageButton').text("Messages " + messages.count);
+        if(messages.NewMessages.length > 0){
+          //Messagetoast(messages.NewMessages);
+        }
+      text = "<li> <a href='/Messages'> Messages </a> </li> \n"
+      for(var i in messages.NewMessages){
+        text = text + "<li> \n"
+        if(messages.NewMessages[i].image == null){
+          text = text + "<a href='/Messages/" + messages.NewMessages[i].userID + "'> \n"
+          text = text + "<img src='/static/pictures/Profile/thor.thumbnail' class='notifyImg'></a> \n"
+        }
+        else if(messages.NewMessages[i].image != null){
+          text = text + "<a href='/Messages/" + messages.NewMessages[i].userID + "'> \n"
+          text = text + "<img src='/static/" + messages.NewMessages[i].image + ".thumbnail" + "'class='notifyImg'></a> \n"
+        }
+        text = text +  "<a href='/Messages/" + messages.NewMessages[i].userID + "'>" + messages.NewMessages[i].firstName + " " + messages.NewMessages[i].lastName + " " + messages.NewMessages[i].message + ".</a></li> \n";
+      
+      }
+      $('#MessagesList').html(text);
+      }
+    });
+        
+        
+    //Notification Handling
+    notificationNamespace = '/Notifications/';
+    var notificationSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + notificationNamespace);
+    notificationSocket.emit('askNotifications', {data: 'I\'m connected!'});
+    notificationSocket.on('getNotifications', function(notifications) {
+      console.log(notifications)
+      if(notifications.count >= 0){
+        $('#NotificationButton').text("Notifications " + notifications.count);
+        if(notifications.NewNotifications > 0){
+        Notificationtoast(notifications);
+        }
+        text = ""
+      for(var i in notifications.notifications){
+            text = text + "<li> \n"
+                if(notifications.notifications[i].image == null){
+                  text = text + "<a href='/User/Profile/" + notifications.notifications[i].userID + "'> \n"
+                  text = text + "<img src='/static/pictures/Profile/thor.thumbnail' class='notifyImg'></a> \n"
+                }
+                else if(notifications.notifications[i].image != null){
+                  text = text + "<a href='/User/Profile/" + notifications.notifications[i].userID + "'> \n"
+                  text = text + "<img src='/static/" + notifications.notifications[i].image + ".thumbnail" + "'class='notifyImg'></a> \n"
+                }
+                  text = text +  "<a href='/View/Post/" + notifications.notifications[i].postID + "'>" + notifications.notifications[i].firstName + " " + notifications.notifications[i].lastName + " " + notifications.notifications[i].information + ".</a></li> \n";
+      
+      }
+      $('#NotificationsList').html(text);
+    }
+    });
+
+
+  </script>
+  {% endblock %}
+    {% block head %}
+    {% endblock %}
+</head>
+{%block nav%}
+ <!--navbar styled with bootstrap classes-->
+ <div class="navBar" id="mainNavBar">
+    <div class="form-inline">
+        <a href="/dashboard"> Home</a>
+        <a href="/Create/New/Dog">Create a new dog</a>
+        <div class="dropdown">
+          <button onclick="Messagedropdown()" id="MessageButton" class="dropbtn">Messages 0</button>
+          <div id="MessageDropdown" class="dropdown-content">
+            <ul id = "MessagesList" style="list-style-type:none;">
+              <li> <a href='/Messages'> Messages </a> </li>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button onclick="Notificationdropdown()" id="NotificationButton" class="dropbtn">Notifications 0</button>
+          <div id="NotificationDropdown" class="dropdown-content">
+            <ul id = "NotificationsList" style="list-style-type:none;">
+          </div>
+        </div>
+   <a href="javascript:void(0);" class="icon" onClick="openDrawerMenu()">&#9776;</a>
+   <!--&#9776; is the code for the 3 line menu button-->
+   <form action="/Search" method="post" novalidate>
+       <input class="search" type="search" name="Search" placeholder="Find Friends" aria-label="Search">
+       <button type="submit"><i class="fa fa-search"></i></button>
+   </form>
+   <a href="/logout" >Logout</a>
+   </div>
+ </div>
+
+ </nav>
+ {% endblock %}
+{% block body %}
+{% endblock %}
+<div aria-live="polite" aria-atomic="true" data-autohide="false" style="position: fixed; bottom: 10px; min-height: 0%;">
+  <div class="toast" style="position: fixed; bottom: 10px; right: 10px;">
+    <div class="toast-header">
+      <a id="toastProfile" href="">
+      <img id="toastImage" class='toastImg' src="" class="rounded mr-2" alt="..."></a>
+      <h3 id="toastTime"></h3>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <h2><div id = "toastMessage" class="toast-body">
+    </div></h2>
+  </div>
+</div>
+</html>

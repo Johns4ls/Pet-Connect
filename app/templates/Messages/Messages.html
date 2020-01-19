@@ -1,0 +1,170 @@
+{% extends "Layout/Layout.html" %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<body>
+    <div class="backgroundContainer">
+    <div class="mainContainer">
+        <h3 class=" text-center">Messaging</h3>
+<div class="container" style="background-color:white;">
+<div class="messaging">
+      <div class="inbox_msg">
+        <div class="inbox_people">
+          <div class="headind_srch">
+            <div class="recent_heading">
+              <h4>Recent</h4>
+            </div>
+            <div class="srch_bar">
+              <div class="stylish-input-group">
+                <input type="text" class="search-bar"  placeholder="Search" >
+                <span class="input-group-addon">
+                <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                </span> </div>
+            </div>
+          </div>
+          {% for friend in friends %}
+          {% if loop.first %}
+          {% set count = namespace(a=0) %}
+          <div class="inbox_chat">
+            <div class="chat_list" id="chatHead{{friend.friendID}}">
+            {% if friendID is none %}
+              <script>
+                var current = {{friend.friendID}};
+              </script>
+            {% else %}
+              <script>
+                var current = {{friendID}};
+              </script>
+            {%endif%}
+              <radio-group>
+              <radio-button tabindex="{{friend.friendID}}" onclick="changeFocus({{friend.friendID}});">
+              <div class="chat_people">
+                <div class="chat_img">     
+                  {% if friend.image == None %}
+                    <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                      <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="Img"></a>
+                    {% elif friend.image != None %}
+                      <a href="{{ url_for('static', filename = friend.image + '.jpg') }}">
+                        <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="Img"></a>
+                    {% endif %}</div>
+                <div class="chat_ib">
+                    {% for message in latest %}
+                    {% if count.a == 0 %}
+                    {% if friend.friendID == message.friendID %}
+                  <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{friend.ts}}</span></h5>
+                  <p>{{message.message}}</p>
+                  {% set count.a = count.a + 1 %}
+                  {% endif %}
+                  {% endif %}
+                  {% endfor %}
+                  {% if count.a == 0 %}
+                  <h5>{{friend.firstName}} {{friend.lastName}}</h5>
+                  {% endif %}
+                </div>
+              </div>
+              </radio-button>
+            </div>
+            {% else %}
+            {% set count = namespace(a=0) %}     
+            <div class="chat_list" id="chatHead{{friend.friendID}}">
+              <radio-button tabindex="{{friend.friendID}}" onclick="changeFocus({{friend.friendID}});">
+              <div class="chat_people">
+                {% if friend.image == None %}
+                <div class="chat_img"><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                  <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="Img"></a></div>
+                {% elif friend.image != None %}
+                <div class="chat_img"><a href="{{ url_for('static', filename = friend.image + '.jpg') }}">
+                    <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="Img"></a></div>
+                {% endif %}
+          
+                <div class="chat_ib">
+                    {% for message in latest %}
+                    {% if count.a == 0 %}
+                    {% if friend.friendID == message.friendID %}    
+                    <h5>{{friend.firstName}} {{friend.lastName}} <span class="chat_date">{{friend.ts}}</span></h5>
+                    <p>{{message.message}}</p>
+                    {% set count.a = count.a + 1 %}
+                  {% endif %}
+                  {% endif %}
+                  {% endfor %}
+                  {% if count.a == 0 %}
+                  <h5>{{friend.firstName}} {{friend.lastName}}</h5>
+                  {% endif %}
+                </div>
+              </div>
+            </radio-button>
+            </radio-group>
+            </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+        {% set count = namespace(a=0) %}
+        {% for friend in friends %}
+        <div class="mesgs"style="display: none;" id=message{{friend.friendID}}>
+          <div id = history{{friend.friendID}} class="msg_history">
+              {% for message in messages %}
+              {% if friend.friendID == message.friendID %}
+            {% if message.recipient == userID %}
+            <div class="incoming_msg">
+              {% if friend.image == None %}
+              <div class="incoming_msg_img"><a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="Img"></a></div>
+              {% elif friend.image != None %}
+              <div class="incoming_msg_img"><a href="{{ url_for('static', filename = friend.image + '.jpg') }}">
+                  <img src="{{ url_for('static', filename = friend.image + '.thumbnail') }}"class="Img"></a></div>
+              {% endif %}
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>{{message.message}}</p>
+                  <span class="time_date"> {{message.time_Sent}}</span></div>
+              </div>
+            </div>
+            {% endif %}
+            {% if message.recipient != userID %}
+            <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>{{message.message}}</p>
+                <span class="time_date">{{message.time_Sent}}</span> </div>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+          </div>
+          <form action="/Send/Message/{{friend.userID}}" method="post" novalidate>
+          <div class="type_msg">
+            <div class="input_msg_write">
+              <input type="text" class="write_msg" name="message" placeholder="Type a message" />
+              <button class="msg_send_btn" type="submit"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </form>
+        </div>
+        {% set count.a = count.a + 1 %}
+        {% endfor %}
+    </div>
+    </div>
+</div>
+</div>
+</div>
+</body>
+<script>
+    function initialFocus() {
+
+      document.getElementById("message" + current).style.display = "inline";
+      document.getElementById("chatHead" + current).classList.add("active_chat");
+      var objDiv = document.getElementById("history" + current);
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
+    window.onload = initialFocus();
+    function changeFocus(id){
+      document.getElementById("message" + current).style.display = "none";
+      document.getElementById("message" + id).style.display = "inline";
+      document.getElementById("chatHead" + current).classList.remove("active_chat");
+      document.getElementById("chatHead" + id).classList.add("active_chat");
+      var objDiv = document.getElementById("history" + id);
+      objDiv.scrollTop = objDiv.scrollHeight;    
+      current = id;
+    }
+    </script>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "Layout/Layout.html" %}
+{% block notifications %}
+{% endblock %}
+{% block head %}
+{% for error in UserInfoform.errors %}
+<div class="alert alert-danger" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  {{error}}</div>
+  {% endfor %}
+{% endblock %}
+{% block nav %}
+{% endblock %}
+{% block body %}
+<div class="backgroundContainer">
+  <div class="mainContainer">
+    <h2>Tell Us About Yourself</h2>
+    <form action="/Create/User" method="post" enctype="multipart/form-data">
+      <ul class="formRegistration">
+        <p><strong>Full Name</strong></p>
+        {{ UserInfoform.hidden_tag() }}
+        <li>
+          {{ UserInfoform.firstName(placeholder="First Name", class_="field-half") }}
+          {{ UserInfoform.lastName(placeholder="Last Name", class_="field-half") }}
+        </li>
+        <br>
+        <p><strong>Address</strong></p>
+        <li>{{ UserInfoform.address(placeholder="Street Address", class_="field-full") }}</li>
+        <li>
+          {{ UserInfoform.city(placeholder="City", class_="field-half") }}
+          {{ UserInfoform.state(placeholder="State", class_="field-half") }}
+        </li>
+        <li>{{ UserInfoform.zipCode(placeholder="Zip Code", class_="field-half") }}</li>
+        <li>{{UserInfoform.profileImage()}}</li>
+        <li>{{ UserInfoform.submit() }}</li>
+      </ul>
+    </form>
+</div>
+{% endblock %}
+</div>

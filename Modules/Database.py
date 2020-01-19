@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.engine import create_engine
+from sqlalchemy.orm import relationship
 import sqlalchemy
 import pymysql
 from sqlalchemy.ext.compiler import compiles
@@ -8,7 +9,7 @@ from sqlalchemy.sql.expression import ClauseElement
 from sqlalchemy import literal
 from datetime import datetime
 engine = sqlalchemy.create_engine(
-    'mysql+pymysql://Website:W3bsite!@ec2-13-59-203-226.us-east-2.compute.amazonaws.com:3306/PetConnect',
+    'mysql+pymysql://Website:W3bsite!@127.0.0.1:3306/PetConnect',
     echo=True, pool_size=30)
 
 # Define and create all tables in the DB
@@ -24,6 +25,7 @@ class tUser(Base):
     image = Column('image', String(255))
     addressID = Column(Integer, ForeignKey('tAddress.addressID'))
     last_message_read_time = Column('last_message_read_time', DateTime)
+    last_notified_time = Column('last_notified_time', DateTime)
 
 class tAddress(Base):
     __tablename__ = 'tAddress'
@@ -115,6 +117,7 @@ class tReacts(Base):
     reactID = Column(Integer, primary_key=True)
     userID = Column(Integer, ForeignKey('tUser.userID'))
     postID = Column(Integer, ForeignKey('tPosts.postID'))
+    ts = Column('ts', DateTime)
 
 class tAvailability(Base):
     __tablename__ = 'tAvailability'
@@ -143,10 +146,12 @@ class tFriend(Base):
     friendID = Column(Integer, primary_key=True)
     user = Column(Integer, ForeignKey('tUser.userID'))
     friend = Column(Integer, ForeignKey('tUser.userID'))
+    message = relationship("tMessage", passive_deletes=True)
 
 class tMessage(Base):
     __tablename__ = 'tMessage'
     messageID = Column(Integer, primary_key=True)
+    friendID = Column(Integer, ForeignKey('tFriend.friendID', ondelete='CASCADE'))
     sender = Column(Integer, ForeignKey('tUser.userID'))
     recipient = Column(Integer, ForeignKey('tUser.userID'))
     time_Sent  = Column('time_Sent', DateTime), 
@@ -187,6 +192,7 @@ class tHeadofHouse(Base):
     __tablename__ = 'tHeadofHouse'
     headofHouseID = Column(Integer, primary_key=True)
     userID = Column(Integer, ForeignKey('tUser.userID'))
+
 
 
 Base.metadata.create_all(engine)
