@@ -65,8 +65,11 @@ def JoinFamilyLanding():
 def JoinFamilySearch():
     session = Database.Session()
     Name = request.form['Search']
-    Users = session.query(Database.tUser).join(Database.tHeadofHouse, Database.tHeadofHouse.userID == Database.tUser.userID) \
-        .filter(Database.tUser.email.contains(Name) | (Database.tUser.email.op('SOUNDS LIKE')(Name))).order_by(Database.tUser.email.match(Name).desc()).all()
+    Users = session.query(Database.tUser, Database.tFamily.familyName).join(Database.tHeadofHouse, Database.tHeadofHouse.userID == Database.tUser.userID) \
+    .join(Database.tFamily, Database.tFamily.familyID == Database.tUser.userID) \
+    .filter(Database.tFamily.familyName.contains(Name) | (Database.tUser.email.contains(Name)) \
+    | (Database.tUser.email.op('SOUNDS LIKE')(Name))) \
+    .order_by(Database.tFamily.name.contains(Name).desc()).all()
 
     return render_template('/Family/JoinFamilySearch.html', Users = Users)
 

@@ -24,7 +24,7 @@
              <td><a href="{{ url_for('static', filename = User.image + '.jpg') }}">
                <img src="{{ url_for('static', filename = User.image + '.thumbnail') }}"class="img-thumbnail"></a></td>
            {% endif %}
-          <td><h3><b>{{User.email}}</b></h3> </td>
+          <td><h3><b>{{User.familyName}}</b></h3> </td>
           <td><input type="button" id="{{User.userID}}" value="Join Family" onclick="window.location = '/Join/Family/{{User.userID}}';"></td>
         </tr>
      {% endfor %}

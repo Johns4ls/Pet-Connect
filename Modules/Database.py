@@ -59,7 +59,7 @@ class tBreed(Base):
 class tFamily(Base):
     __tablename__ = 'tFamily'
     familyID = Column(Integer, primary_key=True)
-    familyName = Column('breed', String(255))
+    familyName = Column('familyName', String(255))
     headofHouseID = Column(Integer, ForeignKey('tHeadofHouse.headofHouseID'))
 
 class tAdmin(Base):
