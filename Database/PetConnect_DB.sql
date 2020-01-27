@@ -113,7 +113,8 @@ CREATE TABLE `tAvailability` (
   `dogID` int,
   `userID` int,
   `Begin_ts` timestamp NULL DEFAULT NULL,
-  `End_ts` timestamp NULL DEFAULT NULL
+  `End_ts` timestamp NULL DEFAULT NULL, 
+  `message` varchar(255)
 );
 
 CREATE TABLE `tPlayDateTime` (

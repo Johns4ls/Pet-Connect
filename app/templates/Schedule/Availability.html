@@ -1,20 +1,29 @@
+{% extends "Layout/Layout.html" %}
+{%block body %}
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset='utf-8' />
+<meta charset='utf-8' /> 
+<script data-require="jquery@*" data-semver="3.1.1" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.3.0/fullcalendar.min.js"></script>
 <link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>
 <link href="{{ url_for('static', filename='packages/core/main.css') }}"rel='stylesheet' />
 <link href="{{ url_for('static', filename='packages/bootstrap/main.css') }}"rel='stylesheet' />
 <link href="{{ url_for('static', filename='packages/daygrid/main.css') }}"rel='stylesheet' />
 <link href="{{ url_for('static', filename='packages/timegrid/main.css') }}"rel='stylesheet' />
 <link href="{{ url_for('static', filename='packages/list/main.css') }}"rel='stylesheet' />
-<script src="{{ url_for('static', filename='packages/interaction/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/core/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/interaction/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/bootstrap/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/daygrid/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/timegrid/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/list/main.js') }}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
 <style>
 
   html, body {
@@ -30,28 +39,93 @@
   }
 
 </style>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  var calendarEl = document.getElementById('calendar');
+<div id='calendar'></div>
+<div id="createEventModal" class="modal fade">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4>Schedule time with {{dog.name}}</h4>
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span> <span class="sr-only">close</span></button>
+          </div>
+            <div id="modalBody" class="modal-body">
+              <div class="form-group form-inline">
+                <div class="col-sm-6">
+                  <input type="text" class="form-control datetimepicker-input" id="from-time" data-toggle="datetimepicker" data-target="#from-time"/>
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control datetimepicker-input" id="to-time" data-toggle="datetimepicker" data-target="#to-time"/>
+                </div>
+              </div>
+            </div>
+          
+          <div class="modal-footer">
+              <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="submitButton">Save</button>
+          </div>
+      </div>
+  </div>
+</div>
 
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    plugins: [ 'dayGrid', 'timeGrid', 'list', 'bootstrap' ],
-    timeZone: 'UTC',
-    themeSystem: 'standard',
-    header: {
-      left: 'prev,next',
-      center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-    },
-    
-    weekNumbers: true,
-    eventLimit: true, // allow "more" link when too many events
-    events: 'https://fullcalendar.io/demo-events.json'
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    userInfoNamespace = '/Availability/';
+    var AvailabilitySocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
+    var calendarEl = document.getElementById('calendar');
+    d = new Date();
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      plugins: [ 'dayGrid', 'timeGrid', 'list', 'bootstrap', 'interaction' ],
+      timeZone: 'local',
+      themeSystem: 'bootstrap',
+      header: {
+        left: 'prev,next',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+      },
+      select: function (endDate) {
+        d = endDate.start;
+        console.log(endDate.start)
+              //do something when space selected
+              //Show 'add event' modal
+              $('#createEventModal').modal('show');
+          },
+      eventClick: function (event) {
+              $('#fullCalModal').modal();
+          },
+  
+      editable: true,
+      selectable: true,
+      eventLimit: true // allow "more" link when too many events
+      
+    });
+    $('#from-time').datetimepicker({
+                    format: 'LT'
+                });
+    $('#to-time').datetimepicker({
+        format: 'LT'
+    });
+    calendar.render();
+    $('#submitButton').on('click', function(e){
+              // We don't want this to act as a link so cancel the link action
+        doSubmit();
+    });
+  
+    function doSubmit(){
+          $("#createEventModal").modal('hide');
+          fromTime = new Date(Date.parse($("#from-time").val()));
+          fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fromTime.getHours(), fromTime.getMinutes(), fromTime.getSeconds());
+          console.log(d.getDay());
+          toTime = new Date(Date.parse($("#to-time").val()));
+          toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds());
+          var details = "{{user.firstName}}'s time with {{dog.name}}.";
+              calendar.addEvent({
+                title: details,
+                start: fromTime,
+                end: toTime
+              });
+              AvailabilitySocket.emit('getAvailability', {dogID:"{{dog.dogID}}", userID: user.userID, Begin_ts: fromTime, End_ts: toTime, message: details});
+  }
   });
 
-  calendar.render();
-});
 </script>
-<div id='calendar'></div>
-
-
+{% endblock %}

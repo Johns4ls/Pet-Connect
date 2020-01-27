@@ -126,6 +126,7 @@ class tAvailability(Base):
     userID = Column(Integer, ForeignKey('tUser.userID'))
     Begin_ts = Column('Begin_ts', DateTime)
     End_ts = Column('End_ts', DateTime)
+    message = Column('message', String(255))
 
 class tPlayDateTime(Base):
     __tablename__ = 'tPlayDateTime'

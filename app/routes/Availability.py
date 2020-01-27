@@ -9,4 +9,10 @@ def Availability(dogID):
     dogID = str(dogID)
     session = Database.Session()
     Availability = session.query(Database.tAvailability).filter(Database.tAvailability.dogID == dogID)
-    return render_template('/Schedule/Availability.html', Availability = Availability)
+    dog = session.query(Database.tDog).filter(Database.tDog.dogID == dogID)
+    for dog in dog:
+        dog = dog
+    user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
+    for user in user:
+        user = user
+    return render_template('/Schedule/Availability.html', Availability = Availability, dog = dog, user = user)
