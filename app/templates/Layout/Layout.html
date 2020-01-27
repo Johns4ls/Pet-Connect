@@ -67,60 +67,66 @@
         //new message handling
     userInfoNamespace = '/Messages/';
     var MessageSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
-    MessageSocket.emit('askMessages', {data: 'I\'m connected!'});
-    MessageSocket.on('getMessages', function(messages) {
-      if (messages.count >= 0){
-        $('#MessageButton').text("Messages " + messages.count);
-        if(messages.NewMessages.length > 0){
-          //Messagetoast(messages.NewMessages);
-        }
-      text = "<li> <a href='/Messages'> Messages </a> </li> \n"
-      for(var i in messages.NewMessages){
-        text = text + "<li> \n"
-        if(messages.NewMessages[i].image == null){
-          text = text + "<a href='/Messages/" + messages.NewMessages[i].userID + "'> \n"
-          text = text + "<img src='/static/pictures/Profile/thor.thumbnail' class='notifyImg'></a> \n"
-        }
-        else if(messages.NewMessages[i].image != null){
-          text = text + "<a href='/Messages/" + messages.NewMessages[i].userID + "'> \n"
-          text = text + "<img src='/static/" + messages.NewMessages[i].image + ".thumbnail" + "'class='notifyImg'></a> \n"
-        }
-        text = text +  "<a href='/Messages/" + messages.NewMessages[i].userID + "'>" + messages.NewMessages[i].firstName + " " + messages.NewMessages[i].lastName + " " + messages.NewMessages[i].message + ".</a></li> \n";
-      
-      }
-      $('#MessagesList').html(text);
-      }
-    });
-        
-        
-    //Notification Handling
+    MessageSocket.emit('connect');
+    setInterval(getMessages, 3000);    
+            //Notification Handling
     notificationNamespace = '/Notifications/';
     var notificationSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + notificationNamespace);
-    notificationSocket.emit('askNotifications', {data: 'I\'m connected!'});
-    notificationSocket.on('getNotifications', function(notifications) {
-      console.log(notifications)
-      if(notifications.count >= 0){
-        $('#NotificationButton').text("Notifications " + notifications.count);
-        if(notifications.NewNotifications > 0){
-        Notificationtoast(notifications);
-        }
-        text = ""
-      for(var i in notifications.notifications){
+    notificationSocket.emit('connect');
+    setInterval(getNotifications, 3000);
+        
+    function getMessages() {  
+        MessageSocket.on('getMessages', function(messages) {
+          if (messages.count >= 0){
+            $('#MessageButton').text("Messages " + messages.count);
+            if(messages.NewMessages.length > 0){
+              //Messagetoast(messages.NewMessages);
+            }
+          text = "<li> <a href='/Messages'> Messages </a> </li> \n"
+          for(var i in messages.NewMessages){
             text = text + "<li> \n"
-                if(notifications.notifications[i].image == null){
-                  text = text + "<a href='/User/Profile/" + notifications.notifications[i].userID + "'> \n"
-                  text = text + "<img src='/static/pictures/Profile/thor.thumbnail' class='notifyImg'></a> \n"
-                }
-                else if(notifications.notifications[i].image != null){
-                  text = text + "<a href='/User/Profile/" + notifications.notifications[i].userID + "'> \n"
-                  text = text + "<img src='/static/" + notifications.notifications[i].image + ".thumbnail" + "'class='notifyImg'></a> \n"
-                }
-                  text = text +  "<a href='/View/Post/" + notifications.notifications[i].postID + "'>" + notifications.notifications[i].firstName + " " + notifications.notifications[i].lastName + " " + notifications.notifications[i].information + ".</a></li> \n";
-      
-      }
-      $('#NotificationsList').html(text);
+            if(messages.NewMessages[i].image == null){
+              text = text + "<a href='/Messages/" + messages.NewMessages[i].userID + "'> \n"
+              text = text + "<img src='/static/pictures/Profile/thor.thumbnail' class='notifyImg'></a> \n"
+            }
+            else if(messages.NewMessages[i].image != null){
+              text = text + "<a href='/Messages/" + messages.NewMessages[i].userID + "'> \n"
+              text = text + "<img src='/static/" + messages.NewMessages[i].image + ".thumbnail" + "'class='notifyImg'></a> \n"
+            }
+            text = text +  "<a href='/Messages/" + messages.NewMessages[i].userID + "'>" + messages.NewMessages[i].firstName + " " + messages.NewMessages[i].lastName + " " + messages.NewMessages[i].message + ".</a></li> \n";
+
+          }
+          $('#MessagesList').html(text);
+          }
+        });
     }
-    });
+        
+    function getNotifications() {      
+        notificationSocket.on('getNotifications', function(notifications) {
+          console.log(notifications)
+          if(notifications.count >= 0){
+            $('#NotificationButton').text("Notifications " + notifications.count);
+            if(notifications.NewNotifications > 0){
+            Notificationtoast(notifications);
+            }
+            text = ""
+          for(var i in notifications.notifications){
+                text = text + "<li> \n"
+                    if(notifications.notifications[i].image == null){
+                      text = text + "<a href='/User/Profile/" + notifications.notifications[i].userID + "'> \n"
+                      text = text + "<img src='/static/pictures/Profile/thor.thumbnail' class='notifyImg'></a> \n"
+                    }
+                    else if(notifications.notifications[i].image != null){
+                      text = text + "<a href='/User/Profile/" + notifications.notifications[i].userID + "'> \n"
+                      text = text + "<img src='/static/" + notifications.notifications[i].image + ".thumbnail" + "'class='notifyImg'></a> \n"
+                    }
+                      text = text +  "<a href='/View/Post/" + notifications.notifications[i].postID + "'>" + notifications.notifications[i].firstName + " " + notifications.notifications[i].lastName + " " + notifications.notifications[i].information + ".</a></li> \n";
+
+          }
+          $('#NotificationsList').html(text);
+        }
+        });
+    }
 
 
   </script>
