@@ -12,10 +12,10 @@ def connect():
 @socketio.on('Notifications', namespace='/Notifications/')
 def asyncNotifications():
     NewNotifications, count, notifications = Notifications.getNotifications(current_user.id)
-        for notification in notifications:
-            notification['ts'] = str(notification['ts'])
-        socketio.emit('getNotifications',
-                    {'NewNotifications': NewNotifications, 'count': count, 'notifications': notifications}, namespace='/Notifications/', room=request.sid)
+    for notification in notifications:
+        notification['ts'] = str(notification['ts'])
+    socketio.emit('getNotifications',
+                {'NewNotifications': NewNotifications, 'count': count, 'notifications': notifications}, namespace='/Notifications/', room=request.sid)
 
 @socketio.on('disconnect', namespace='/Notifications/')
 def disconnect():
