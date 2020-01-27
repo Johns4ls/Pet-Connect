@@ -2,6 +2,11 @@ from Modules import Comments
 from flask_socketio import SocketIO, emit
 from app import socketio
 from flask_login import current_user
+
+@socketio.on('connect', namespace='/Comments/')
+def connect():
+    return ''
+
 @socketio.on('sendComment', namespace='/Comments/')
 def commitComment(msg):
     try:
@@ -10,4 +15,7 @@ def commitComment(msg):
                     {'message': "Success"}, namespace='/Comments/')    
     except:        
         socketio.emit('returnComment',
-                    {'message': "Fail"}, namespace='/Comments/')    
+                    {'message': "Fail"}, namespace='/Comments/')   
+@socketio.on('disconnect', namespace='/Comments/')
+def disconnect():
+    return ''
