@@ -69,7 +69,7 @@ def JoinFamilySearch():
     .join(Database.tFamily, Database.tFamily.familyID == Database.tUser.userID) \
     .filter(Database.tFamily.familyName.contains(Name) | (Database.tUser.email.contains(Name)) \
     | (Database.tUser.email.op('SOUNDS LIKE')(Name))) \
-    .order_by(Database.tFamily.name.contains(Name).desc()).all()
+    .order_by(Database.tFamily.familyName.contains(Name).desc()).all()
 
     return render_template('/Family/JoinFamilySearch.html', Users = Users)
 

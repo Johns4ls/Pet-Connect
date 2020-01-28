@@ -66,22 +66,37 @@
         
         //new message handling
     userInfoNamespace = '/Messages/';
-    var MessageSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
-    MessageSocket.emit('connect');
-    setInterval(getMessages, 3000);    
+    var messageSock = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace, {
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax : 5000,
+    reconnectionAttempts: 99999
+    });  
             //Notification Handling
     notificationNamespace = '/Notifications/';
-    var notificationSocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + notificationNamespace);
-    notificationSocket.emit('connect');
-    setInterval(getNotifications, 3000);
-        
-    function getMessages() {  
-        MessageSocket.on('getMessages', function(messages) {
+    notificationSock = io.connect(location.protocol + '//' + document.domain + ':' + location.port + notificationNamespace, {
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax : 5000,
+    reconnectionAttempts: 99999
+    });
+    getNotifications();
+    getMessages();
+    myInterval = setInterval(function(){
+      getNotifications();
+      getMessages();
+    },3000);
+    
+    function getMessages() { 
+      messageSock.emit('askMessages')
+    }
+        messageSock.on('getMessages', function(messages) {
           if (messages.count >= 0){
             $('#MessageButton').text("Messages " + messages.count);
             if(messages.NewMessages.length > 0){
               //Messagetoast(messages.NewMessages);
             }
+          }
           text = "<li> <a href='/Messages'> Messages </a> </li> \n"
           for(var i in messages.NewMessages){
             text = text + "<li> \n"
@@ -97,13 +112,12 @@
 
           }
           $('#MessagesList').html(text);
-          }
         });
-    }
         
-    function getNotifications() {      
-        notificationSocket.on('getNotifications', function(notifications) {
-          console.log(notifications)
+    function getNotifications() {   
+        notificationSock.emit('askNotifications')
+    }  
+    notificationSock.on('getNotifications', function(notifications) {
           if(notifications.count >= 0){
             $('#NotificationButton').text("Notifications " + notifications.count);
             if(notifications.NewNotifications > 0){
@@ -126,7 +140,6 @@
           $('#NotificationsList').html(text);
         }
         });
-    }
 
 
   </script>

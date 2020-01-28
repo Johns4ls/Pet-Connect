@@ -6,16 +6,16 @@ from flask_login import current_user
 from flask import request
 
 @socketio.on('connect', namespace='/Notifications/')
-def connect():
+def test_connect():
     return ''
 
-@socketio.on('Notifications', namespace='/Notifications/')
-def asyncNotifications():
+@socketio.on('askNotifications', namespace='/Notifications/')
+def send():
     NewNotifications, count, notifications = Notifications.getNotifications(current_user.id)
     for notification in notifications:
         notification['ts'] = str(notification['ts'])
-    socketio.emit('getNotifications',
-                {'NewNotifications': NewNotifications, 'count': count, 'notifications': notifications}, namespace='/Notifications/', room=request.sid)
+    emit('getNotifications',
+                {'NewNotifications': NewNotifications, 'count': count, 'notifications': notifications}, namespace='/Notifications/')
 
 @socketio.on('disconnect', namespace='/Notifications/')
 def disconnect():

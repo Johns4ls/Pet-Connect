@@ -9,8 +9,8 @@ from flask import request
 def Connect():
     return ''
 
-@socketio.on('Messages', namespace='/Messages/')
-def Messages():
+@socketio.on('askMessages', namespace='/Messages/')
+def getMessages():
     newMessages, count = Messages.getMessages(current_user.id)
     for message in newMessages:
         message['ts'] = str(message['ts'])
