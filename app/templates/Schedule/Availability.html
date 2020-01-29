@@ -109,6 +109,30 @@
               // We don't want this to act as a link so cancel the link action
         doSubmit();
     });
+    askAvailability();
+    myInterval = setInterval(function(){
+      askAvailability();
+    }, 3000);
+    function askAvailability(){
+      AvailabilitySocket.emit('askAvailability',
+                {'dogID': "{{dog.dogID}}"})
+    }
+    var ids = [];
+    AvailabilitySocket.on('giveAvailability', function(messages) {
+      for (var i=0; i < messages.Availability.length; i++){
+        var message = messages.Availability[i];
+        if(!ids.includes(message.availabilityID)){
+          console.log(message.availabilityID)
+          ids.push(message.availabilityID)
+          console.log(message)
+                  calendar.addEvent({
+                  title: message.message,
+                  start: message.Begin_ts,
+                  end: message.End_ts
+                });
+          }
+        }
+    });
   
     function doSubmit(){
           $("#createEventModal").modal('hide');
@@ -118,12 +142,15 @@
           toTime = new Date(Date.parse($("#to-time").val()));
           toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds());
           var details = "{{user.firstName}}'s time with {{dog.name}}.";
+          /*
+          This is now deprecated. Replaced with using sockets.
               calendar.addEvent({
                 title: details,
                 start: fromTime,
                 end: toTime
               });
-              AvailabilitySocket.emit('getAvailability', {dogID:"{{dog.dogID}}", userID: user.userID, Begin_ts: fromTime, End_ts: toTime, message: details});
+              */
+              AvailabilitySocket.emit('getAvailability', {dogID:"{{dog.dogID}}", userID: "{{user.userID}}", Begin_ts: fromTime, End_ts: toTime, message: details});
   }
   });
 
