@@ -75,7 +75,7 @@
     d = new Date();
     var calendar = new FullCalendar.Calendar(calendarEl, {
       plugins: [ 'dayGrid', 'timeGrid', 'list', 'bootstrap', 'interaction' ],
-      timeZone: 'local',
+      timeZone: 'America/New_York',
       themeSystem: 'bootstrap',
       header: {
         left: 'prev,next',
@@ -83,7 +83,7 @@
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
       },
       select: function (endDate) {
-        d = endDate.start;
+        d = endDate.end;
         console.log(endDate.start)
               //do something when space selected
               //Show 'add event' modal
@@ -136,11 +136,11 @@
   
     function doSubmit(){
           $("#createEventModal").modal('hide');
-          fromTime = new Date(Date.parse($("#from-time").val()));
-          fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fromTime.getHours(), fromTime.getMinutes(), fromTime.getSeconds());
-          console.log(d.getDay());
+          fTime = new Date(Date.parse($("#from-time").val()));
+          fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fTime.getHours(), fTime.getMinutes(), fTime.getSeconds()).toISOString();
+          console.log(fromTime)
           toTime = new Date(Date.parse($("#to-time").val()));
-          toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds());
+          toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds()).toISOString();
           var details = "{{user.firstName}}'s time with {{dog.name}}.";
           /*
           This is now deprecated. Replaced with using sockets.
