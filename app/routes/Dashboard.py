@@ -16,7 +16,7 @@ def index():
     #Get comments of posts
     commentResults = session.query(Database.tPosts.postID, Database.tComments.Comment, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName, Database.tUser.image) \
         .join(Database.tUser, Database.tComments.userID == Database.tUser.userID)\
-        .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID)
+        .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID).order_by(Database.tComments.commentID.desc())
 
     #Get reacts of posts
     reactResults = session.query(Database.tReacts.postID, Database.tUser.userID, Database.tUser.firstName, Database.tUser.lastName, Database.tUser.image) \
