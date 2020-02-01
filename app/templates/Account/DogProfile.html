@@ -99,8 +99,10 @@
                 </p>
               {% endif %}
               <hr>
+              {% set count = namespace(a=0) %}
               {% for comment in commentResults %}
                 {% if post.postID == comment.postID %}
+                {% if count.a < 3 %}
                 <p>
                     {% if comment.image == None %}
                     <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
@@ -111,8 +113,13 @@
                     {% endif %}
                   <a href="/User/Profile/{{comment.userID}}"><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b></a> said: </p>
                 <p>{{comment.Comment}}</p>
+                {% set count.a = count.a + 1 %}
+                {% endif %}
                 {% endif %}
               {% endfor %}
+              {% if count.a > 0%}
+              <a href="/View/Post/{{post.postID}}"> View all comments</a>
+              {% endif %}
             </div>
           </div>
           {% endfor %}
