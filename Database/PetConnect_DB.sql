@@ -80,16 +80,11 @@ CREATE TABLE `tPosts` (
   `postID` int PRIMARY KEY AUTO_INCREMENT,
   `dogID` int,
   `userID` int,
-  `groupID` int,
+  `playDateID` int,
   `Post` varchar(255) NOT NULL,
   `ts` timestamp NOT NULL DEFAULT NOW(),
   `image` varchar(255)
-);
-
-CREATE TABLE `tPostPictures` (
-  `postPicturesID` int,
-  `image` varchar(255),
-  `postID` int
+  
 );
 
 CREATE TABLE `tComments` (
@@ -117,18 +112,13 @@ CREATE TABLE `tAvailability` (
   `message` varchar(255)
 );
 
-CREATE TABLE `tPlayDateTime` (
-  `playdateTimeID` int PRIMARY KEY AUTO_INCREMENT,
-  `playDateID` int,
-  `Begin_ts` timestamp NULL DEFAULT NULL,
-  `End_ts` timestamp NULL DEFAULT NULL,
-  `AddressID` int
-);
-
 CREATE TABLE `tPlayDate` (
   `playDateID` int PRIMARY KEY AUTO_INCREMENT,
   `dogID` int,
-  `userID` int
+  `userID` int,
+  `Begin_ts` timestamp NULL DEFAULT NULL,
+  `End_ts` timestamp NULL DEFAULT NULL,
+  `AddressID` int
 );
 
 CREATE TABLE `tFriend` (
@@ -147,12 +137,6 @@ CREATE TABLE `tMessage` (
   `message` varchar(255)
 );
 
-CREATE TABLE `tPictureMessage` (
-  `pictureMessageID` int,
-  `image` varchar(255),
-  `messageID` int
-);
-
 CREATE TABLE `tInterests` (
   `interestsID` int PRIMARY KEY AUTO_INCREMENT,
   `Interests` varchar(255) NOT NULL,
@@ -163,18 +147,6 @@ CREATE TABLE `tDogInterests` (
   `DogInterestsID` int PRIMARY KEY AUTO_INCREMENT,
   `interestsID` int,
   `dogID` int
-);
-
-CREATE TABLE `tGroupParticipants` (
-  `GroupParticipantsID` int PRIMARY KEY AUTO_INCREMENT,
-  `userID` int,
-  `groupID` int
-);
-
-CREATE TABLE `tGroup` (
-  `groupID` int PRIMARY KEY AUTO_INCREMENT,
-  `Name` varchar(255),
-  `image` varchar(255)
 );
 
 CREATE TABLE `tHeadofHouse` (
@@ -209,9 +181,7 @@ ALTER TABLE `tPosts` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
 
 ALTER TABLE `tPosts` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
-ALTER TABLE `tPosts` ADD FOREIGN KEY (`groupID`) REFERENCES `tGroup` (`groupID`);
-
-ALTER TABLE `tPostPictures` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
+ALTER TABLE `tPosts` ADD FOREIGN KEY (`playDateID`) REFERENCES `tPlayDate` (`playDateID`);
 
 ALTER TABLE `tComments` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
 
@@ -224,10 +194,6 @@ ALTER TABLE `tReacts` ADD FOREIGN KEY (`postID`) REFERENCES `tPosts` (`postID`);
 ALTER TABLE `tAvailability` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
 
 ALTER TABLE `tAvailability` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
-
-ALTER TABLE `tPlayDateTime` ADD FOREIGN KEY (`playDateID`) REFERENCES `tPlayDate` (`playDateID`);
-
-ALTER TABLE `tPlayDateTime` ADD FOREIGN KEY (`AddressID`) REFERENCES `tAddress` (`addressID`);
 
 ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
 
@@ -243,14 +209,8 @@ ALTER TABLE `tMessage` ADD FOREIGN KEY (`sender`) REFERENCES `tUser` (`userID`);
 
 ALTER TABLE `tMessage` ADD FOREIGN KEY (`recipient`) REFERENCES `tUser` (`userID`);
 
-ALTER TABLE `tPictureMessage` ADD FOREIGN KEY (`messageID`) REFERENCES `tMessage` (`messageID`);
-
 ALTER TABLE `tDogInterests` ADD FOREIGN KEY (`interestsID`) REFERENCES `tInterests` (`interestsID`);
 
 ALTER TABLE `tDogInterests` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
-
-ALTER TABLE `tGroupParticipants` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
-
-ALTER TABLE `tGroupParticipants` ADD FOREIGN KEY (`groupID`) REFERENCES `tGroup` (`groupID`);
 
 ALTER TABLE `tHeadofHouse` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);

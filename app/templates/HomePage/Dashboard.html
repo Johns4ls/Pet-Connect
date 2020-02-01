@@ -4,6 +4,7 @@
   {% block head %}
       <title> Dashboard</title>
       <script>
+      messageSock = commentSock();
         function changeLike(id) {
         value = document.getElementById(id).value;
               window.location = '/' + value + '/' + id;
@@ -78,12 +79,10 @@
           <p>{{ post.Post }}</p>
 
         </div>
-      <form action="/Create/Comment/{{post.postID}}" method="post" novalidate>
-        <textarea name="Comment"></textarea>
-        <br>
-        <button onclick="window.location='/Create/Comment/{{post.postID}}';" style="font-size: 70%;">Comment</button>
-        <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
-      </form>
+      <textarea id="Comment" name="Comment"></textarea>
+      <br>
+      <button onclick="submitComment('{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
+      <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
       <br>
         <div class="commentResultContainer">
 

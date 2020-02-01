@@ -92,16 +92,9 @@ class tPosts(Base):
     postID = Column(Integer, primary_key=True)
     dogID = Column(Integer, ForeignKey('tDog.dogID'))
     userID = Column(Integer, ForeignKey('tUser.userID'))
-    groupID = Column(Integer, ForeignKey('tGroup.groupID'))
     Post = Column('Post', String(255))
     ts = Column('ts', DateTime)
     image = Column('image', String(255))
-
-class tPostPictures(Base):
-    __tablename__ = 'tPostPictures'
-    postPictureID = Column(Integer, primary_key=True)
-    image = Column('image', String(255))
-    postID = Column(Integer, ForeignKey('tPost.postID'))
 
 class tComments(Base):
     __tablename__ = 'tComments'
@@ -128,19 +121,15 @@ class tAvailability(Base):
     End_ts = Column('End_ts', DateTime)
     message = Column('message', String(255))
 
-class tPlayDateTime(Base):
-    __tablename__ = 'tPlayDateTime'
-    playdateTimeID = Column(Integer, primary_key=True)
-    playDateID = Column(Integer, ForeignKey('tPlayDate.playDateID'))
-    Begin_ts = Column('Begin_ts', DateTime)
-    End_ts = Column('End_ts', DateTime)
-    addressID = Column(Integer, ForeignKey('tAddress.addressID'))
-
 class tPlayDate(Base):
     __tablename__ = 'tPlayDate'
     playdateID = Column(Integer, primary_key=True)
     dogID = Column(Integer, ForeignKey('tDog.dogID'))
     userID = Column(Integer, ForeignKey('tUser.userID'))
+    Begin_ts = Column('Begin_ts', DateTime)
+    End_ts = Column('End_ts', DateTime)
+    addressID = Column(Integer, ForeignKey('tAddress.addressID'))
+
 
 class tFriend(Base):
     __tablename__ = 'tFriend'
@@ -158,12 +147,6 @@ class tMessage(Base):
     time_Sent  = Column('time_Sent', DateTime), 
     message = Column('message', String(255))
 
-class tPictureMessage(Base):
-    __tablename__ = 'tPictureMessage'
-    pictureMessageID = Column(Integer, primary_key=True)
-    image = Column('image', String(255))
-    message_ID = Column(Integer, ForeignKey('tMessage.messageID'))
-
 
 class tInterests(Base):
     __tablename__ = 'tInterests'
@@ -176,18 +159,6 @@ class tDogInterests(Base):
     DogInterestsID = Column(Integer, primary_key=True)
     interestsID = Column(Integer, ForeignKey('tInterests.interestsID'))
     dogID = Column(Integer, ForeignKey('tDog.dogID'))
-
-class tGroupParticipants(Base):
-    __tablename__ = 'tGroupParticipants'
-    GroupParticipantsID = Column(Integer, primary_key=True)
-    userID = Column(Integer, ForeignKey('tUser.userID'))
-    groupID = Column(Integer, ForeignKey('tGroup.groupID'))
-
-class tGroup(Base):
-    __tablename__ = 'tGroup'
-    groupID = Column(Integer, primary_key=True)
-    Name = Column('Name', String(255))
-    image = Column('image', String(255))
 
 class tHeadofHouse(Base):
     __tablename__ = 'tHeadofHouse'

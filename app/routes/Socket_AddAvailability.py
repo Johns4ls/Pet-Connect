@@ -1,6 +1,6 @@
 from Modules import Tlbx, Notifications, Database
 import time
-from flask_socketio import SocketIO, emit, disconnect, test_client
+from flask_socketio import SocketIO, emit, test_client
 from app import socketio
 from flask_login import current_user
 from threading import Lock

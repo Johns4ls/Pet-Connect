@@ -4,8 +4,8 @@ from flask_login import login_required, current_user
 from flask import render_template, request
 from app import app
 #Add a comment
-@app.route('/Availability/<int:dogID>', methods=['GET', 'POST'])
-def Availability(dogID):
+@app.route('/Playdate/<int:dogID>', methods=['GET', 'POST'])
+def Playedate(dogID):
     dogID = str(dogID)
     session = Database.Session()
     dog = session.query(Database.tDog).filter(Database.tDog.dogID == dogID)
@@ -14,4 +14,4 @@ def Availability(dogID):
     user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
     for user in user:
         user = user
-    return render_template('/Schedule/Availability.html', Availability = Availability, dog = dog, user = user)
+    return render_template('/Playdate/Playdate.html', Availability = Availability, dog = dog, user = user)

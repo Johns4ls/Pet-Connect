@@ -9,7 +9,7 @@ def CreatePost():
     session = Database.Session()
     dogID = request.form['DogValue']
     Post = request.form['Post']
-    Query = Database.tPosts(dogID=dogID, userID=current_user.id, groupID=None, Post=Post, ts=datetime.datetime.now(), image=None)
+    Query = Database.tPosts(dogID=dogID, userID=current_user.id, Post=Post, ts=datetime.datetime.now(), image=None)
     session.add(Query)
     session.commit()
     flash('Posted successfully')
