@@ -18,6 +18,18 @@ def addAvailability(msg):
     eastern = timezone('US/Eastern')
     Availability.commitAvailability(msg['dogID'], msg['userID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern), msg['message'])
 
+@socketio.on('updateAvailability', namespace='/Availability/')
+def updateAvailability(msg):
+    print("doing something")
+    msg = ast.literal_eval(json.dumps(msg))
+    eastern = timezone('US/Eastern')
+    Availability.updateAvailability(msg['availabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern))
+
+@socketio.on('deleteAvailability', namespace='/Availability/')
+def deleteAvailability(msg):
+    Availability.deleteAvailability(msg['availabilityID'])
+
+
 @socketio.on('askAvailability', namespace='/Availability/')
 def askAvailability(dogID):
     msg = ast.literal_eval(json.dumps(dogID))
