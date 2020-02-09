@@ -92,6 +92,7 @@ class tPosts(Base):
     postID = Column(Integer, primary_key=True)
     dogID = Column(Integer, ForeignKey('tDog.dogID'))
     userID = Column(Integer, ForeignKey('tUser.userID'))
+    PlayDateID = Column(Integer, ForeignKey('tPlayDate.PlayDateID'))
     Post = Column('Post', String(255))
     ts = Column('ts', DateTime)
     image = Column('image', String(255))
@@ -123,9 +124,10 @@ class tAvailability(Base):
 
 class tPlayDate(Base):
     __tablename__ = 'tPlayDate'
-    playdateID = Column(Integer, primary_key=True)
-    dogID = Column(Integer, ForeignKey('tDog.dogID'))
-    userID = Column(Integer, ForeignKey('tUser.userID'))
+    PlayDateID = Column(Integer, primary_key=True)
+    hostDogID = Column(Integer, ForeignKey('tDog.dogID'))
+    guestDogID = Column(Integer, ForeignKey('tDog.dogID'))
+    AvailabilityID = Column(Integer, ForeignKey('tAvailability.AvailabilityID'))
     Begin_ts = Column('Begin_ts', DateTime)
     End_ts = Column('End_ts', DateTime)
     addressID = Column(Integer, ForeignKey('tAddress.addressID'))
