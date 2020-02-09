@@ -80,14 +80,14 @@ def dogProfile(dogID):
         like.append(likes[react.postID])
 
 
-        cur, db = Tlbx.dbConnectDict()
-        query = "select tFamily.familyID from tFamily \
-            JOIN tUser on tFamily.familyID = tUser.familyID \
-            JOIN tDog on tUser.familyID = tDog.familyID \
-            WHERE tUser.userID = %s AND tDog.dogID = %s;"
-        data = (current_user.id, dogID)
-        cur.execute(query, data)
-        family = cur.fetchone()
+    cur, db = Tlbx.dbConnectDict()
+    query = "select tFamily.familyID from tFamily \
+        JOIN tUser on tFamily.familyID = tUser.familyID \
+        JOIN tDog on tUser.familyID = tDog.familyID \
+        WHERE tUser.userID = %s AND tDog.dogID = %s;"
+    data = (current_user.id, dogID)
+    cur.execute(query, data)
+    family = cur.fetchone()
     if(family is not None):
         return render_template('Account/AdminDogProfile.html', postResults = zip(postResults, like), commentResults = commentResults, reactResults = reactResults, yourReacts = yourReacts, dog=dog)
     else:
