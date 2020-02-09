@@ -10,6 +10,7 @@ def getCountNotifications(userID):
     JOIN tPosts ON tPosts.postID = tReacts.postID \
     JOIN tUser ON tPosts.userID = tUser.userID \
     WHERE tPosts.UserID = %s \
+    AND tReacts.userID <> %s \
     AND tReacts.ts > (SELECT tUser.last_message_read_time FROM tUser WHERE userID = %s) \
     UNION \
     SELECT count(commentUser.firstName) \
@@ -18,8 +19,9 @@ def getCountNotifications(userID):
     JOIN tPosts ON tPosts.postID = tComments.postiD \
     JOIN tUser ON tPosts.userID = tUser.userID \
     WHERE tPosts.userID = %s \
+    AND tComments.userID <> %s \
     AND tComments.ts > (SELECT tUser.last_message_read_time FROM tUser WHERE userID = %s);"
-    data = (userID, userID, userID, userID)
+    data = (userID, userID, userID, userID, userID, userID)
     cur.execute(query, data)
     counts = cur.fetchall()
     total = 0
