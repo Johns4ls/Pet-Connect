@@ -25,20 +25,20 @@ def likes(postID):
 def viewPost(postID):
     session = Database.Session()
     #Get post information
-    post = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog.name, Database.tUser.firstName, Database.tUser.lastName) \
+    post = session.query(Database.tPosts.postID, Database.tPosts.Post, Database.tDog, Database.tUser.firstName, Database.tUser.lastName, Database.tUser.image) \
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tDog.dogID == Database.tPosts.dogID) \
     .filter(Database.tPosts.postID==postID)
     for post in post:
         post = post
         #Get comments of posts
-    comments = session.query( Database.tComments.Comment, Database.tUser.firstName, Database.tUser.lastName) \
+    comments = session.query( Database.tComments.Comment, Database.tUser.firstName, Database.tUser.lastName, Database.tUser.image) \
         .join(Database.tUser, Database.tComments.userID == Database.tUser.userID) \
         .join(Database.tPosts, Database.tComments.postID == Database.tPosts.postID) \
         .filter(Database.tPosts.postID == postID)
 
     #Get reacts of posts
-    reacts = session.query(Database.tReacts.reactID, Database.tUser.firstName, Database.tUser.lastName) \
+    reacts = session.query(Database.tReacts.reactID, Database.tUser.firstName, Database.tUser.lastName, Database.tUser.image) \
         .join(Database.tUser, Database.tReacts.userID == Database.tUser.userID) \
         .join(Database.tPosts, Database.tReacts.postID == Database.tPosts.postID) \
         .filter(Database.tPosts.postID == postID)

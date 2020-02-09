@@ -12,4 +12,4 @@ def Comment(postID):
     Comment = Database.tComments(postID=postID, userID = current_user.id, Comment = Comment, ts=datetime.datetime.now(), image=None)
     session.add(Comment)
     session.commit()
-    return redirect('/dashboard')
+    return redirect('/View/Post/'+postID)
