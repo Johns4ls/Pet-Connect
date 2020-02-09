@@ -124,6 +124,13 @@
             Notificationtoast(notifications);
             }
             text = ""
+          console.log(notifications.notifications.length);
+          if (notifications.notifications.length == 0){
+            text = "<li> You have no notifications.    </li>";
+          }
+          else{
+
+          
           for(var i in notifications.notifications){
                 text = text + "<li> \n"
                     if(notifications.notifications[i].image == null){
@@ -136,6 +143,7 @@
                     }
                       text = text +  "<a href='/View/Post/" + notifications.notifications[i].postID + "'>" + notifications.notifications[i].firstName + " " + notifications.notifications[i].lastName + " " + notifications.notifications[i].information + ".</a></li> \n";
 
+          }
           }
           $('#NotificationsList').html(text);
         }

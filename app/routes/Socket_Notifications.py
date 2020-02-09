@@ -18,5 +18,5 @@ def send():
                 {'NewNotifications': NewNotifications, 'count': count, 'notifications': notifications}, namespace='/Notifications/')
 
 @socketio.on('disconnect', namespace='/Notifications/')
-def disconnect():
+def test_disconnect():
     print('Client disconnected', request.sid)
