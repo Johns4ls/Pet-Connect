@@ -8,13 +8,16 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql.expression import ClauseElement
 from sqlalchemy import literal
 from datetime import datetime
-#engine = sqlalchemy.create_engine(
-    #'mysql+pymysql://Website:W3bsite!@127.0.0.1:3306/PetConnect',
-    #echo=True, pool_size=30)
+import os
 
-engine = sqlalchemy.create_engine(
-    'mysql+pymysql://Website:W3bsite!@ec2-52-14-47-9.us-east-2.compute.amazonaws.com:3306/PetConnect',
-    echo=True, pool_size=30)
+if os.name == "nt":
+    engine = sqlalchemy.create_engine(
+        'mysql+pymysql://Website:W3bsite!@127.0.0.1:3306/PetConnect',
+        echo=True, pool_size=30)
+else:
+    engine = sqlalchemy.create_engine(
+        'mysql+pymysql://Website:W3bsite!@ec2-52-14-47-9.us-east-2.compute.amazonaws.com:3306/PetConnect',
+        echo=True, pool_size=30)
 
 # Define and create all tables in the DB
 Base = declarative_base()
