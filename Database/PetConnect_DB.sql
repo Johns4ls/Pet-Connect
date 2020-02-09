@@ -81,7 +81,7 @@ CREATE TABLE `tPosts` (
   `dogID` int,
   `userID` int,
   `playDateID` int,
-  `Post` varchar(255) NOT NULL,
+  `Post` varchar(255),
   `ts` timestamp NOT NULL DEFAULT NOW(),
   `image` varchar(255)
   
@@ -113,9 +113,10 @@ CREATE TABLE `tAvailability` (
 );
 
 CREATE TABLE `tPlayDate` (
-  `playDateID` int PRIMARY KEY AUTO_INCREMENT,
-  `dogID` int,
-  `userID` int,
+  `PlayDateID` int PRIMARY KEY AUTO_INCREMENT,
+  `hostDogID` int,
+  `guestDogID` int,
+  `AvailabilityID` int,
   `Begin_ts` timestamp NULL DEFAULT NULL,
   `End_ts` timestamp NULL DEFAULT NULL,
   `AddressID` int
@@ -195,9 +196,11 @@ ALTER TABLE `tAvailability` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`
 
 ALTER TABLE `tAvailability` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
-ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`);
+ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`hostDogID`) REFERENCES `tDog` (`dogID`);
 
-ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
+ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`guestDogID`) REFERENCES `tDog` (`dogID`);
+
+ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`AvailabilityID`) REFERENCES `tAvailability` (`AvailabilityID`);
 
 ALTER TABLE `tFriend` ADD FOREIGN KEY (`user`) REFERENCES `tUser` (`userID`);
 
