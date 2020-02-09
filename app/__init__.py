@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
    This will need to be updated before the site goes live.'''
 app.secret_key = 'some_secret'
 from routes import Comments, CreateDog, Dashboard, Follow, Friend, HomePage, Likes, Logout, Messages
-from routes import NewAccount, Socket_Notifications, Password, Posts, Profile, Search, Socket_Messages
+from routes import NewAccount, Socket_Notifications, Password, Posts, Profile, Search, Socket_Messages, MediaQuery
 @login_manager.user_loader
 def load_user(userid):
     return Tlbx.userRefresh(userid)

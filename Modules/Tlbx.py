@@ -10,13 +10,13 @@ import datetime
 #Connectors to database
 def dbConnect():
 
-    #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-    db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    db = pymysql.connect(host='ec2-52-14-47-9.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
     cur = db.cursor()
     return cur
 def dbConnectDict():
-    #db = pymysql.connect(host='ec2-13-59-203-226.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-    db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    db = pymysql.connect(host='ec2-52-14-47-9.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
     cur = db.cursor(pymysql.cursors.DictCursor)
     return cur, db
 
@@ -61,7 +61,7 @@ def imgToJPG(location, image):
     image.save(savePath,optimize=True,quality=80)
     if location == "Profile":
         thumbnailGen(image, thumbPath)
-    else: 
+    else:
         fullPath = None
     return fullPath
 
@@ -70,7 +70,7 @@ def thumbnailGen(image, path):
     image.thumbnail(size)
     print(path)
     image.save(path + ".thumbnail", "JPEG" )
-    
+
 
 #Insert the new account information into the database
 def new_Account(firstName, lastName, email, password, address, city, state, zipCode, image):
