@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" media="all" type="text/css" href="/static/style.css">
     <link rel="stylesheet" media="all" type="text/css" href="/static/skeleton.css">
+
     <script type="text/javascript" src="/static/script.js"></script>
     {% block notifications %}
     <script>
@@ -32,7 +33,7 @@
             delay: 5000
         });
       $('.toast').toast('show');
-   } 
+   }
    function Messagetoast(notifications) {
       $('#toastMessage').html("<a href='/View/Post/" + notifications.notifications[0].postID + "'>" + notifications.notifications[0].firstName + " " + notifications.notifications[0].lastName + " " + notifications.notifications[0].information + ".</a>");
       $('#toastTime').html(notifications.notifications[0].ts);
@@ -42,7 +43,7 @@
             delay: 5000
         });
       $('.toast').toast('show');
-   } 
+   }
     // Close the dropdown menu if the user clicks outside of it
     window.onclick = function(event) {
       if (!event.target.matches('.dropbtn')) {
@@ -59,11 +60,11 @@
         // Connect to the Socket.IO server.
         // The connection URL has the following format:
         //     http[s]://<domain>:<port>[/<namespace>]
-        
+
         // Event handler for new connections.
         // The callback function is invoked when a connection with the
         // server is established.
-        
+
         //new message handling
     userInfoNamespace = '/Messages/';
     var messageSock = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace, {
@@ -156,7 +157,35 @@
     {% endblock %}
 </head>
 {%block nav%}
- <!--navbar styled with bootstrap classes-->
+
+<!-- Top Navigation Menu - MOBILE -->
+<script>
+function myFunction() {
+  var x = document.getElementById("myLinks");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+</script>
+<div class="navBarMobile">
+  <a href="#home" class="active">Pet Connect</a>
+  <!-- Navigation links (hidden by default) -->
+  <div id="myLinks">
+    <a href="/dashboard"> Home</a>
+    <a href="/Create/New/Dog">Create a new dog</a>
+    <a href='/Messages'> Messages </a>
+    <a href="/logout" >Logout</a>
+  </div>
+  <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a>
+</div>
+<br>
+<!--navbar styled with bootstrap classes-->
+<!-- Top Navigation Menu - DESKTOP -->
  <div class="navBar" id="mainNavBar">
     <div class="form-inline">
         <a href="/dashboard"> Home</a>
