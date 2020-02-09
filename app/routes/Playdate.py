@@ -14,4 +14,5 @@ def Playedate(dogID):
     user = session.query(Database.tUser).filter(Database.tUser.userID == current_user.id)
     for user in user:
         user = user
-    return render_template('/Playdate/Playdate.html', dog = dog, user = user)
+    dogResults = session.query(Database.tDog).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID).filter(Database.tUser.userID == current_user.id)
+    return render_template('/Playdate/Playdate.html', dog = dog, user = user, dogResults = dogResults)

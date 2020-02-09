@@ -15,6 +15,7 @@
 <link href="{{ url_for('static', filename='packages/list/main.css') }}"rel='stylesheet' />
 <script src="{{ url_for('static', filename='packages/core/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/interaction/main.js') }}"></script>
+<script src="{{ url_for('static', filename='packages/moment-timezone/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/bootstrap/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/daygrid/main.js') }}"></script>
 <script src="{{ url_for('static', filename='packages/timegrid/main.js') }}"></script>
@@ -65,7 +66,32 @@
       </div>
   </div>
 </div>
-
+<div id="editEventModal" class="modal fade">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4>edit time with {{dog.name}}</h4>
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span> <span class="sr-only">close</span></button>
+          </div>
+            <div id="modalBody" class="modal-body">
+              <div class="form-group form-inline">
+                <div class="col-sm-6">
+                  <input type="text" class="form-control datetimepicker-input" id="edit-from-time" data-toggle="datetimepicker" data-target="#edit-from-time"/>
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control datetimepicker-input" id="edit-to-time" data-toggle="datetimepicker" data-target="#edit-to-time"/>
+                </div>
+              </div>
+            </div>
+          
+          <div class="modal-footer">
+              <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="updateButton">Update</button>
+              <button type="submit" class="btn btn-primary" id="deleteButton">Delete</button>
+          </div>
+      </div>
+  </div>
+</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -73,6 +99,7 @@
     var AvailabilitySocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
     var calendarEl = document.getElementById('calendar');
     d = new Date();
+    var data;
     var calendar = new FullCalendar.Calendar(calendarEl, {
       plugins: [ 'dayGrid', 'timeGrid', 'list', 'bootstrap', 'interaction' ],
       timeZone: 'America/New_York',
@@ -84,13 +111,26 @@
       },
       select: function (endDate) {
         d = endDate.end;
-        console.log(endDate.start)
               //do something when space selected
               //Show 'add event' modal
               $('#createEventModal').modal('show');
           },
-      eventClick: function (event) {
-              $('#fullCalModal').modal();
+      eventClick: function (i) {
+              data = i.event;
+              d = data.start;
+              if(data.start != null){
+                start = data.start
+                start.setHours(start.getHours()+(data.start.getTimezoneOffset()/60));
+                start = moment(start , "YYYY-MM-DD hh:mm A").format("hh:mm A");
+                document.getElementById('edit-from-time').value = start;
+              }
+              if(data.end != null){
+              end = data.end;
+              end.setHours(end.getHours()+(data.end.getTimezoneOffset()/60));
+              end = moment(end ,"YYYY-MM-DD hh:mm A").format("hh:mm A");
+              document.getElementById('edit-to-time').value = end;
+              }
+              $('#editEventModal').modal('show');
           },
   
       editable: true,
@@ -99,8 +139,14 @@
       
     });
     $('#from-time').datetimepicker({
-                    format: 'LT'
-                });
+    format: 'LT'
+    });
+    $('#edit-from-time').datetimepicker({
+        format: 'LT'
+    });
+    $('#edit-to-time').datetimepicker({
+        format: 'LT'
+    });
     $('#to-time').datetimepicker({
         format: 'LT'
     });
@@ -109,9 +155,17 @@
               // We don't want this to act as a link so cancel the link action
         doSubmit();
     });
+    $('#updateButton').on('click', function(e){
+              // We don't want this to act as a link so cancel the link action
+        doUpdate();
+    });
+    $('#deleteButton').on('click', function(e){
+              // We don't want this to act as a link so cancel the link action
+        doDelete();
+    });
     askAvailability();
     myInterval = setInterval(function(){
-      askAvailability();
+      askAvailability();zz
     }, 3000);
     function askAvailability(){
       AvailabilitySocket.emit('askAvailability',
@@ -122,10 +176,9 @@
       for (var i=0; i < messages.Availability.length; i++){
         var message = messages.Availability[i];
         if(!ids.includes(message.availabilityID)){
-          console.log(message.availabilityID)
           ids.push(message.availabilityID)
-          console.log(message)
                   calendar.addEvent({
+                  id: message.availabilityID,
                   title: message.message,
                   start: message.Begin_ts,
                   end: message.End_ts
@@ -133,7 +186,7 @@
           }
         }
     });
-  
+
     function doSubmit(){
           $("#createEventModal").modal('hide');
           fTime = new Date(Date.parse($("#from-time").val()));
@@ -151,6 +204,27 @@
               });
               */
               AvailabilitySocket.emit('getAvailability', {dogID:"{{dog.dogID}}", userID: "{{user.userID}}", Begin_ts: fromTime, End_ts: toTime, message: details});
+  }
+  function doUpdate(){
+          $("#editEventModal").modal('hide');
+          fTime = new Date(Date.parse($("#edit-from-time").val()));
+          fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fTime.getHours(), fTime.getMinutes(), fTime.getSeconds()).toISOString();
+          toTime = new Date(Date.parse($("#edit-to-time").val()));
+          toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds()).toISOString();
+          AvailabilitySocket.emit('updateAvailability', {availabilityID: data.id, Begin_ts: fromTime, End_ts: toTime});
+          oldEvent = calendar.getEventById(data.id)
+          oldEvent.remove();
+          var index = ids.indexOf(Number(data.id));
+          if (index !== -1) {
+            ids.splice(index, 1);
+          }
+  }
+
+  function doDelete(){
+          $("#editEventModal").modal('hide');
+          AvailabilitySocket.emit('deleteAvailability', {availabilityID: data.id});
+          oldEvent = calendar.getEventById(data.id)
+                  oldEvent.remove();
   }
   });
 

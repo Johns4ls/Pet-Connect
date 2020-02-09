@@ -40,21 +40,20 @@
 
 </style>
 <div id='calendar'></div>
-<div id="createEventModal" class="modal fade">
+<div id="createPlaydateModal" class="modal fade">
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h4>Schedule time with {{dog.name}}</h4>
+              <h4>Who wants to go on a playdate with {{dog.name}}?</h4>
+              <select id="GuestDog" name="DogValue">
+                {% for dog in dogResults %}
+                <option  value="{{dog.dogID}}">{{dog.name}}</option>
+                {% endfor %}
+              </select>
               <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span> <span class="sr-only">close</span></button>
           </div>
             <div id="modalBody" class="modal-body">
               <div class="form-group form-inline">
-                <div class="col-sm-6">
-                  <input type="text" class="form-control datetimepicker-input" id="from-time" data-toggle="datetimepicker" data-target="#from-time"/>
-                </div>
-                <div class="col-sm-6">
-                  <input type="text" class="form-control datetimepicker-input" id="to-time" data-toggle="datetimepicker" data-target="#to-time"/>
-                </div>
               </div>
             </div>
           
@@ -69,6 +68,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    var data;
     userInfoNamespace = '/Availability/';
     var AvailabilitySocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
     var calendarEl = document.getElementById('calendar');
@@ -76,24 +76,24 @@
     var calendar = new FullCalendar.Calendar(calendarEl, {
       plugins: [ 'dayGrid', 'timeGrid', 'list', 'bootstrap', 'interaction' ],
       timeZone: 'America/New_York',
+      defaultView: 'timeGridWeek',
       themeSystem: 'bootstrap',
+      businessHours: {
+  // days of week. an array of zero-based day of week integers (0=Sunday)
+  daysOfWeek: [ 0, 1, 2, 3, 4, 5, 6], // Monday - Thursday
+
+  startTime: '0:00', // a start time (10am in this example)
+  endTime: '0:00', // an end time (6pm in this example)
+},
       header: {
         left: 'prev,next',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+        right: 'timeGridWeek,timeGridDay,listMonth'
       },
-      select: function (endDate) {
-        d = endDate.end;
-        console.log(endDate.start)
-              //do something when space selected
-              //Show 'add event' modal
-              $('#createEventModal').modal('show');
+      eventClick: function (i) {
+        data = i.event;
+              $('#createPlaydateModal').modal('show');
           },
-      eventClick: function (event) {
-              $('#fullCalModal').modal();
-          },
-  
-      editable: true,
       selectable: true,
       eventLimit: true // allow "more" link when too many events
       
@@ -109,48 +109,86 @@
               // We don't want this to act as a link so cancel the link action
         doSubmit();
     });
+    askPlayDates();
     askAvailability();
     myInterval = setInterval(function(){
       askAvailability();
+      askPlayDates();
     }, 3000);
     function askAvailability(){
       AvailabilitySocket.emit('askAvailability',
                 {'dogID': "{{dog.dogID}}"})
     }
-    var ids = [];
+    function askPlayDates(){
+      AvailabilitySocket.emit('askPlayDates',
+                {'dogID': "{{dog.dogID}}"})
+    }
+    var AvailabilityIDs = [];
+    var PlayDateIDs = [];
     AvailabilitySocket.on('giveAvailability', function(messages) {
       for (var i=0; i < messages.Availability.length; i++){
         var message = messages.Availability[i];
-        if(!ids.includes(message.availabilityID)){
+        if(!AvailabilityIDs.includes(message.availabilityID)){
           console.log(message.availabilityID)
-          ids.push(message.availabilityID)
+          AvailabilityIDs.push(message.availabilityID)
           console.log(message)
                   calendar.addEvent({
-                  title: message.message,
+                  id: message.availabilityID, 
+                  title: "Available",
                   start: message.Begin_ts,
                   end: message.End_ts
                 });
           }
         }
     });
+    AvailabilitySocket.on('givePlayDates', function(messages) {
+      console.log(messages)
+      for (var i=0; i < messages.PlayDates.length; i++){
+        var message = messages.PlayDates[i];
+        if(!AvailabilityIDs.includes(message.availabilityID) && !PlayDateIDs.includes(message.availabilityID)){
+          AvailabilityIDs.push(message.availabilityID)
+          PlayDateIDs.push(message.availabilityID)
+          calendar.addEvent({
+                  id: message.availabilityID, 
+                  title: message.hostDogName + " and " + message.guestDogName + "'s playdate'",
+                  start: message.Begin_ts,
+                  end: message.End_ts
+                });
+        }
+        else if(AvailabilityIDs.includes(message.availabilityID) && !PlayDateIDs.includes(message.availabilityID)){
+          PlayDateIDs.push(message.availabilityID)
+          oldEvent = calendar.getEventById(data.id)
+          oldEvent.remove();
+          calendar.addEvent({
+                  id: message.availabilityID, 
+                  title: message.hostDogName + " and " + message.guestDogName + "'s playdate'",
+                  start: message.Begin_ts,
+                  end: message.End_ts
+                });
+          }        
+        else if(!AvailabilityIDs.includes(message.availabilityID) && PlayDateIDs.includes(message.availabilityID)){
+          AvailabilityIDs.push(message.availabilityID)
+          }
+        }
+    });
   
     function doSubmit(){
-          $("#createEventModal").modal('hide');
+          $("#createPlaydateModal").modal('hide');
           fTime = new Date(Date.parse($("#from-time").val()));
           fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fTime.getHours(), fTime.getMinutes(), fTime.getSeconds()).toISOString();
           console.log(fromTime)
           toTime = new Date(Date.parse($("#to-time").val()));
           toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds()).toISOString();
-          var details = "{{user.firstName}}'s time with {{dog.name}}.";
-          /*
-          This is now deprecated. Replaced with using sockets.
-              calendar.addEvent({
-                title: details,
-                start: fromTime,
-                end: toTime
-              });
-              */
-              AvailabilitySocket.emit('getAvailability', {dogID:"{{dog.dogID}}", userID: "{{user.userID}}", Begin_ts: fromTime, End_ts: toTime, message: details});
+          var e = document.getElementById("GuestDog");
+          var GuestDog = e.options[e.selectedIndex].value;
+          var details = "{{dog.name}}'s playdate with " + GuestDog + " .";
+          AvailabilitySocket.emit('getPlayDate', {hostDogID:"{{dog.dogID}}", guestDogID: GuestDog, availabilityID: data.id, Begin_ts: fromTime, End_ts: toTime, message: details});
+          oldEvent = calendar.getEventById(data.id)
+          oldEvent.remove();
+          var index = ids.indexOf(Number(data.id));
+          if (index !== -1) {
+            ids.splice(index, 1);
+          }
   }
   });
 
