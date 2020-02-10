@@ -70,6 +70,26 @@
       </div>
   </div>
 </div>
+<div id="editPlaydateModal" class="modal fade">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4>Playdate details</h4>
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span> <span class="sr-only">close</span></button>
+          </div>
+            <div id="modalBody" class="modal-body">
+              <div class="form-group form-inline">
+              </div>
+            </div>
+          
+          <div class="modal-footer">
+              <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="deleteButton">Delete</button>
+              <button type="submit" class="btn btn-primary" data-dismiss="modal">Continue</button>
+          </div>
+      </div>
+  </div>
+</div>
 </div>
 
 <script>
@@ -98,8 +118,14 @@
       },
       eventClick: function (i) {
         data = i.event;
-              $('#createPlaydateModal').modal('show');
-          },
+        console.log(data)
+        if(data.extendedProps.isPlayDate){
+          $('#editPlaydateModal').modal('show');
+        }
+        else{
+          $('#createPlaydateModal').modal('show');
+        }
+      },
       selectable: true,
       eventLimit: true // allow "more" link when too many events
       
@@ -112,8 +138,11 @@
     });
     calendar.render();
     $('#submitButton').on('click', function(e){
-              // We don't want this to act as a link so cancel the link action
         doSubmit();
+    });
+    $('#deleteButton').on('click', function(e){
+              // We don't want this to act as a link so cancel the link action
+        doDelete();
     });
     askPlayDates();
     askAvailability();
@@ -140,13 +169,30 @@
                   id: message.AvailabilityID, 
                   title: "Available",
                   start: message.Begin_ts,
-                  end: message.End_ts
+                  end: message.End_ts,
+                  extendedProps: {
+                  isPlayDate: false
+                  }
                 });
           }
         }
     });
 
+AvailabilitySocket.on('PlayDateSuccess', function(msg) {
+  oldEvent = calendar.getEventById(data.id)
+    oldEvent.remove();
+  console.log(data)
+  var index = AvailabilityIDs.indexOf(data.extendedProps.AvailabilityID);
+  if (index !== -1){
+    console.log(data.id)
+    AvailabilityIDs.splice(index, 1);
+  }
+  var index = PlayDateIDs.indexOf(data.id);
+  if (index !== -1){
+  PlayDateIDs.splice(index, 1);
+}
 
+});
     AvailabilitySocket.on('PlayDateException', function(msg) {
       $("#alert").text(msg.Error);
       $('#alert').show();
@@ -163,12 +209,15 @@
         if(!AvailabilityIDs.includes(message.AvailabilityID) && !PlayDateIDs.includes(message.AvailabilityID)){
           AvailabilityIDs.push(message.AvailabilityID)
           PlayDateIDs.push(message.AvailabilityID)
-          console.log(message)
           calendar.addEvent({
-                  id: 'message' + message.AvailabilityID, 
+                  id: message.PlayDateID, 
                   title: message['hostDog.name'] + " and " + message['guestDog.name'] + "'s playdate",
                   start: message.Begin_ts,
-                  end: message.End_ts
+                  end: message.End_ts,
+                  extendedProps: {
+                  isPlayDate: true,
+                  AvailabilityID: message.AvailabilityID
+                  }
                 });
         }
         else if(AvailabilityIDs.includes(message.AvailabilityID) && !PlayDateIDs.includes(message.AvailabilityID)){
@@ -176,10 +225,14 @@
           oldEvent = calendar.getEventById(message.AvailabilityID)
           oldEvent.remove();
           calendar.addEvent({
-                  id: "message" + message.AvailabilityID, 
+                  id: message.PlayDateID, 
                   title: message['hostDog.name'] + " and " + message['guestDog.name']  + "'s playdate",
                   start: message.Begin_ts,
-                  end: message.End_ts
+                  end: message.End_ts,
+                  extendedProps: {
+                  isPlayDate: true,
+                  AvailabilityID: message.AvailabilityID
+                  }
                 });
           }        
         else if(!AvailabilityIDs.includes(message.AvailabilityID) && PlayDateIDs.includes(message.AvailabilityID)){
@@ -198,6 +251,10 @@
           var GuestDog = e.options[e.selectedIndex].value;
           var details = "{{dog.name}}'s playdate with " + GuestDog + " .";
           AvailabilitySocket.emit('getPlayDate', {hostDogID:"{{dog.dogID}}", guestDogID: GuestDog, AvailabilityID: data.id, Begin_ts: fromTime, End_ts: toTime, message: details});
+  }
+  function doDelete(){
+          $("#editPlaydateModal").modal('hide');
+          AvailabilitySocket.emit('deletePlayDate', {PlayDateID: data.id});
   }
   });
 

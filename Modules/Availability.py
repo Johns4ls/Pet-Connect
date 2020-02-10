@@ -26,3 +26,11 @@ def deleteAvailability(availabilityID):
     session = Database.Session()
     session.query(Database.tAvailability).filter(Database.tAvailability.AvailabilityID==availabilityID).delete()
     session.commit()
+def deletePlayDate(PlayDateID):
+    session = Database.Session()
+    '''To prevent FK exceptions, we need to delete Reacts, Comments, and Posts associated with 
+    the playdate.'''
+    session.query(Database.tPosts).filter(Database.tPosts.PlayDateID==PlayDateID).delete()
+    session.commit()
+    session.query(Database.tPlayDate).filter(Database.tPlayDate.PlayDateID==PlayDateID).delete()
+    session.commit()

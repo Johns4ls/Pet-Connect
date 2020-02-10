@@ -27,10 +27,11 @@ def addPlaydate(msg):
     data = (msg['AvailabilityID'])
     cur.execute(query, data)
     playdate = cur.fetchall()
-    if (playdate != None):
+    if (playdate != ()):
         socketio.emit('PlayDateException',
         {'Error': "This time is in use by another playdate."}, namespace='/Availability/', room=request.sid)
-    Availability.commitPlayDate(msg['hostDogID'], msg['guestDogID'], msg['AvailabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern), msg['message'])
+    else:
+        Availability.commitPlayDate(msg['hostDogID'], msg['guestDogID'], msg['AvailabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern), msg['message'])
 
 @socketio.on('updateAvailability', namespace='/Availability/')
 def updateAvailability(msg):
@@ -54,6 +55,17 @@ def deleteAvailability(msg):
     except:
         socketio.emit('AvailabilityException',
                 {'Error': "You cannot delete availability if it is in use for a playdate."}, namespace='/Availability/', room=request.sid)
+
+@socketio.on('deletePlayDate', namespace='/Availability/')
+def deletePlayDate(msg):
+    try:
+        Availability.deletePlayDate(msg['PlayDateID'])
+        socketio.emit('PlayDateSuccess',
+                {'Success': 'Success'}, namespace='/Availability/', room=request.sid)
+    except:
+        socketio.emit('PlayDateException',
+                {'Error': "There was an error deleting the playdate."}, namespace='/Availability/', room=request.sid)
+
 
 
 @socketio.on('askAvailability', namespace='/Availability/')
