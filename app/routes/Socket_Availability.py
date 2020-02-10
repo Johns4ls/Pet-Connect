@@ -22,18 +22,38 @@ def addAvailability(msg):
 def addPlaydate(msg):
     msg = ast.literal_eval(json.dumps(msg))
     eastern = timezone('US/Eastern')
+    cur, db = Tlbx.dbConnectDict()
+    query = "SELECT * FROM tPlayDate WHERE AvailabilityID = %s"
+    data = (msg['AvailabilityID'])
+    cur.execute(query, data)
+    playdate = cur.fetchall()
+    if (playdate != None):
+        socketio.emit('PlayDateException',
+        {'Error': "This time is in use by another playdate."}, namespace='/Availability/', room=request.sid)
     Availability.commitPlayDate(msg['hostDogID'], msg['guestDogID'], msg['AvailabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern), msg['message'])
 
 @socketio.on('updateAvailability', namespace='/Availability/')
 def updateAvailability(msg):
-    print("doing something")
     msg = ast.literal_eval(json.dumps(msg))
     eastern = timezone('US/Eastern')
-    Availability.updateAvailability(msg['AvailabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern))
+    try:
+        Availability.updateAvailability(msg['AvailabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern))
+        socketio.emit('AvailabilitySuccess',
+                {'Success': 'Success'}, namespace='/Availability/', room=request.sid)
+    except:
+        socketio.emit('AvailabilityException',
+                {'Error': "You cannot update availability if it is in use for a playdate."}, namespace='/Availability/', room=request.sid)
 
 @socketio.on('deleteAvailability', namespace='/Availability/')
 def deleteAvailability(msg):
-    Availability.deleteAvailability(msg['AvailabilityID'])
+    try:
+        print(msg['AvailabilityID'])
+        Availability.deleteAvailability(msg['AvailabilityID'])
+        socketio.emit('AvailabilitySuccess',
+                {'Success': 'Success'}, namespace='/Availability/', room=request.sid)
+    except:
+        socketio.emit('AvailabilityException',
+                {'Error': "You cannot delete availability if it is in use for a playdate."}, namespace='/Availability/', room=request.sid)
 
 
 @socketio.on('askAvailability', namespace='/Availability/')
