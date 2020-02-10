@@ -104,7 +104,7 @@ CREATE TABLE `tReacts` (
 );
 
 CREATE TABLE `tAvailability` (
-  `availabilityID` int PRIMARY KEY AUTO_INCREMENT,
+  `AvailabilityID` int PRIMARY KEY AUTO_INCREMENT,
   `dogID` int,
   `userID` int,
   `Begin_ts` timestamp NULL DEFAULT NULL,

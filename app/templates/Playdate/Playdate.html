@@ -128,12 +128,10 @@
     AvailabilitySocket.on('giveAvailability', function(messages) {
       for (var i=0; i < messages.Availability.length; i++){
         var message = messages.Availability[i];
-        if(!AvailabilityIDs.includes(message.availabilityID)){
-          console.log(message.availabilityID)
-          AvailabilityIDs.push(message.availabilityID)
-          console.log(message)
+        if(!AvailabilityIDs.includes(message.AvailabilityID)){
+          AvailabilityIDs.push(message.AvailabilityID)
                   calendar.addEvent({
-                  id: message.availabilityID, 
+                  id: message.AvailabilityID, 
                   title: "Available",
                   start: message.Begin_ts,
                   end: message.End_ts
@@ -142,32 +140,32 @@
         }
     });
     AvailabilitySocket.on('givePlayDates', function(messages) {
-      console.log(messages)
       for (var i=0; i < messages.PlayDates.length; i++){
         var message = messages.PlayDates[i];
-        if(!AvailabilityIDs.includes(message.availabilityID) && !PlayDateIDs.includes(message.availabilityID)){
-          AvailabilityIDs.push(message.availabilityID)
-          PlayDateIDs.push(message.availabilityID)
+        if(!AvailabilityIDs.includes(message.AvailabilityID) && !PlayDateIDs.includes(message.AvailabilityID)){
+          AvailabilityIDs.push(message.AvailabilityID)
+          PlayDateIDs.push(message.AvailabilityID)
+          console.log(message)
           calendar.addEvent({
-                  id: message.availabilityID, 
-                  title: message.hostDogName + " and " + message.guestDogName + "'s playdate'",
+                  id: 'message' + message.AvailabilityID, 
+                  title: message['hostDog.name'] + " and " + message['guestDog.name'] + "'s playdate",
                   start: message.Begin_ts,
                   end: message.End_ts
                 });
         }
-        else if(AvailabilityIDs.includes(message.availabilityID) && !PlayDateIDs.includes(message.availabilityID)){
-          PlayDateIDs.push(message.availabilityID)
-          oldEvent = calendar.getEventById(data.id)
+        else if(AvailabilityIDs.includes(message.AvailabilityID) && !PlayDateIDs.includes(message.AvailabilityID)){
+          PlayDateIDs.push(message.AvailabilityID)
+          oldEvent = calendar.getEventById(message.AvailabilityID)
           oldEvent.remove();
           calendar.addEvent({
-                  id: message.availabilityID, 
-                  title: message.hostDogName + " and " + message.guestDogName + "'s playdate'",
+                  id: "message" + message.AvailabilityID, 
+                  title: message['hostDog.name'] + " and " + message['guestDog.name']  + "'s playdate",
                   start: message.Begin_ts,
                   end: message.End_ts
                 });
           }        
-        else if(!AvailabilityIDs.includes(message.availabilityID) && PlayDateIDs.includes(message.availabilityID)){
-          AvailabilityIDs.push(message.availabilityID)
+        else if(!AvailabilityIDs.includes(message.AvailabilityID) && PlayDateIDs.includes(message.AvailabilityID)){
+          AvailabilityIDs.push(message.AvailabilityID)
           }
         }
     });
@@ -176,19 +174,12 @@
           $("#createPlaydateModal").modal('hide');
           fTime = new Date(Date.parse($("#from-time").val()));
           fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fTime.getHours(), fTime.getMinutes(), fTime.getSeconds()).toISOString();
-          console.log(fromTime)
           toTime = new Date(Date.parse($("#to-time").val()));
           toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds()).toISOString();
           var e = document.getElementById("GuestDog");
           var GuestDog = e.options[e.selectedIndex].value;
           var details = "{{dog.name}}'s playdate with " + GuestDog + " .";
-          AvailabilitySocket.emit('getPlayDate', {hostDogID:"{{dog.dogID}}", guestDogID: GuestDog, availabilityID: data.id, Begin_ts: fromTime, End_ts: toTime, message: details});
-          oldEvent = calendar.getEventById(data.id)
-          oldEvent.remove();
-          var index = ids.indexOf(Number(data.id));
-          if (index !== -1) {
-            ids.splice(index, 1);
-          }
+          AvailabilitySocket.emit('getPlayDate', {hostDogID:"{{dog.dogID}}", guestDogID: GuestDog, AvailabilityID: data.id, Begin_ts: fromTime, End_ts: toTime, message: details});
   }
   });
 

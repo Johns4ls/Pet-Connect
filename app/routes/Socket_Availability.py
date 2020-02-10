@@ -22,18 +22,18 @@ def addAvailability(msg):
 def addPlaydate(msg):
     msg = ast.literal_eval(json.dumps(msg))
     eastern = timezone('US/Eastern')
-    Availability.commitPlayDate(msg['hostDogID'], msg['guestDogID'], msg['availabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern), msg['message'])
+    Availability.commitPlayDate(msg['hostDogID'], msg['guestDogID'], msg['AvailabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern), msg['message'])
 
 @socketio.on('updateAvailability', namespace='/Availability/')
 def updateAvailability(msg):
     print("doing something")
     msg = ast.literal_eval(json.dumps(msg))
     eastern = timezone('US/Eastern')
-    Availability.updateAvailability(msg['availabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern))
+    Availability.updateAvailability(msg['AvailabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern))
 
 @socketio.on('deleteAvailability', namespace='/Availability/')
 def deleteAvailability(msg):
-    Availability.deleteAvailability(msg['availabilityID'])
+    Availability.deleteAvailability(msg['AvailabilityID'])
 
 
 @socketio.on('askAvailability', namespace='/Availability/')
@@ -54,7 +54,10 @@ def askAvailability(dogID):
 def askPlayDate(dogID):
     msg = ast.literal_eval(json.dumps(dogID))
     cur, db = Tlbx.dbConnectDict()
-    query = "SELECT * FROM tPlayDate WHERE hostDogID = %s"
+    query = "SELECT *, hostDog.name, guestDog.name FROM tPlayDate \
+        JOIN tDog hostDog ON tPlayDate.hostDogID = hostDog.dogID \
+        JOIN tDog guestDog ON tPlayDate.guestDogID = guestDog.dogID \
+        WHERE tPlayDate.hostDogID = %s"
     data = (msg['dogID'])
     cur.execute(query, data)
     Availability = cur.fetchall()

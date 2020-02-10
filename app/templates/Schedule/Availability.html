@@ -165,7 +165,7 @@
     });
     askAvailability();
     myInterval = setInterval(function(){
-      askAvailability();zz
+      askAvailability();
     }, 3000);
     function askAvailability(){
       AvailabilitySocket.emit('askAvailability',
@@ -175,10 +175,10 @@
     AvailabilitySocket.on('giveAvailability', function(messages) {
       for (var i=0; i < messages.Availability.length; i++){
         var message = messages.Availability[i];
-        if(!ids.includes(message.availabilityID)){
-          ids.push(message.availabilityID)
+        if(!ids.includes(message.AvailabilityID)){
+          ids.push(message.AvailabilityID)
                   calendar.addEvent({
-                  id: message.availabilityID,
+                  id: message.AvailabilityID,
                   title: message.message,
                   start: message.Begin_ts,
                   end: message.End_ts
@@ -211,7 +211,7 @@
           fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fTime.getHours(), fTime.getMinutes(), fTime.getSeconds()).toISOString();
           toTime = new Date(Date.parse($("#edit-to-time").val()));
           toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds()).toISOString();
-          AvailabilitySocket.emit('updateAvailability', {availabilityID: data.id, Begin_ts: fromTime, End_ts: toTime});
+          AvailabilitySocket.emit('updateAvailability', {AvailabilityID: data.id, Begin_ts: fromTime, End_ts: toTime});
           oldEvent = calendar.getEventById(data.id)
           oldEvent.remove();
           var index = ids.indexOf(Number(data.id));
@@ -222,7 +222,7 @@
 
   function doDelete(){
           $("#editEventModal").modal('hide');
-          AvailabilitySocket.emit('deleteAvailability', {availabilityID: data.id});
+          AvailabilitySocket.emit('deleteAvailability', {AvailabilityID: data.id});
           oldEvent = calendar.getEventById(data.id)
                   oldEvent.remove();
   }
