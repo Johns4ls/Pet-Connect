@@ -114,6 +114,7 @@ CREATE TABLE `tAvailability` (
 
 CREATE TABLE `tPlayDate` (
   `PlayDateID` int PRIMARY KEY AUTO_INCREMENT,
+  `creatorID` int,
   `hostDogID` int,
   `guestDogID` int,
   `AvailabilityID` int,
@@ -197,6 +198,8 @@ ALTER TABLE `tAvailability` ADD FOREIGN KEY (`dogID`) REFERENCES `tDog` (`dogID`
 ALTER TABLE `tAvailability` ADD FOREIGN KEY (`userID`) REFERENCES `tUser` (`userID`);
 
 ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`hostDogID`) REFERENCES `tDog` (`dogID`);
+
+ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`creatorID`) REFERENCES `tUser` (`userID`);
 
 ALTER TABLE `tPlayDate` ADD FOREIGN KEY (`guestDogID`) REFERENCES `tDog` (`dogID`);
 

@@ -95,6 +95,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var data;
+    var userID = '{{current_user.id}}';
     userInfoNamespace = '/Availability/';
     var AvailabilitySocket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + userInfoNamespace);
     var calendarEl = document.getElementById('calendar');
@@ -216,6 +217,7 @@ AvailabilitySocket.on('PlayDateSuccess', function(msg) {
                   end: message.End_ts,
                   extendedProps: {
                   isPlayDate: true,
+                  creatorID: message.creatorID,
                   AvailabilityID: message.AvailabilityID
                   }
                 });
@@ -231,6 +233,7 @@ AvailabilitySocket.on('PlayDateSuccess', function(msg) {
                   end: message.End_ts,
                   extendedProps: {
                   isPlayDate: true,
+                  creatorID: message.creatorID,
                   AvailabilityID: message.AvailabilityID
                   }
                 });
@@ -242,21 +245,33 @@ AvailabilitySocket.on('PlayDateSuccess', function(msg) {
     });
   
     function doSubmit(){
-          $("#createPlaydateModal").modal('hide');
-          fTime = new Date(Date.parse($("#from-time").val()));
-          fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fTime.getHours(), fTime.getMinutes(), fTime.getSeconds()).toISOString();
-          toTime = new Date(Date.parse($("#to-time").val()));
-          toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds()).toISOString();
-          var e = document.getElementById("GuestDog");
-          var GuestDog = e.options[e.selectedIndex].value;
-          var details = "{{dog.name}}'s playdate with " + GuestDog + " .";
-          AvailabilitySocket.emit('getPlayDate', {hostDogID:"{{dog.dogID}}", guestDogID: GuestDog, AvailabilityID: data.id, Begin_ts: fromTime, End_ts: toTime, message: details});
+      $("#createPlaydateModal").modal('hide');
+      fTime = new Date(Date.parse($("#from-time").val()));
+      fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fTime.getHours(), fTime.getMinutes(), fTime.getSeconds()).toISOString();
+      toTime = new Date(Date.parse($("#to-time").val()));
+      toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds()).toISOString();
+      var e = document.getElementById("GuestDog");
+      var GuestDog = e.options[e.selectedIndex].value;
+      var details = "{{dog.name}}'s playdate with " + GuestDog + " .";
+      AvailabilitySocket.emit('getPlayDate', {hostDogID:"{{dog.dogID}}", guestDogID: GuestDog, creatorID: userID, AvailabilityID: data.id, Begin_ts: fromTime, End_ts: toTime, message: details});
   }
   function doDelete(){
-          $("#editPlaydateModal").modal('hide');
-          AvailabilitySocket.emit('deletePlayDate', {PlayDateID: data.id});
+    if(data.extendedProps.creatorID == userID){
+      $("#editPlaydateModal").modal('hide');
+      AvailabilitySocket.emit('deletePlayDate', {PlayDateID: data.id});
+    }
+    else{
+      $("#editPlaydateModal").modal('hide');
+      $("#alert").text("You cannot delete a playdate you did not make.");
+      $('#alert').show();
+      window.setTimeout(function() {
+        $("#alert").delay(4000).slideUp(200, function() {
+        $(this).alert('close');
+        });
+      });
+    }
   }
-  });
+});
 
 </script>
 {% endblock %}

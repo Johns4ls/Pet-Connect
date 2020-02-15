@@ -31,7 +31,7 @@ def addPlaydate(msg):
         socketio.emit('PlayDateException',
         {'Error': "This time is in use by another playdate."}, namespace='/Availability/', room=request.sid)
     else:
-        Availability.commitPlayDate(msg['hostDogID'], msg['guestDogID'], msg['AvailabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern), msg['message'])
+        Availability.commitPlayDate(msg['hostDogID'], msg['guestDogID'], msg['creatorID'] ,msg['AvailabilityID'], parser.parse(msg['Begin_ts']).astimezone(eastern), parser.parse(msg['End_ts']).astimezone(eastern), msg['message'])
 
 @socketio.on('updateAvailability', namespace='/Availability/')
 def updateAvailability(msg):

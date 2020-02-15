@@ -134,6 +134,7 @@ class tPlayDate(Base):
     PlayDateID = Column(Integer, primary_key=True)
     hostDogID = Column(Integer, ForeignKey('tDog.dogID'))
     guestDogID = Column(Integer, ForeignKey('tDog.dogID'))
+    creatorID = Column(Integer, ForeignKey('tUser.userID'))
     AvailabilityID = Column(Integer, ForeignKey('tAvailability.AvailabilityID'))
     Begin_ts = Column('Begin_ts', DateTime)
     End_ts = Column('End_ts', DateTime)
