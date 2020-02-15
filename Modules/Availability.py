@@ -11,7 +11,7 @@ def commitPlayDate(hostDogID, guestDogID, creatorID ,availabilityID, Begin_ts, E
     PlayDate = Database.tPlayDate(hostDogID=hostDogID, guestDogID = guestDogID, creatorID = creatorID ,AvailabilityID = availabilityID, Begin_ts = Begin_ts, End_ts = End_ts, addressID = None)
     session.add(PlayDate)
     session.commit()
-    Playdate = Database.tPosts(dogID=None, userID = None, PlayDateID = PlayDate.PlayDateID, Post = None, ts = datetime.now(), image = None)
+    Playdate = Database.tPosts(dogID=hostDogID, userID = creatorID, PlayDateID = PlayDate.PlayDateID, Post = None, ts = datetime.now(), image = None)
     session.add(Playdate)
     session.commit()
 

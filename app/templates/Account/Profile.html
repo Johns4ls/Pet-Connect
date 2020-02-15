@@ -66,6 +66,25 @@
           <div class="postContainer">
           <div class="well well-lg">
             <p>
+              {% if post.tPlayDate.PlayDateID != None %}
+              {% if post.tHostDog.image == None %}
+              <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+              {% elif post.tHostDog.image != None %}
+                <a href="{{ url_for('static', filename = post.tHostDog.image + '.jpg') }}">
+                  <img src="{{ url_for('static', filename = post.tHostDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
+              {% endif %}
+            <a href="/Dog/Profile/{{post.tHostDog.dogID}}"><b style="color: #0d6591;">{{post.tHostDog.name}} </b></a> Has a playdate with <a href="/Dog/Profile/{{post.tGuestDog.dogID}}"><b style="color: #0d6591;">{{post.tGuestDog.name}}</b></a>:
+            {% if post.tGuestDog.image == None %}
+            <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% elif post.tGuestDog.image != None %}
+              <a href="{{ url_for('static', filename = post.tGuestDog.image + '.jpg') }}">
+                <img src="{{ url_for('static', filename = post.tGuestDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% endif %}
+            tomorrow at {{post.tPlayDate.Begin_ts}}
+          </p>
+              {% else %}
                 {% if post.image == None %}
                 <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
                   <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
@@ -82,6 +101,7 @@
                     <img src="{{ url_for('static', filename = post.tDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
                 {% endif %}</p>
             <p>{{ post.Post }}</p>
+            {% endif %}
 
           </div>
           <textarea id="Comment" name="Comment"></textarea>
