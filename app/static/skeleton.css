@@ -676,6 +676,13 @@ there.
 .mobileReg {
     text-align: center;
 }
+.mobileReg b, u{
+    color: Black;
+}
+.mobileReg img {
+  width: 50px;
+  height: 50px
+}
 .mobileReg #profileImage{
   text-align: center;
   width: 55%;
@@ -685,6 +692,10 @@ there.
 }
 ul {
   list-style-type: none;
+}
+.dogPicPost {
+  float: left;
+  margin-left: 10%
 }
 /* Larger than phablet (also point when grid becomes active) */
 @media (min-width: 550px) {}

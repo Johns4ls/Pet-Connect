@@ -7,6 +7,28 @@
   {% endfor %}
 {% endblock %}
 {% block body %}
+<div class="mobileReg">
+  <h2>Tell Us About Your Dog</h2>
+  <form action="/Create/Start/Park" method="post" enctype="multipart/form-data">
+    <ul class="formRegistration">
+      {{ CreateDogform.hidden_tag() }}
+      <p><strong>Basic Information</strong></p>
+      <li><p>Name: </p>{{ CreateDogform.dogName(placeholder="Thor", class_="field-80") }}</li>
+      <li><p>Gender: </p>{{ CreateDogform.gender(placeholder="Male/Female", class_="field-80") }}</li>
+      <li><p>Breed: </p>{{ CreateDogform.breed(placeholder="Rottweiler", class_="field-80") }}</li>
+      <li><p>Fixed? </p>{{ CreateDogform.fixed(class_="field-80") }}</li>
+      <li><p>Age: </p>{{ CreateDogform.age(placeholder="Age (Years)", class_="field-80") }}</li>
+      <br><p><strong>Size</strong></p>
+      <li><p>Size: </p>{{ CreateDogform.size(class_="field-80") }}</li>
+      <li><p>Weight: </p>{{ CreateDogform.weight(placeholder="Weight (lbs)", class_="field-80") }}</li>
+      <br><p><strong>Personality</strong></p>
+      <li><p>Fav' Toy: </p>{{ CreateDogform.favToy(placeholder="Ball", class_="field-80") }}</li>
+      <li><p>Fun Fact: </p>{{ CreateDogform.bio(placeholder="Tell us about them!", class_="field-80") }}</li>
+      <li><p>{{CreateDogform.profileImage()}}</p></li>
+      <br><li>{{ CreateDogform.submit() }}</li>
+    </ul>
+  </form>
+</div>
 <div class="backgroundContainer">
   <div class="mainContainer">
     <h2>Tell Us About Your Dog</h2>
