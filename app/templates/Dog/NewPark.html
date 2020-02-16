@@ -7,6 +7,20 @@
   {% endfor %}
 {% endblock %}
 {% block body %}
+<div class="mobileReg">
+  <h2>Tell Us About Your Favorite Park</h2>
+  <form action="/Create/Finish/Dog" method="post" novalidate>
+    <ul class="formRegistration">
+      {{ FavoriteParkform.hidden_tag() }}
+      <li><p>Name: </p>{{ FavoriteParkform.parkName(placeholder="Miami Meadows", class_="field-80") }}</li>
+      <li><p>Address: </p>{{ FavoriteParkform.address(placeholder="1234 Miami Ave.", class_="field-80") }}</li>
+      <li><p>City: </p>{{ FavoriteParkform.city(placeholder="Cincinnati", class_="field-80") }}</li>
+      <li><p>State: </p>{{ FavoriteParkform.state(placeholder="Ohio", class_="field-80") }}</li>
+      <li><p>Zip Code: </p>{{ FavoriteParkform.zipCode(placeholder="45244", class_="field-80") }}</li>
+      <br><li>{{ FavoriteParkform.submit() }}</li>
+    </ul>
+  </form>
+</div>
 <div class="backgroundContainer">
   <div class="mainContainer">
     <h2>Tell Us About Your Favorite Park</h2>

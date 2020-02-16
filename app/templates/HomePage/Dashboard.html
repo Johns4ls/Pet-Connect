@@ -20,6 +20,136 @@
       </script>
   {% endblock %}
   {% block body %}
+
+
+<!--START MOBILE BLOCK-->
+<div class="mobileReg">
+    {% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+  {% for message in messages %}
+  <div class="alert alert-success" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      {{message}}
+    </div>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+  <h2>Hello, {{currentUser.firstName}}!</h2>
+  {% if currentUser.image == None %}
+  <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+    <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="profileImg"></a>
+  {% elif currentUser.image != None %}
+    <a href="{{ url_for('static', filename = currentUser.image + '.jpg') }}">
+      <img src="{{ url_for('static', filename = currentUser.image + '.thumbnail') }}"class="profileImg"></a>
+  {% endif %}
+  <div class="subContainer">
+    <form action="/Create/Post" method="post" novalidate>
+      <select name="DogValue">
+        {% for dog in dogResults %}
+        <option  value="{{dog.dogID}}">{{dog.name}}</option>
+        {% endfor %}
+      </select>
+      <textarea name="Post" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="What's on your mind?"></textarea>
+      <button>Create Post</button>
+    </form>
+  </div>
+  <br>
+  <h2>Your Feed</h2>
+  <br>
+  <div class="feed">
+  <div class="container">
+    {% for post, like in postResults %}
+    <div class="postContainer">
+    <div class="well well-lg">
+      <h6>
+      <div class="wroteAbout">
+        {% if post.image == None %}
+        <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+          <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+        {% elif post.image != None %}
+          <a href="{{ url_for('static', filename = post.image + '.jpg') }}">
+            <img src="{{ url_for('static', filename = post.image + '.thumbnail') }}"class="img-thumbnail"></a>
+        {% endif %}
+        <a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b></a> wrote this about
+      </div>
+      <div class="dogPicPost">
+        {% if post.tDog.image == None %}
+        <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+          <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+        {% elif post.tDog.image != None %}
+          <a href="{{ url_for('static', filename = post.tDog.image + '.jpg') }}">
+            <img src="{{ url_for('static', filename = post.tDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
+        {% endif %}
+        <a href="/Dog/Profile/{{post.tDog.dogID}}"><b style="color: #0d6591;">{{post.tDog.name}}</b></a>:
+      </div>
+    </h6>
+      <h6>{{ post.Post }}</h6>
+
+    </div>
+  <textarea id="Comment" name="Comment"></textarea>
+  <br>
+  <button onclick="submitComment('{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
+  <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
+  <br>
+    <div class="commentResultContainer">
+
+      {% set count = namespace(a=0) %}
+      {% for react in reactResults %}
+        {% if post.postID == react.postID %}
+        {% if count.a == 0 %}
+        <h6>
+            {% if react.image == None %}
+            <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% elif react.image != None %}
+              <a href="{{ url_for('static', filename = react.image + '.jpg') }}">
+                <img src="{{ url_for('static', filename = react.image + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% endif %}
+            <a href="/User/Profile/{{react.userID}}"><b style="color: #0d6591;">{{react.firstName}} {{react.lastName}}</b></a>
+        {% endif %}
+        {% set count.a = count.a + 1 %}
+        {% endif %}
+      {% endfor %}
+      {% if count.a > 1 %}
+      <a href="/Likes/Post/{{post.postID}}">and {{count.a - 1}} others liked this</a></h6>
+      {% elif count.a == 1 %}
+      liked this</p>
+      {{else}}
+        </p>
+      {% endif %}
+      <hr>
+      {% set count = namespace(a=0) %}
+      {% for comment in commentResults %}
+        {% if post.postID == comment.postID %}
+        {% if count.a < 3 %}
+        <h6>
+        {% if comment.image == None %}
+        <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+          <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+        {% elif comment.image != None %}
+          <a href="{{ url_for('static', filename = comment.image + '.jpg') }}">
+            <img src="{{ url_for('static', filename = comment.image + '.thumbnail') }}"class="img-thumbnail"></a>
+        {% endif %}
+          <a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b></a> said: </h6>
+        <h6>{{comment.Comment}}</h6>
+        {% set count.a = count.a + 1 %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% if count.a > 0%}
+        <a href="/View/Post/{{post.postID}}"> View all comments</a>
+        {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  </div>
+</div>
+</div>
+<!--END MOBILE BLOCK-->
+
+<!--START DESKTOP BLOCK-->
   <div class="backgroundContainer">
     <div class="mainContainer">
         {% with messages = get_flashed_messages() %}
