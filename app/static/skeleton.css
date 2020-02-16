@@ -676,6 +676,9 @@ there.
 .mobileReg {
     text-align: center;
 }
+.mobileReg b, u{
+    color: Black;
+}
 .mobileReg #profileImage{
   text-align: center;
   width: 55%;

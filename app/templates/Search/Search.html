@@ -26,6 +26,67 @@
 
 {% endblock %}
 {% block body %}
+<div class="mobileReg">
+          <div class="feed">
+            <h2>Top Dog Results</h2>
+            <br>
+            <div class="postContainer">
+   <table style="width:100%">
+     <h1>
+     <tr>
+       <td><b>Profile</b></td>
+       <td><b>Name</b></td>
+       <td><b>Follow</b></td>
+    </tr>
+    </h1>
+  {% for dogs, text in results %}
+     <tr>
+        {% if dogs.image == None %}
+        <td><a href="/Dog/Profile/{{dogs.dogID}}">
+          <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="profileImg"></a></td>
+        {% elif dogs.image != None %}
+          <td><a href="/Dog/Profile/{{dogs.dogID}}">
+            <img src="{{ url_for('static', filename = dogs.image + '.thumbnail') }}"class="Profile"></a></td>
+        {% endif %}
+       <td><a href="/Dog/Profile/{{dogs.dogID}}"><h4><u><b>{{dogs.name}}</b></u></h4></a></td>
+       <td><input type="button" id="Dog/{{dogs.dogID}}" value="{{text}}" onclick="changeFollow({{dogs.dogID}})"></td>
+     </tr>
+  {% endfor %}
+  </table>
+  </div>
+  <br>
+  <a href="/Search/Dogs">View All Dogs</a>
+  <br>
+  <br>
+  <h2>Top User Results</h2>
+  <div class="postContainer">
+  <table style="width:100%">
+      <h1>
+      <tr>
+        <td><b>Profile</b></td>
+        <td><b>Name</b></td>
+        <td><b>Friend</b></td>
+     </tr>
+     </h1>
+   {% for User in users %}
+      <tr>
+         {% if User.image == None %}
+         <td><a href="/User/Profile/{{User.userID}}">
+           <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="profileImg"></a></td>
+         {% elif User.image != None %}
+           <td><a href="/User/Profile/{{User.userID}}">
+             <img src="{{ url_for('static', filename = User.image + '.thumbnail') }}"class="profileImg"></a></td>
+         {% endif %}
+        <td><a href="/User/Profile/{{User.userID}}"><h4><u><b>{{User.firstName}} {{User.lastName}}</b></u></h4></a></td>
+        <td><input type="button" id="Friend/{{User.userID}}" value={{friends[User.userID]}} onclick="changeFriend({{User.userID}})"></td>
+      </tr>
+   {% endfor %}
+   </table>
+   </div>
+   <a href="/Search/Users">View All Users</a>
+  </div>
+</div>
+
 <div class="backgroundContainer">
     <div class="mainContainer">
         <div class="feed">
@@ -62,7 +123,7 @@
 <table style="width:100%">
     <h1>
     <tr>
-      <td><b>profile</b></td>
+      <td><b>Profile</b></td>
       <td><b>Name</b></td>
       <td><b>Friend</b></td>
    </tr>

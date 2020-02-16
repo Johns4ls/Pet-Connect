@@ -30,7 +30,8 @@ def validate_email(email):
 
 
 def imgToJPG(location, image):
-    dirpath = os.getcwd()
+    # dirpath = os.getcwd()
+    dirpath = '/home/ec2-user/official-repo/Pet-Connect'
     path =  'pictures/' + location + '/'
     imageName = image.filename.split('.')
     imageType = imageName[1]
