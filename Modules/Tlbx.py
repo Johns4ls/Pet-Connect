@@ -9,14 +9,17 @@ import datetime
 
 #Connectors to database
 def dbConnect():
-
-    db = pymysql.connect(host='ec2-52-14-47-9.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-    #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    if os.name == "nt":
+        db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    else:
+        db = pymysql.connect(host='ec2-52-14-47-9.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
     cur = db.cursor()
     return cur
 def dbConnectDict():
-    db = pymysql.connect(host='ec2-52-14-47-9.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
-    #db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    if os.name == "nt":
+        db = pymysql.connect(host='127.0.0.1', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
+    else:
+        db = pymysql.connect(host='ec2-52-14-47-9.us-east-2.compute.amazonaws.com', port=3306, user='Website', password='W3bsite!', db='PetConnect',autocommit=True)
     cur = db.cursor(pymysql.cursors.DictCursor)
     return cur, db
 
@@ -30,8 +33,10 @@ def validate_email(email):
 
 
 def imgToJPG(location, image):
-    # dirpath = os.getcwd()
-    dirpath = '/home/ec2-user/official-repo/Pet-Connect'
+    if os.name == 'nt':
+        dirpath = os.getcwd()
+    else:
+        dirpath = '/home/ec2-user/official-repo/Pet-Connect'
     path =  'pictures/' + location + '/'
     imageName = image.filename.split('.')
     imageType = imageName[1]
@@ -140,6 +145,7 @@ class User(UserMixin):
         cur.execute(query)
         user = cur.fetchone()
         userID = user.get("userID")
+        password = user.get("password")
         password = user.get("password")
         self.id = userID
         self.name = email
