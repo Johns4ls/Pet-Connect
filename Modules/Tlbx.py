@@ -146,7 +146,6 @@ class User(UserMixin):
         user = cur.fetchone()
         userID = user.get("userID")
         password = user.get("password")
-        password = user.get("password")
         self.id = userID
         self.name = email
         self.password = password
