@@ -1,5 +1,16 @@
 {% extends "Layout/Layout.html" %}
 {% block head %}
+<script>
+function changeLike(place, id) {
+  value = document.getElementById(place + id).value;
+        window.location = '/' + value + '/' + id;
+  if (value == 'Unlike'){
+  document.getElementById(place + id).value = 'Like';
+  }
+  else {
+  document.getElementById(place + id).value = 'Unlike';
+    }
+  </script>
 {% endblock %}
 {% block body %}
 <div class="backgroundContainer">
@@ -80,7 +91,7 @@
             <textarea name="Comment"></textarea>
             <br>
             <button onclick="window.location='/Create/Comment/{{post.postID}}';" style="font-size: 70%;">Comment</button>
-            <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
+            <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike('desktop',{{post.postID}});">
           </form>
           <br>
             <div class="commentResultContainer">

@@ -7,14 +7,14 @@
       <title> Dashboard</title>
       <script>
       messageSock = commentSock();
-        function changeLike(id) {
-        value = document.getElementById(id).value;
+        function changeLike(place, id) {
+        value = document.getElementById(place + id).value;
               window.location = '/' + value + '/' + id;
         if (value == 'Unlike'){
-        document.getElementById(id).value = 'Like';
+        document.getElementById(place + id).value = 'Like';
         }
         else {
-        document.getElementById(id).value = 'Unlike';
+        document.getElementById(place + id).value = 'Unlike';
           }
         }
       </script>
@@ -88,12 +88,12 @@
       <h6>{{ post.Post }}</h6>
 
     </div>
-  <textarea id="Comment" name="Comment"></textarea>
+  <textarea id="mobileComment{{post.postID}}" name="Comment"></textarea>
   <br>
-  <button onclick="submitComment('{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
-  <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
+  <button onclick="submitComment('mobile','{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
+  <input type="button" style="font-size: 70%;" id="mobile{{post.postID}}" value ="{{like}}" onclick="changeLike('mobile',{{post.postID}});">
   <br>
-    <div class="commentResultContainer">
+    <div class="mobilecommentResultContainer{{post.postID}}">
 
       {% set count = namespace(a=0) %}
       {% for react in reactResults %}
@@ -233,12 +233,12 @@
           {% endif %}
 
         </div>
-      <textarea id="Comment" name="Comment"></textarea>
+      <textarea id="desktopComment{{post.postID}}" name="Comment"></textarea>
       <br>
-      <button onclick="submitComment('{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
-      <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
+      <button onclick="submitComment('desktop','{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
+      <input type="button" style="font-size: 70%;" id="desktop{{post.postID}}" value ="{{like}}" onclick="changeLike('desktop',{{post.postID}});">
       <br>
-        <div id="commentResultContainer{{post.postID}}"class="commentResultContainer">
+        <div id="desktopcommentResultContainer{{post.postID}}"class="commentResultContainer">
 
           {% set count = namespace(a=0) %}
           {% for react in reactResults %}

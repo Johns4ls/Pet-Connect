@@ -9,8 +9,8 @@ function commentSock() {
     commentSock.emit('connect',{});
     return commentSock
 }
-function submitComment(postID, commentSock){
-    comment = document.getElementById("Comment").value;
+function submitComment(view ,postID, commentSock){
+    comment = document.getElementById(view+"Comment"+postID).value;
     commentSock.emit('sendComment',
     {'postID': postID, 'Comment': comment})
     commentSock.on('returnComments', function(messages) {
@@ -37,7 +37,7 @@ function submitComment(postID, commentSock){
             text += "<p> <a href=\"/View/Post/" + comment.postID + "> View all comments</a> </p> \n"
             text += "</div> \n"
             text += "</div> \n"
-            document.getElementById("commentResultContainer"+postID).innerHTML = text
+            document.getElementById(view+"commentResultContainer"+postID).innerHTML = text
         }
         if(messages.message == 'Fail')
         {
@@ -45,7 +45,7 @@ function submitComment(postID, commentSock){
         }
         else
         {
-            document.getElementById("Comment").value = "";
+            document.getElementById(view+"Comment"+postID).value = "";
         }
     });
 }

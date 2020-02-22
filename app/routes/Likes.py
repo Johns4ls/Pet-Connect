@@ -10,7 +10,7 @@ def Like(postID):
     Like = Database.tReacts(userID=current_user.id, postID=postID, ts=datetime.datetime.now())
     session.add(Like)
     session.commit()
-    return redirect('/dashboard')
+    return '', 204
 
 #Remove a like
 @app.route('/Unlike/<int:postID>', methods=['GET', 'POST'])
@@ -20,4 +20,4 @@ def Unlike(postID):
     session.query(Database.tReacts).filter(Database.tReacts.postID==postID) \
     .filter(Database.tReacts.userID==current_user.id).delete()
     session.commit()
-    return redirect('/dashboard')
+    return '', 204

@@ -2,15 +2,15 @@
 {% block head %}
 <script>
   messageSock = commentSock();
-    function changeLike(id) {
-    value = document.getElementById(id).value;
-          window.location = '/' + value + '/' + id;
-    if (value == 'Unlike'){
-    document.getElementById(id).value = 'Like';
-    }
-    else {
-    document.getElementById(id).value = 'Unlike';
-      }
+  function changeLike(place, id) {
+        value = document.getElementById(place + id).value;
+              window.location = '/' + value + '/' + id;
+        if (value == 'Unlike'){
+        document.getElementById(place + id).value = 'Like';
+        }
+        else {
+        document.getElementById(place + id).value = 'Unlike';
+          }
     }
   </script>
 <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
@@ -109,7 +109,7 @@
           <textarea id="Comment" name="Comment"></textarea>
           <br>
           <button onclick="submitComment('{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
-          <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">        <br>
+          <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike('desktop',{{post.postID}});">        <br>
           <div class="commentResultContainer">
 
             {% set count = namespace(a=0) %}
