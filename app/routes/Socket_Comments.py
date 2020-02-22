@@ -13,12 +13,12 @@ def commitComment(msg):
     try:
         msg = ast.literal_eval(json.dumps(msg))
         Comments.commitComment(current_user.id, msg)
+        comments = Comments.getPostComments(msg['postID'])
+        socketio.emit('returnComments',
+                    {'message': comments}, namespace='/Comments/')    
+    except:
         socketio.emit('returnComment',
-                    {'message': "Success"}, namespace='/Comments/')    
-    except:       
-        print("bad news") 
-        socketio.emit('returnComment',
-                    {'message': "Fail"}, namespace='/Comments/')
+        {'message': "Fail"}, namespace='/Comments/') 
 @socketio.on('disconnect', namespace='/Comments/')
 def disconnect():
     return ''

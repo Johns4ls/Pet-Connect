@@ -119,7 +119,7 @@
       },
       eventClick: function (i) {
         data = i.event;
-        console.log(data)
+        d = data.end;
         if(data.extendedProps.isPlayDate){
           $('#editPlaydateModal').modal('show');
         }
@@ -172,23 +172,21 @@
                   start: message.Begin_ts,
                   end: message.End_ts,
                   extendedProps: {
-                  isPlayDate: false
+                  isPlayDate: false,
+                  creatorID: message.creatorID,
+                  AvailabilityID: message.AvailabilityID
                   }
                 });
           }
         }
     });
-
-AvailabilitySocket.on('PlayDateSuccess', function(msg) {
+AvailabilitySocket.on('PlayDateDeleteSuccess', function(msg) {
   oldEvent = calendar.getEventById(data.id)
-    oldEvent.remove();
-  console.log(data)
+  oldEvent.remove();
   var index = AvailabilityIDs.indexOf(data.extendedProps.AvailabilityID);
   if (index !== -1){
-    console.log(data.id)
     AvailabilityIDs.splice(index, 1);
   }
-  var index = PlayDateIDs.indexOf(data.id);
   if (index !== -1){
   PlayDateIDs.splice(index, 1);
 }
@@ -246,14 +244,14 @@ AvailabilitySocket.on('PlayDateSuccess', function(msg) {
   
     function doSubmit(){
       $("#createPlaydateModal").modal('hide');
-      fTime = new Date(Date.parse($("#from-time").val()));
-      fromTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fTime.getHours(), fTime.getMinutes(), fTime.getSeconds()).toISOString();
-      toTime = new Date(Date.parse($("#to-time").val()));
-      toTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), toTime.getHours(), toTime.getMinutes(), toTime.getSeconds()).toISOString();
       var e = document.getElementById("GuestDog");
       var GuestDog = e.options[e.selectedIndex].value;
+      start = data.start;
+      start.setHours(start.getHours()+(data.start.getTimezoneOffset()/60));
+      end = data.end;
+      end.setHours(end.getHours()+(data.end.getTimezoneOffset()/60));
       var details = "{{dog.name}}'s playdate with " + GuestDog + " .";
-      AvailabilitySocket.emit('getPlayDate', {hostDogID:"{{dog.dogID}}", guestDogID: GuestDog, creatorID: userID, AvailabilityID: data.id, Begin_ts: fromTime, End_ts: toTime, message: details});
+      AvailabilitySocket.emit('getPlayDate', {hostDogID:"{{dog.dogID}}", guestDogID: GuestDog, creatorID: userID, AvailabilityID: data.id, Begin_ts: start, End_ts: end, message: details});
   }
   function doDelete(){
     if(data.extendedProps.creatorID == userID){

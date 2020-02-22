@@ -11,8 +11,8 @@ def getPosts():
     .join(Database.tFollowers, Database.tPosts.dogID == Database.tFollowers.dogID) \
     .join(Database.tUser, Database.tPosts.userID == Database.tUser.userID) \
     .join(Database.tDog, Database.tPosts.dogID == Database.tDog.dogID) \
-    .join(Database.tPlayDate, Database.tPosts.PlayDateID == Database.tPlayDate.PlayDateID) \
-    .join(tHostDog, Database.tPlayDate.hostDogID == tHostDog.dogID) \
-    .join(tGuestDog, Database.tPlayDate.guestDogID == tGuestDog.dogID) \
+    .join(Database.tPlayDate, Database.tPosts.PlayDateID == Database.tPlayDate.PlayDateID, isouter=True) \
+    .join(tHostDog, Database.tPlayDate.hostDogID == tHostDog.dogID, isouter=True) \
+    .join(tGuestDog, Database.tPlayDate.guestDogID == tGuestDog.dogID, isouter=True) \
     .filter(Database.tFollowers.userID == current_user.id).order_by(Database.tPosts.postID.desc())
     return Posts

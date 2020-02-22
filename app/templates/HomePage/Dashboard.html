@@ -63,6 +63,7 @@
         <div class="well well-lg">
             <p>
             {% if post.tPlayDate.PlayDateID != None %}
+            {% if post.tHostDog %}
             {% if post.tHostDog.image == None %}
             <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
               <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
@@ -99,6 +100,7 @@
         </p>
           <p>{{ post.Post }}</p>
           {% endif %}
+          {% endif %}
 
         </div>
       <textarea id="Comment" name="Comment"></textarea>
@@ -106,7 +108,7 @@
       <button onclick="submitComment('{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
       <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike({{post.postID}});">
       <br>
-        <div class="commentResultContainer">
+        <div id="commentResultContainer{{post.postID}}"class="commentResultContainer">
 
           {% set count = namespace(a=0) %}
           {% for react in reactResults %}

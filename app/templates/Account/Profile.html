@@ -67,6 +67,7 @@
           <div class="well well-lg">
             <p>
               {% if post.tPlayDate.PlayDateID != None %}
+              {% if post.tHostDog %}
               {% if post.tHostDog.image == None %}
               <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
                 <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
@@ -101,6 +102,7 @@
                     <img src="{{ url_for('static', filename = post.tDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
                 {% endif %}</p>
             <p>{{ post.Post }}</p>
+            {% endif %}
             {% endif %}
 
           </div>
