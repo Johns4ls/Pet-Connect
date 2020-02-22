@@ -72,7 +72,7 @@
     reconnectionDelay: 1000,
     reconnectionDelayMax : 5000,
     reconnectionAttempts: 99999
-    });  
+    });
             //Notification Handling
     notificationNamespace = '/Notifications/';
     notificationSock = io.connect(location.protocol + '//' + document.domain + ':' + location.port + notificationNamespace, {
@@ -87,8 +87,8 @@
       getNotifications();
       getMessages();
     },3000);
-    
-    function getMessages() { 
+
+    function getMessages() {
       messageSock.emit('askMessages')
     }
         messageSock.on('getMessages', function(messages) {
@@ -114,10 +114,10 @@
           }
           $('#MessagesList').html(text);
         });
-        
-    function getNotifications() {   
+
+    function getNotifications() {
         notificationSock.emit('askNotifications')
-    }  
+    }
     notificationSock.on('getNotifications', function(notifications) {
           if(notifications.count >= 0){
             $('#NotificationButton').text("Notifications " + notifications.count);
@@ -130,7 +130,7 @@
           }
           else{
 
-          
+
           for(var i in notifications.notifications){
                 text = text + "<li> \n"
                     if(notifications.notifications[i].image == null){
@@ -175,7 +175,13 @@ function myFunction() {
     <a href="/dashboard"> Home</a>
     <a href="/Create/New/Dog">Create a new dog</a>
     <a href='/Messages'> Messages </a>
-    <a href="/logout" >Logout</a>
+    <a href="/logout">Logout</a>
+    <a>
+      <form action="/Search" method="post" novalidate>
+         <input class="search" type="search" name="Search" placeholder="Find Friends" aria-label="Search">
+         <button type="submit"></button>
+      </form>
+    </a>
   </div>
   <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">

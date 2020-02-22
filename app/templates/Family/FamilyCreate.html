@@ -11,6 +11,18 @@
 {% block nav %}
 {% endblock %}
 {% block body %}
+<div class="mobileReg">
+  <h2>Tell Us About Your Family</h2>
+  <br><br><br>
+  <form action="/Create/Finish/Family" method="post" novalidate>
+    <ul class="formRegistration">
+      {{ CreateFamilyform.hidden_tag() }}
+      <li></li>
+      <li><p>Last Name: </p>{{ CreateFamilyform.surName(placeholder="Last Name", class_="field-75") }}</li>
+      <br><li>{{ CreateFamilyform.submit() }}</li>
+    </ul>
+  </form>
+</div>
 <div class="backgroundContainer">
   <div class="mainContainer">
     <h2>Tell Us About Your Family</h2>
