@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms.widgets import TextInput
 from wtforms.validators import DataRequired, ValidationError, EqualTo
 from flask_wtf.file import FileAllowed, FileField
 class LoginForm(FlaskForm):
@@ -14,10 +15,8 @@ class RegisterForm(FlaskForm):
 class UserInfoForm(FlaskForm):
     firstName = StringField('firstName', validators=[DataRequired()])
     lastName = StringField('lastName', validators=[DataRequired()])
+    autoComplete = StringField('autoComplete', validators=[DataRequired()])
     address = StringField('address', validators=[DataRequired()])
-    city = StringField('city', validators=[DataRequired()])
-    state = StringField('state', validators=[DataRequired()])
-    zipCode = StringField('zipCode', validators=[DataRequired()])
     profileImage = FileField('profileImage', validators=[FileAllowed(['jpg','bmp', 'jpeg', 'png'])])
     submit = SubmitField('Register')
 class CreateFamilyForm(FlaskForm):
@@ -41,9 +40,6 @@ class CreateDogForm(FlaskForm):
 class FavoriteParkForm(FlaskForm):
     parkName = StringField('surName', validators=[DataRequired()])
     address = StringField('address', validators=[DataRequired()])
-    city = StringField('city', validators=[DataRequired()])
-    state = StringField('state', validators=[DataRequired()])
-    zipCode = StringField('zipCode', validators=[DataRequired()])
     submit = SubmitField('Register')
 class PasswordResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])

@@ -13,12 +13,14 @@ def userInfo():
         email = session.get('email')
         password =  Tlbx.hash_password(session.get('password', None))
         address = UserInfoform.address.data
-        city = UserInfoform.city.data
-        state = UserInfoform.state.data
-        zipCode = UserInfoform.zipCode.data
+        addresslist = address.split('')
+        address = addresslist[0]
+        city = addresslist[1]
+        state = addresslist[2]
+
         image = request.files[UserInfoform.profileImage.name]
         image = Tlbx.imgToJPG("Profile", image)
-        Tlbx.new_Account(firstName, lastName, email, password, address, city, state, zipCode, image)
+        Tlbx.new_Account(firstName, lastName, email, password, address, city, state, image)
         Tlbx.loginUser(email)
         return render_template('/Family/FamilySplash.html')
     flash("Please input data in all fields")

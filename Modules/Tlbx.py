@@ -81,8 +81,8 @@ def thumbnailGen(image, path):
 #Insert the new account information into the database
 def new_Account(firstName, lastName, email, password, address, city, state, zipCode, image):
     cur, db = dbConnectDict()
-    addressQuery = ("INSERT INTO tAddress (address, city, state, zip) VALUES(%s, %s, %s, %s);")
-    data = (address, city, state, zipCode)
+    addressQuery = ("INSERT INTO tAddress (address, city, state) VALUES(%s, %s, %s);")
+    data = (address, city, state)
     cur.execute(addressQuery, data)
     userQuery = ("INSERT INTO tUser (firstName, lastName, email, familyID, password, image, addressID) VALUES(%s, %s, %s, NULL, %s, %s, LAST_INSERT_ID());")
     data = (firstName, lastName, email, password, image)
