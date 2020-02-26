@@ -14,13 +14,11 @@ function submitComment(view, postID, commentSock){
     commentSock.emit('sendComment',
     {'postID': postID, 'Comment': comment})
     commentSock.on('returnComments', function(messages) {
-        console.log(messages.message)
         if(messages.message != 'Fail'){
             for (var i=0; i < messages.message.length; i++){
                 var text = "";
                 text += "<p> \n"
                 comment = messages.message[i]
-                console.log(comment)
 
                 if (comment.image == null)
                 {
@@ -34,7 +32,12 @@ function submitComment(view, postID, commentSock){
                 }
                 text += "<a href=\"/User/Profile/"+ comment.userID + "\"><b style=\"color: #0d6591;\">" + comment.firstName + " " + comment.lastName + "</b></a> said: </p> \n"
                 text += "<p>" + comment.Comment + "</p> \n"
+                try{
                 document.getElementById("mobilesubcommentcontainer"+comment.postID+(i)).innerHTML = text
+                }
+                catch{
+                    console.log("Has mobile been implemented on this page?")
+                }
                 document.getElementById("desktopsubcommentcontainer"+comment.postID+(i)).innerHTML = text
             }
         }

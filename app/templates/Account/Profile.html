@@ -106,9 +106,9 @@
             {% endif %}
 
           </div>
-          <textarea id="Comment" name="Comment"></textarea>
+          <textarea id="desktopComment{{post.postID}}" name="Comment"></textarea>
           <br>
-          <button onclick="submitComment('{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
+          <button onclick="submitComment('desktop','{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
           <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike('desktop',{{post.postID}});">        <br>
           <div class="commentResultContainer">
 
@@ -141,6 +141,7 @@
             {% for comment in commentResults %}
               {% if post.postID == comment.postID %}
               {% if count.a < 3 %}
+              <div id="desktopsubcommentcontainer{{comment.postID}}{{count.a}}">
               <p>
                   {% if comment.image == None %}
                   <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
@@ -151,6 +152,7 @@
                   {% endif %}
                 <a href="/User/Profile/{{comment.userID}}"><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b></a> said: </p>
               <p>{{comment.Comment}}</p>
+                    </div>
               {% set count.a = count.a + 1 %}
               {% endif %}
               {% endif %}
