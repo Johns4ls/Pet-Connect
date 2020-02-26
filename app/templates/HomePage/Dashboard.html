@@ -90,7 +90,7 @@
     </div>
   <textarea id="mobileComment{{post.postID}}" name="Comment"></textarea>
   <br>
-  <button onclick="submitComment('mobile','{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
+  <button onclick="submitComment('mobile', '{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
   <input type="button" style="font-size: 70%;" id="mobile{{post.postID}}" value ="{{like}}" onclick="changeLike('mobile',{{post.postID}});">
   <br>
     <div class="mobilecommentResultContainer{{post.postID}}">
@@ -125,6 +125,7 @@
         {% if post.postID == comment.postID %}
         {% if count.a < 3 %}
         <h6>
+        <div id="mobilesubcommentcontainer{{comment.postID}}{{count.a}}">
         {% if comment.image == None %}
         <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
           <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
@@ -140,6 +141,7 @@
         {% endfor %}
         {% if count.a > 0%}
         <a href="/View/Post/{{post.postID}}"> View all comments</a>
+        </div>
         {% endif %}
     </div>
   </div>
@@ -269,16 +271,19 @@
           {% for comment in commentResults %}
             {% if post.postID == comment.postID %}
             {% if count.a < 3 %}
-            <p>
-            {% if comment.image == None %}
-            <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
-              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
-            {% elif comment.image != None %}
-              <a href="{{ url_for('static', filename = comment.image + '.jpg') }}">
-                <img src="{{ url_for('static', filename = comment.image + '.thumbnail') }}"class="img-thumbnail"></a>
-            {% endif %}
-              <a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b></a> said: </p>
-            <p>{{comment.Comment}}</p>
+            <div id="desktopsubcommentcontainer{{comment.postID}}{{count.a}}"></3>
+              <p>
+                {% if comment.image == None %}
+                <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                  <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+                {% elif comment.image != None %}
+                  <a href="{{ url_for('static', filename = comment.image + '.jpg') }}">
+                    <img src="{{ url_for('static', filename = comment.image + '.thumbnail') }}"class="img-thumbnail"></a>
+                {% endif %}
+                  <a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b></a> said: 
+              </p>
+              <p>{{comment.Comment}}</p>
+            </div>
             {% set count.a = count.a + 1 %}
             {% endif %}
             {% endif %}

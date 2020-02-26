@@ -9,17 +9,18 @@ function commentSock() {
     commentSock.emit('connect',{});
     return commentSock
 }
-function submitComment(view ,postID, commentSock){
+function submitComment(view, postID, commentSock){
     comment = document.getElementById(view+"Comment"+postID).value;
     commentSock.emit('sendComment',
     {'postID': postID, 'Comment': comment})
     commentSock.on('returnComments', function(messages) {
+        console.log(messages.message)
         if(messages.message != 'Fail'){
-            var text = "";
             for (var i=0; i < messages.message.length; i++){
+                var text = "";
                 text += "<p> \n"
                 comment = messages.message[i]
-                postID = comment.postID
+                console.log(comment)
 
                 if (comment.image == null)
                 {
@@ -33,11 +34,9 @@ function submitComment(view ,postID, commentSock){
                 }
                 text += "<a href=\"/User/Profile/"+ comment.userID + "\"><b style=\"color: #0d6591;\">" + comment.firstName + " " + comment.lastName + "</b></a> said: </p> \n"
                 text += "<p>" + comment.Comment + "</p> \n"
+                document.getElementById("mobilesubcommentcontainer"+comment.postID+(i)).innerHTML = text
+                document.getElementById("desktopsubcommentcontainer"+comment.postID+(i)).innerHTML = text
             }
-            text += "<p> <a href=\"/View/Post/" + comment.postID + "> View all comments</a> </p> \n"
-            text += "</div> \n"
-            text += "</div> \n"
-            document.getElementById(view+"commentResultContainer"+postID).innerHTML = text
         }
         if(messages.message == 'Fail')
         {
