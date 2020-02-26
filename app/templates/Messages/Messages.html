@@ -12,7 +12,7 @@
               </div>
               <div class="srch_bar">
                 <div class="stylish-input-group">
-                  <input type="text" class="search-bar"  placeholder="Search" >
+                  <input id="mobilesearch" type="text" class="search-bar"  placeholder="Search" >
                   <span class="input-group-addon">
                   <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
                   </span> </div>
@@ -22,7 +22,7 @@
             {% if loop.first %}
             {% set count = namespace(a=0) %}
             <div class="inbox_chat">
-              <div class="chat_list" id="chatHead{{friend.userID}}">
+              <div class="chat_list" id="mobilechatHead{{friend.userID}}">
               {% if friendID is none %}
                 <script>
                   var current = {{friend.userID}};
@@ -62,7 +62,7 @@
               </div>
               {% else %}
               {% set count = namespace(a=0) %}
-              <div class="chat_list" id="chatHead{{friend.userID}}">
+              <div class="chat_list" id="mobilechatHead{{friend.userID}}">
                 <radio-button tabindex="{{friend.userID}}" onclick="changeFocus({{friend.userID}});">
                 <div class="chat_people">
                   {% if friend.image == None %}
@@ -97,8 +97,8 @@
       </div>
           {% set count = namespace(a=0) %}
           {% for friend in friends %}
-          <div class="mesgs"style="display: none;" id=message{{friend.userID}}>
-            <div id = history{{friend.userID}} class="msg_history">
+          <div class="mesgs"style="display: none;" id=mobilemessage{{friend.userID}}>
+            <div id = mobilehistory{{friend.userID}} class="msg_history">
                 {% for message in messages %}
                 {% if friend.friendID == message.friendID %}
               {% if message.recipient == userID %}
@@ -155,7 +155,7 @@
             </div>
             <div class="srch_bar">
               <div class="stylish-input-group">
-                <input type="text" class="search-bar"  placeholder="Search" >
+                <input id="desktopsearch" type="text" class="search-bar"  placeholder="Search" >
                 <span class="input-group-addon">
                 <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
                 </span> </div>
@@ -165,7 +165,7 @@
           {% if loop.first %}
           {% set count = namespace(a=0) %}
           <div class="inbox_chat">
-            <div class="chat_list" id="chatHead{{friend.userID}}">
+            <div class="chat_list" id="desktopchatHead{{friend.userID}}">
             {% if friendID is none %}
               <script>
                 var current = {{friend.userID}};
@@ -205,7 +205,7 @@
             </div>
             {% else %}
             {% set count = namespace(a=0) %}
-            <div class="chat_list" id="chatHead{{friend.userID}}">
+            <div class="chat_list" id="desktopchatHead{{friend.userID}}">
               <radio-button tabindex="{{friend.userID}}" onclick="changeFocus({{friend.userID}});">
               <div class="chat_people">
                 {% if friend.image == None %}
@@ -240,8 +240,8 @@
     </div>
         {% set count = namespace(a=0) %}
         {% for friend in friends %}
-        <div class="mesgs"style="display: none;" id=message{{friend.userID}}>
-          <div id = history{{friend.userID}} class="msg_history">
+        <div class="mesgs"style="display: none;" id=desktopmessage{{friend.userID}}>
+          <div id = desktophistory{{friend.userID}} class="msg_history">
               {% for message in messages %}
               {% if friend.friendID == message.friendID %}
             {% if message.recipient == userID %}
@@ -288,22 +288,58 @@
 </div>
 </body>
 <script>
+    var friends = {{friends | tojson}};
     function initialFocus() {
       console.log(current)
-      document.getElementById("message" + current).style.display = "inline";
-      document.getElementById("chatHead" + current).classList.add("active_chat");
-      var objDiv = document.getElementById("history" + current);
+      //Set initial mobile view
+      document.getElementById("mobilemessage" + current).style.display = "inline";
+      document.getElementById("mobilechatHead" + current).classList.add("active_chat");
+      var objDiv = document.getElementById("mobilehistory" + current);
+      //Set initial desktop view
+      document.getElementById("desktopmessage" + current).style.display = "inline";
+      document.getElementById("desktopchatHead" + current).classList.add("active_chat");
+      var objDiv = document.getElementById("desktophistory" + current);
       objDiv.scrollTop = objDiv.scrollHeight;
     }
     window.onload = initialFocus();
     function changeFocus(id){
-      document.getElementById("message" + current).style.display = "none";
-      document.getElementById("message" + id).style.display = "inline";
-      document.getElementById("chatHead" + current).classList.remove("active_chat");
-      document.getElementById("chatHead" + id).classList.add("active_chat");
-      var objDiv = document.getElementById("history" + id);
+      //Update mobile view
+      document.getElementById("mobilemessage" + current).style.display = "none";
+      document.getElementById("mobilemessage" + id).style.display = "inline";
+      document.getElementById("mobilechatHead" + current).classList.remove("active_chat");
+      document.getElementById("mobilechatHead" + id).classList.add("active_chat");
+      var objDiv = document.getElementById("mobilehistory" + id);
+      //update desktop view
+      document.getElementById("desktopmessage" + current).style.display = "none";
+      document.getElementById("desktopmessage" + id).style.display = "inline";
+      document.getElementById("desktopchatHead" + current).classList.remove("active_chat");
+      document.getElementById("desktopchatHead" + id).classList.add("active_chat");
+      var objDiv = document.getElementById("desktophistory" + id);
       objDiv.scrollTop = objDiv.scrollHeight;
       current = id;
     }
+    $("#mobilesearch").keyup(function(event) {
+      var results =  friends.filter( friend => (friend.firstName + " " + friend.lastName).includes($("#desktopsearch").val()));
+      for (var i=0; i < friends.length; i++){
+        var friend = friends[i];
+        if (!results.includes(friend.friendID)){
+          document.getElementById("mobilechatHead" + friend.friendID).style.display("none");
+        }
+      }
+    });
+      $("#desktopsearch").keyup(function(event) {
+      var results =  friends.filter( friend => (friend.firstName + " " + friend.lastName).includes($("#desktopsearch").val()));
+      for (var i=0; i < friends.length; i++){
+        var friend = friends[i];
+        if (!results.some(result => friend.userID == result.userID)){
+          console.log("remove")
+          $("#desktopchatHead" + friend.userID).hide();
+        }
+        else{
+          $("#desktopchatHead" + friend.userID).show();
+        }
+      }
+      });
+      
     </script>
 {% endblock %}
