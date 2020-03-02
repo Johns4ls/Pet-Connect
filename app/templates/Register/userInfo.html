@@ -2,7 +2,7 @@
 {% block notifications %}
 {% endblock %}
 {% block head %}
-<script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places"></script> 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzSRJSQQuYV33HLkHI2h_nt0jmqYDS1G0&libraries=places"></script> 
 {% for error in UserInfoform.errors %}
 <div class="alert alert-danger" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -14,7 +14,7 @@
 {% block body %}
 <div class="mobileReg">
   <h2>Tell Us About Yourself</h2>
-  <form action="/Create/User" method="post" enctype="multipart/form-data">
+  <form action="/Create/User" method="post" enctype="multipart/form-data" autocomplete="off">
     <ul>
       <p><strong>Full Name</strong></p>
       {{ UserInfoform.hidden_tag() }}
@@ -24,7 +24,10 @@
       </li>
       <br>
       <p><strong>Address</strong></p>
-      <li>{{ UserInfoform.address(placeholder="Street Address", class_="field-full") }}</li>
+      <li><input type=text class="field_full" autocomplete="off" onFocus="geolocate" id="mobileAutocomplete" name="mobileAutocomplete" placeholder="Full Address"></li>
+      <li><input type=text class="field_full" id="mobilestreet_address" name="mobilestreet_address" placeholder="Address" disabled="True"></li>
+      <li><input type=text class="field_full" id="mobileadministrative_area_level_1" name="mobileadministrative_area_level_1" placeholder="City" disabled="True"></li>
+      <li><input type=text class="field_full" id="mobilelocality" name="mobilelocality" placeholder="State" disabled="True"></li>
       <li>{{UserInfoform.profileImage()}}</li>
       <li>{{ UserInfoform.submit() }}</li>
     </ul>
@@ -33,30 +36,84 @@
 <div class="backgroundContainer">
   <div class="mainContainer">
     <h2>Tell Us About Yourself</h2>
-    <form action="/Create/User" method="post" enctype="multipart/form-data">
+    <form action="/Create/User" method="post" enctype="multipart/form-data" autocomplete="off">
       <ul class="formRegistration">
         <p><strong>Full Name</strong></p>
         {{ UserInfoform.hidden_tag() }}
         <li>
-          {{ UserInfoform.firstName(placeholder="First Name", class_="field-half") }}
-          {{ UserInfoform.lastName(placeholder="Last Name", class_="field-half") }}
+          {{ UserInfoform.firstName(placeholder="First Name", class_="field-half", autocomplete="off") }}
+          {{ UserInfoform.lastName(placeholder="Last Name", class_="field-half", autocomplete="off") }}
         </li>
         <br>
         <p><strong>Address</strong></p>
-        <li>{{ UserInfoform.autoComplete(placeholder="Enter Address", class_="field-full", onFocus="geolocate()") }}</li>
-        <li>{{ UserInfoform.address(placeholder="Street Address", class_="field-full") }}</li>
+        <li><input type=text class="field_full" autocomplete="off" onFocus="geolocate" id="desktopAutocomplete" placeholder="Full Address"></li>
+        <li><input type=text class="field_full" id="desktopstreet_address" name="desktopstreet_address" placeholder="Address" disabled="True"></li>
+        <li><input type=text class="field_full" id="desktopadministrative_area_level_1" name="desktopadministrative_area_level_1" placeholder="City" disabled="True"></li>
+        <li><input type=text class="field_full" id="desktoplocality" name="desktoplocality" placeholder="State" disabled="True"></li>
         <li>{{UserInfoform.profileImage()}}</li>
         <li>{{ UserInfoform.submit() }}</li>
       </ul>
     </form>
 </div>
 <script>
+        var componentForm = {
+        street_address: 'long_name',
+        locality: 'long_name',
+        administrative_area_level_1: 'short_name',
+      };
       function initAutocomplete() {
         // Create the autocomplete object, restricting the search to geographical
         // location types.
-        autocomplete = new google.maps.places.Autocomplete(
-            /** @type {!HTMLInputElement} */(document.getElementById('autoComplete')),
+        mobileautocomplete = new google.maps.places.Autocomplete(
+            /** @type {!HTMLInputElement} */(document.getElementById('mobileAutocomplete')),
             {types: ['geocode']});
+        desktopautocomplete = new google.maps.places.Autocomplete(
+            /** @type {!HTMLInputElement} */(document.getElementById('desktopAutocomplete')),
+            {types: ['geocode']});
+        mobileautocomplete.addListener('place_changed', mobilefillInAddress);
+        desktopautocomplete.addListener('place_changed', desktopfillInAddress);
+      }
+      function desktopfillInAddress() {
+        // Get the place details from the autocomplete object.
+        var place = desktopautocomplete.getPlace();
+        console.log(place)
+
+        for (var component in componentForm) {
+          document.getElementById("desktop"+component).value = '';
+          document.getElementById("desktop"+component).disabled = false;
+        }
+        for (var i = 0; i < place.address_components.length; i++) {
+          var addressType = place.address_components[i].types[0];
+          if (componentForm[addressType]) {
+            var val = place.address_components[i][componentForm[addressType]];
+            document.getElementById("desktop"+addressType).value = val;
+          if(place.adr_address){
+            var val = place.name;
+            document.getElementById("desktopstreet_address").value = val;
+          }
+          }
+        }
+      }
+      function mobilefillInAddress() {
+        // Get the place details from the autocomplete object.
+        var place = mobileautocomplete.getPlace();
+
+        for (var component in componentForm) {
+          document.getElementById("mobile"+component).value = '';
+          document.getElementById("mobile"+component).disabled = false;
+        }
+        for (var i = 0; i < place.address_components.length; i++) {
+          var addressType = place.address_components[i].types[0];
+          if (componentForm[addressType]) {
+            var val = place.address_components[i][componentForm[addressType]];
+            document.getElementById("mobile"+addressType).value = val;
+            document.getElementById("desktop"+addressType).value = val;
+          if(place.adr_address){
+            var val = place.name;
+            document.getElementById("mobilestreet_address").value = val;
+          }
+          }
+        }
       }
 
       // Bias the autocomplete object to the user's geographical location,
@@ -72,7 +129,8 @@
               center: geolocation,
               radius: position.coords.accuracy
             });
-            autocomplete.setBounds(circle.getBounds());
+            mobileAutocomplete.setBounds(circle.getBounds());
+            desktopAutocomplete.setBounds(circle.getBounds());
           });
         }
       }

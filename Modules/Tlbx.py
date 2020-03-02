@@ -79,7 +79,7 @@ def thumbnailGen(image, path):
 
 
 #Insert the new account information into the database
-def new_Account(firstName, lastName, email, password, address, city, state, zipCode, image):
+def new_Account(firstName, lastName, email, password, address, city, state, image):
     cur, db = dbConnectDict()
     addressQuery = ("INSERT INTO tAddress (address, city, state) VALUES(%s, %s, %s);")
     data = (address, city, state)

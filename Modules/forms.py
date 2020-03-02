@@ -15,8 +15,6 @@ class RegisterForm(FlaskForm):
 class UserInfoForm(FlaskForm):
     firstName = StringField('firstName', validators=[DataRequired()])
     lastName = StringField('lastName', validators=[DataRequired()])
-    autoComplete = StringField('autoComplete', validators=[DataRequired()])
-    address = StringField('address', validators=[DataRequired()])
     profileImage = FileField('profileImage', validators=[FileAllowed(['jpg','bmp', 'jpeg', 'png'])])
     submit = SubmitField('Register')
 class CreateFamilyForm(FlaskForm):
@@ -39,7 +37,6 @@ class CreateDogForm(FlaskForm):
     submit = SubmitField('Next')
 class FavoriteParkForm(FlaskForm):
     parkName = StringField('surName', validators=[DataRequired()])
-    address = StringField('address', validators=[DataRequired()])
     submit = SubmitField('Register')
 class PasswordResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])

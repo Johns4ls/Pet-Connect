@@ -12,11 +12,14 @@ def userInfo():
         lastName = UserInfoform.lastName.data
         email = session.get('email')
         password =  Tlbx.hash_password(session.get('password', None))
-        address = UserInfoform.address.data
-        addresslist = address.split('')
-        address = addresslist[0]
-        city = addresslist[1]
-        state = addresslist[2]
+        try:
+            address = request.form['desktopstreet_address']
+            city = request.form['desktopadministrative_area_level_1']
+            state = request.form['desktoplocality']
+        except:
+            address = request.form['mobilestreet_address']
+            city = request.form['mobileadministrative_area_level_1']
+            state = request.form['mobilelocality']
 
         image = request.files[UserInfoform.profileImage.name]
         image = Tlbx.imgToJPG("Profile", image)
