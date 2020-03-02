@@ -14,7 +14,10 @@
     <ul class="formRegistration">
       {{ FavoriteParkform.hidden_tag() }}
       <li><p>Name: </p>{{ FavoriteParkform.parkName(placeholder="Miami Meadows", class_="field-80") }}</li>
-      <li><p>Address: </p>{{ FavoriteParkform.address(id="mobileaddress",placeholder="1234 Miami Ave.", class_="field-80", onFocus="geolocate()") }}</li>
+      <li><input type=text class="field_full" autocomplete="off" onFocus="geolocate" id="mobileAutocomplete" name="mobileAutocomplete" placeholder="Full Address"></li>
+      <li><input type=text class="field_full" id="mobilestreet_address" name="mobilestreet_address" placeholder="Address" disabled="True"></li>
+      <li><input type=text class="field_full" id="mobileadministrative_area_level_1" name="mobileadministrative_area_level_1" placeholder="City" disabled="True"></li>
+      <li><input type=text class="field_full" id="mobilelocality" name="mobilelocality" placeholder="State" disabled="True"></li>
       <br><li>{{ FavoriteParkform.submit() }}</li>
     </ul>
   </form>
@@ -26,41 +29,94 @@
       <ul class="formRegistration">
         {{ FavoriteParkform.hidden_tag() }}
         <li><p>Name: </p>{{ FavoriteParkform.parkName(placeholder="Miami Meadows", class_="field-80") }}</li>
-        <li><p>Address: </p>{{ FavoriteParkform.address(id="desktopaddress",placeholder="1234 Miami Ave.", class_="field-80", onFocus="geolocate()") }}</li>
+        <li><input type=text class="field_full" autocomplete="off" onFocus="geolocate" id="desktopAutocomplete" placeholder="Full Address"></li>
+        <li><input type=text class="field_full" id="desktopstreet_address" name="desktopstreet_address" placeholder="Address" disabled="True"></li>
+        <li><input type=text class="field_full" id="desktopadministrative_area_level_1" name="desktopadministrative_area_level_1" placeholder="City" disabled="True"></li>
+        <li><input type=text class="field_full" id="desktoplocality" name="desktoplocality" placeholder="State" disabled="True"></li>
         <br><li>{{ FavoriteParkform.submit() }}</li>
       </ul>
     </form>
 </div>
 <script>
-  function initAutocomplete() {
-    // Create the autocomplete object, restricting the search to geographical
-    // location types.
-    autocomplete = new google.maps.places.Autocomplete(
-        /** @type {!HTMLInputElement} */(document.getElementById('mobileaddress')),
-        {types: ['geocode']});
-    autocomplete = new google.maps.places.Autocomplete(
-        /** @type {!HTMLInputElement} */(document.getElementById('desktopaddress')),
-        {types: ['geocode']});
-  }
+  var componentForm = {
+  street_address: 'long_name',
+  locality: 'long_name',
+  administrative_area_level_1: 'short_name',
+};
+function initAutocomplete() {
+  // Create the autocomplete object, restricting the search to geographical
+  // location types.
+  mobileautocomplete = new google.maps.places.Autocomplete(
+      /** @type {!HTMLInputElement} */(document.getElementById('mobileAutocomplete')),
+      {types: ['geocode']});
+  desktopautocomplete = new google.maps.places.Autocomplete(
+      /** @type {!HTMLInputElement} */(document.getElementById('desktopAutocomplete')),
+      {types: ['geocode']});
+  mobileautocomplete.addListener('place_changed', mobilefillInAddress);
+  desktopautocomplete.addListener('place_changed', desktopfillInAddress);
+}
+function desktopfillInAddress() {
+  // Get the place details from the autocomplete object.
+  var place = desktopautocomplete.getPlace();
+  console.log(place)
 
-  // Bias the autocomplete object to the user's geographical location,
-  // as supplied by the browser's 'navigator.geolocation' object.
-  function geolocate() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        var geolocation = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-        var circle = new google.maps.Circle({
-          center: geolocation,
-          radius: position.coords.accuracy
-        });
-        autocomplete.setBounds(circle.getBounds());
-      });
+  for (var component in componentForm) {
+    document.getElementById("desktop"+component).value = '';
+    document.getElementById("desktop"+component).disabled = false;
+  }
+  for (var i = 0; i < place.address_components.length; i++) {
+    var addressType = place.address_components[i].types[0];
+    if (componentForm[addressType]) {
+      var val = place.address_components[i][componentForm[addressType]];
+      document.getElementById("desktop"+addressType).value = val;
+    if(place.adr_address){
+      var val = place.name;
+      document.getElementById("desktopstreet_address").value = val;
+    }
     }
   }
+}
+function mobilefillInAddress() {
+  // Get the place details from the autocomplete object.
+  var place = mobileautocomplete.getPlace();
+
+  for (var component in componentForm) {
+    document.getElementById("mobile"+component).value = '';
+    document.getElementById("mobile"+component).disabled = false;
+  }
+  for (var i = 0; i < place.address_components.length; i++) {
+    var addressType = place.address_components[i].types[0];
+    if (componentForm[addressType]) {
+      var val = place.address_components[i][componentForm[addressType]];
+      document.getElementById("mobile"+addressType).value = val;
+      document.getElementById("desktop"+addressType).value = val;
+    if(place.adr_address){
+      var val = place.name;
+      document.getElementById("mobilestreet_address").value = val;
+    }
+    }
+  }
+}
+
+// Bias the autocomplete object to the user's geographical location,
+// as supplied by the browser's 'navigator.geolocation' object.
+function geolocate() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var geolocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+      var circle = new google.maps.Circle({
+        center: geolocation,
+        radius: position.coords.accuracy
+      });
+      mobileAutocomplete.setBounds(circle.getBounds());
+      desktopAutocomplete.setBounds(circle.getBounds());
+    });
+  }
+}
 google.maps.event.addDomListener(window, 'load', initAutocomplete);
-</script> 
+</script>
 {% endblock %}
 </div>

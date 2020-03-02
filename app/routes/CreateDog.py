@@ -69,10 +69,14 @@ def DogCreation():
         image = None
         addressQuery = "INSERT INTO tAddress (address, city, state) VALUES (%s, %s, %s);"
 
-        addresslist = (FavoriteParkform.address.data).split(',')
-        address = addresslist[0]
-        city = addresslist[1]
-        state = addresslist[2]
+        try:
+            address = request.form['desktopstreet_address']
+            city = request.form['desktopadministrative_area_level_1']
+            state = request.form['desktoplocality']
+        except:
+            address = request.form['mobilestreet_address']
+            city = request.form['mobileadministrative_area_level_1']
+            state = request.form['mobilelocality']
         data = (address, city, state)
         cur.execute(addressQuery, data)
         favParkQuery = "INSERT INTO tFavoritePark (parkName, AddressID, image) VALUES (%s, LAST_INSERT_ID(), %s);"
