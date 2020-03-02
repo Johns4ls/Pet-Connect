@@ -16,6 +16,132 @@
 <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
 {% endblock %}
 {% block body %}
+
+<div class="mobileReg">
+  <h1 style="text-align: center;">{{user.firstName}} {{user.lastName}}'s profile</h1>
+  {% if user.image == None %}
+  <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+    <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="profileImg"></a>
+  {% elif user.image != None %}
+    <a href="{{ url_for('static', filename = user.image + '.jpg') }}">
+      <img src="{{ url_for('static', filename = user.image + '.thumbnail') }}"class="profileImg"></a>
+  {% endif %}
+  <br>
+  <br>
+  <div class="profileMain">
+    <button onclick="window.location='';">Schedule Playdate</button>
+    {% for dog in dogResults %}
+    <button onclick="window.location='/Dog/Profile/{{dog.dogID}}';">{{dog.name}}'s Profile</button>
+    {% endfor %}
+    </section>
+  </div>
+  <br><br><br>
+  <div class="feed">
+      <div class="container">
+        <br>
+        <h1 style="text-align: center;">{{user.firstName}}'s feed</h1>
+        <br>
+        {% for post, like in postResults %}
+        <div class="postContainer">
+        <div class="well well-lg">
+          <p>
+            {% if post.tPlayDate.PlayDateID != None %}
+            {% if post.tHostDog %}
+            {% if post.tHostDog.image == None %}
+            <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% elif post.tHostDog.image != None %}
+              <a href="{{ url_for('static', filename = post.tHostDog.image + '.jpg') }}">
+                <img src="{{ url_for('static', filename = post.tHostDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
+            {% endif %}
+          <a href="/Dog/Profile/{{post.tHostDog.dogID}}"><b style="color: #0d6591;">{{post.tHostDog.name}} </b></a> Has a playdate with <a href="/Dog/Profile/{{post.tGuestDog.dogID}}"><b style="color: #0d6591;">{{post.tGuestDog.name}}</b></a>:
+          {% if post.tGuestDog.image == None %}
+          <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+            <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+          {% elif post.tGuestDog.image != None %}
+            <a href="{{ url_for('static', filename = post.tGuestDog.image + '.jpg') }}">
+              <img src="{{ url_for('static', filename = post.tGuestDog.image + '.thumbnail') }}"class="img-thumbnail"></a>
+          {% endif %}
+          tomorrow at {{post.tPlayDate.Begin_ts}}
+        </p>
+            {% else %}
+              {% if post.image == None %}
+              <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+              {% elif post.image != None %}
+                <a href="{{ url_for('static', filename = post.image + '.jpg') }}">
+                  <img src="{{ url_for('static', filename = post.image + '.thumbnail') }}"class="img-thumbnail"></a>
+              {% endif %}
+              <a href="/User/Profile/{{post.userID}}"><b style="color: #0d6591;">{{post.firstName}} {{post.lastName}}</b></a> wrote this about
+              <a href="/Dog/Profile/{{post.tDog.dogID}}"><b style="color: #0d6591;">{{post.tDog.name}}</b></a>:
+              </p>
+          <p>{{ post.Post }}</p>
+          {% endif %}
+          {% endif %}
+
+        </div>
+        <textarea id="desktopComment{{post.postID}}" name="Comment"></textarea>
+        <br>
+        <button onclick="submitComment('desktop','{{post.postID}}', messageSock);" style="font-size: 70%;">Comment</button>
+        <input type="button" style="font-size: 70%;" id="{{post.postID}}" value ="{{like}}" onclick="changeLike('desktop',{{post.postID}});">        <br>
+        <div class="commentResultContainer">
+
+          {% set count = namespace(a=0) %}
+          {% for react in reactResults %}
+            {% if post.postID == react.postID %}
+            {% if count.a == 0 %}
+            <p>
+                {% if react.image == None %}
+                <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                  <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+                {% elif react.image != None %}
+                  <a href="{{ url_for('static', filename = react.image + '.jpg') }}">
+                    <img src="{{ url_for('static', filename = react.image + '.thumbnail') }}"class="img-thumbnail"></a>
+                {% endif %}
+              <a href="/User/Profile/{{react.userID}}"><b style="color: #0d6591;">{{react.firstName}} {{react.lastName}}</b></a>
+            {% endif %}
+            {% set count.a = count.a + 1 %}
+            {% endif %}
+          {% endfor %}
+          {% if count.a > 1 %}
+          <a href="/Likes/Post/{{post.postID}}">and {{count.a - 1}} others liked this</a></p>
+          {% elif count.a == 1 %}
+          liked this</p>
+          {{else}}
+            </p>
+          {% endif %}
+          <hr>
+          {% set count = namespace(a=0) %}
+          {% for comment in commentResults %}
+            {% if post.postID == comment.postID %}
+            {% if count.a < 3 %}
+            <div id="desktopsubcommentcontainer{{comment.postID}}{{count.a}}">
+            <p>
+                {% if comment.image == None %}
+                <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
+                  <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
+                {% elif comment.image != None %}
+                  <a href="{{ url_for('static', filename = comment.image + '.jpg') }}">
+                    <img src="{{ url_for('static', filename = comment.image + '.thumbnail') }}"class="img-thumbnail"></a>
+                {% endif %}
+              <a href="/User/Profile/{{comment.userID}}"><b style="color: #0d6591;">{{comment.firstName}} {{comment.lastName}}</b></a> said: </p>
+            <p>{{comment.Comment}}</p>
+                  </div>
+            {% set count.a = count.a + 1 %}
+            {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if count.a > 0%}
+          <a href="/View/Post/{{post.postID}}"> View all comments</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+
+      </div>
+    </div>
+</div>
+
 <div class="backgroundContainer">
   <div class="mainContainer">
     <h1 style="text-align: center;">{{user.firstName}} {{user.lastName}}'s profile</h1>
@@ -32,7 +158,7 @@
 
       <section class="profileButtonsText70">
         <div class="dogButtonHalfText">
-          <p>Dog's in {{user.firstName}}'s family</p>
+          <p>Dogs in {{user.firstName}}'s family</p>
         </div>
         <div class="playdateButtonHalfText">
           <p style="float: right;">Schedule a Playdate</p>
@@ -41,13 +167,6 @@
       {% for dog in dogResults %}
       <section class="profileButtonsText70">
         <div class="dogButtonHalfText">
-            {% if dog.image == None %}
-            <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
-              <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="img-thumbnail"></a>
-            {% elif dog.image != None %}
-              <a href="{{ url_for('static', filename = dog.image + '.jpg') }}">
-                <img src="{{ url_for('static', filename = dog.image + '.thumbnail') }}"class="img-thumbnail"></a>
-            {% endif %}
           <button onclick="window.location='/Dog/Profile/{{dog.dogID}}';">{{dog.name}}'s Profile</button>
         </div>
         <div class="playdateButtonHalfText">
@@ -56,12 +175,11 @@
         {% endfor %}
       </section>
     </div>
-    <br><br><br>
+    <br><br><br><br><br><br><br><br>
+    <h1 style="text-align: center;">{{user.firstName}}'s feed</h1>
     <div class="feed">
         <div class="container">
-          <br>
-          <h1 style="text-align: center;">{{user.firstName}}'s feed</h1>
-          <br>
+          <br><br>
           {% for post, like in postResults %}
           <div class="postContainer">
           <div class="well well-lg">
