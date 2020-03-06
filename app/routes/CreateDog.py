@@ -36,7 +36,13 @@ def StartPark():
         session['weight'] = CreateDogform.weight.data
         session['bio'] = CreateDogform.bio.data
         image = request.files[CreateDogform.profileImage.name]
-        session['image'] = Tlbx.imgToJPG("Profile", image)
+
+        if(image.filename.encode('ascii', 'ignore') is not ""):
+            image = request.files[CreateDogform.profileImage.name]
+            session['image'] = Tlbx.imgToJPG("Profile", image)
+        else:
+            session['image'] = None
+
         FavoriteParkform = FavoriteParkForm()
         followed = dbsession.query(Database.tDog.dogID).join(Database.tUser, Database.tDog.familyID == Database.tUser.familyID) \
         .filter(Database.tUser.userID == current_user.id)

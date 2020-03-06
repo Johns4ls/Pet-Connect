@@ -20,9 +20,11 @@ def userInfo():
             address = request.form['mobilestreet_address']
             city = request.form['mobileadministrative_area_level_1']
             state = request.form['mobilelocality']
-
         image = request.files[UserInfoform.profileImage.name]
-        image = Tlbx.imgToJPG("Profile", image)
+        if(image.filename.encode('ascii', 'ignore') is not ""):
+            image = Tlbx.imgToJPG("Profile", image)
+        else:
+            image = None
         Tlbx.new_Account(firstName, lastName, email, password, address, city, state, image)
         Tlbx.loginUser(email)
         return render_template('/Family/FamilySplash.html')
