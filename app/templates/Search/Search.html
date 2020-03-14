@@ -94,7 +94,7 @@
 <div class="backgroundContainer">
     <div class="mainContainer">
         <div class="feed">
-          <h1>Top Dog Results</h1>
+          <h2>Top Dog Results</h2>
           <br>
           <div class="postContainer">
  <table style="width:100%">
@@ -114,7 +114,7 @@
         <td><a href="/Dog/Profile/{{dogs.dogID}}">
           <img src="{{ url_for('static', filename = dogs.image + '.thumbnail') }}"class="Profile"></a></td>
       {% endif %}
-     <td><a href="/Dog/Profile/{{dogs.dogID}}"><h3><b>{{dogs.name}}</b></h3></a></td>
+     <td><a href="/Dog/Profile/{{dogs.dogID}}"><h5><b>{{dogs.name}}</b></h5></a></td>
      <td><input type="button" id="desktopDog/{{dogs.dogID}}" value="{{text}}" onclick="changeFollow({{dogs.dogID}})"></td>
    </tr>
 {% endfor %}
@@ -122,7 +122,7 @@
 </div>
 <a href="/Search/Dogs">View All Dogs</a>
 <br>
-<h1>Top user results</h1>
+<h2>Top user results</h2>
 <div class="postContainer">
 <table style="width:100%">
     <h1>
@@ -141,7 +141,7 @@
          <td><a href="/User/Profile/{{User.userID}}">
            <img src="{{ url_for('static', filename = User.image + '.thumbnail') }}"class="profileImg"></a></td>
        {% endif %}
-      <td><a href="/User/Profile/{{User.userID}}"><h3><b>{{User.firstName}} {{User.lastName}}</b></h3></a></td>
+      <td><a href="/User/Profile/{{User.userID}}"><h5><b>{{User.firstName}} {{User.lastName}}</b></h5></a></td>
       <td><input type="button" id="desktopFriend/{{User.userID}}" value={{friends[User.userID]}} onclick="changeFriend({{User.userID}})"></td>
     </tr>
  {% endfor %}
