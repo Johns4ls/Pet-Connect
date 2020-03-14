@@ -1,4 +1,4 @@
-   
+
 @import url('https://fonts.googleapis.com/css?family=Mukta');
 .background{
     background-image: url(/app/static/thumb-1920-588305.jpg);
@@ -52,7 +52,7 @@ a{
 .login-reg-panel{
     color:#B8B8B8;
 }
-.login-reg-panel #label-login, 
+.login-reg-panel #label-login,
 .login-reg-panel #label-register{
     border:1px solid #9E9E9E;
     padding:5px 5px;
@@ -79,11 +79,11 @@ a{
     right:0;
     position:absolute;
     text-align:left;
-    
+
 }
 .right-log{right:50px !important;}
 
-.login-show, 
+.login-show,
 .register-show{
     z-index: 1;
     display:none;
@@ -104,18 +104,6 @@ a{
     padding: 15px;
     border: 1px solid #b5b5b5;
     outline: none;
-}
-.login-show input[type="submit"] {
-    max-width: 150px;
-    width: 100%;
-    background: #444444;
-    color: #f9f9f9;
-    border: none;
-    padding: 10px;
-    text-transform: uppercase;
-    border-radius: 2px;
-    float:right;
-    cursor:pointer;
 }
 .login-show a{
     display:inline-block;
@@ -160,9 +148,9 @@ a{
   text-decoration:none;
   color:#2c7715;
 }
-    
+
 .container{max-width:1170px; margin:auto;}
-img{ 
+img{
   max-width: 100%;
   max-height: 100%;
 }
@@ -314,12 +302,15 @@ img{
 }
 /* Dropdown Button */
 .dropbtn {
-  background-color: #3498DB;
   color: white;
-  padding: 16px;
-  font-size: 16px;
+  padding: 14px 16px;
+  font-size: 17px;
   border: none;
   cursor: pointer;
+  text-decoration: none;
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
 /* Dropdown button on hover & focus */
@@ -331,7 +322,7 @@ img{
 .dropdown {
   position: static;
   display: inline-block;
-  
+
 }
 
 /* Dropdown Content (Hidden by Default) */

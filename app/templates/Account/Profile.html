@@ -144,7 +144,7 @@
 
 <div class="backgroundContainer">
   <div class="mainContainer">
-    <h1 style="text-align: center;">{{user.firstName}} {{user.lastName}}'s profile</h1>
+    <h2 style="text-align: center;">{{user.firstName}} {{user.lastName}}'s profile</h2>
     {% if user.image == None %}
     <a href="{{ url_for('static', filename = 'pictures/Profile/thor' + '.jpg') }}">
       <img src="{{ url_for('static', filename = 'pictures/Profile/thor' + '.thumbnail') }}"class="profileImg"></a>
@@ -176,7 +176,7 @@
       </section>
     </div>
     <br><br><br><br><br><br><br><br>
-    <h1 style="text-align: center;">{{user.firstName}}'s feed</h1>
+    <h2 style="text-align: center;">{{user.firstName}}'s feed</h2>
     <div class="feed">
         <div class="container">
           <br><br>
